@@ -1,0 +1,38 @@
+{
+  "compilerOptions": {
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "resolvePackageJsonExports": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "ES2023",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "incremental": true,
+    "skipLibCheck": true,
+    "strictNullChecks": true,
+    // On by default under `strict`, which the Nest generator leaves off. Without it
+    // the CLI silently accepted a callback signature that editors (which default to
+    // stricter settings) flagged as an error — `pnpm typecheck` and the editor have
+    // to agree, or one of them is lying.
+    "strictFunctionTypes": true,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitAny": false,
+    "strictBindCallApply": false,
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "@app/observability": [
+        "libs/observability/src"
+      ],
+      "@app/observability/*": [
+        "libs/observability/src/*"
+      ]
+    }
+  }
+}
