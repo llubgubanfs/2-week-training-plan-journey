@@ -17,11 +17,14 @@
     "start:prod": "node dist/apps/booking-api/main",
     "start:prod:notifier": "node dist/apps/notifier/main",
     "lint": "eslint \"{apps,libs}/**/*.ts\" --fix",
+    "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./apps/booking-api/test/jest-e2e.json"
+    "test:e2e": "pnpm test:e2e:booking-api && pnpm test:e2e:notifier",
+    "test:e2e:booking-api": "jest --config ./apps/booking-api/test/jest-e2e.json",
+    "test:e2e:notifier": "jest --config ./apps/notifier/test/jest-e2e.json"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
@@ -29,6 +32,7 @@
     "@nestjs/core": "^11.0.1",
     "@nestjs/platform-express": "^11.0.1",
     "nest-winston": "^1.10.2",
+    "nestjs-cls": "^6.2.1",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
     "winston": "^3.19.0"

@@ -17,6 +17,11 @@
     "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": true,
+    // On by default under `strict`, which the Nest generator leaves off. Without it
+    // the CLI silently accepted a callback signature that editors (which default to
+    // stricter settings) flagged as an error — `pnpm typecheck` and the editor have
+    // to agree, or one of them is lying.
+    "strictFunctionTypes": true,
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": false,
     "strictBindCallApply": false,
