@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Full Scale — Leander Lorenz Lubguban — 2-Week Training Plan</title>
+<style>
+/* ── Full Scale Brand System ── fullscale.ph production tokens ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --fs-green:      #17A150;
+  --fs-orange:     #FF6600;
+  --fs-navy:       #1F242E;
+  --fs-white:      #FFFFFF;
+  --fs-off-white:  #F9FAFB;
+  --fs-border:     #E5E7EB;
+  --fs-muted:      #6B7280;
+  --fs-grad-green:  linear-gradient(135deg, #148f47 0%, #1ab359 50%, #2eb867 100%);
+  --fs-grad-orange: linear-gradient(135deg, #e65c00 0%, #ff6600 50%, #ff751a 100%);
+  --fs-grad-header: linear-gradient(90deg, #17A150, #FF6600);
+  --fs-shadow-sm: 0 1px 2px 0 rgba(31,36,46,0.05);
+  --fs-font:  system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  --fs-mono:  'SF Mono', 'Cascadia Code', Consolas, 'Courier New', monospace;
+
+  /* Track colors */
+  --trk-obs:  #6A1B9A;
+  --trk-sd:   #7C4DFF;
+}
+
+body { font-family: var(--fs-font); background: var(--fs-off-white); color: var(--fs-navy); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+
+.fs-header { background: var(--fs-navy); color: var(--fs-white); padding: 24px 32px; position: relative; overflow: hidden; }
+.fs-header::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--fs-grad-header); }
+.fs-header-org   { font-size: 10px; font-weight: 700; letter-spacing: .10em; text-transform: uppercase; color: rgba(255,255,255,.4); margin-bottom: 6px; }
+.fs-header-title { font-size: 20px; font-weight: 700; }
+.fs-header-meta  { font-size: 12px; color: rgba(255,255,255,.45); margin-top: 4px; }
+
+.fs-section-title { font-size: 18px; font-weight: 700; color: var(--fs-navy); margin: 32px 0 16px; padding-bottom: 8px; border-bottom: 2px solid var(--fs-green); }
+.fs-wrap   { max-width: 1080px; margin: 0 auto; padding: 0 32px 48px; }
+.fs-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--fs-muted); margin-bottom: 6px; margin-top: 32px; }
+.fs-divider { height: 1px; background: var(--fs-border); margin: 28px 0; }
+
+.fs-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 8px; }
+.fs-table thead tr { background: var(--fs-green); color: var(--fs-white); }
+.fs-table th { padding: 10px 14px; font-weight: 600; text-align: left; }
+.fs-table td { padding: 9px 14px; border-bottom: 1px solid var(--fs-border); vertical-align: top; }
+.fs-table tbody tr:nth-child(even) { background: var(--fs-off-white); }
+.fs-table .val-good   { color: var(--fs-green);  font-weight: 700; white-space: nowrap; }
+.fs-table .val-alert  { color: var(--fs-orange); font-weight: 700; white-space: nowrap; }
+
+.fs-badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px; }
+.fs-badge-strongfit   { border: 1.5px solid var(--fs-green);  color: var(--fs-green);  background: transparent; }
+.fs-badge-adequate    { border: 1.5px solid var(--fs-muted);  color: var(--fs-muted);  background: transparent; }
+.fs-badge-flag        { border: 1.5px solid var(--fs-orange); color: var(--fs-orange); background: transparent; }
+
+.fs-callout { border-left: 3px solid var(--fs-green); background: rgba(23,161,80,.06); padding: 12px 16px; border-radius: 0 8px 8px 0; font-size: 13px; margin: 8px 0; }
+.fs-callout.risk { border-left-color: var(--fs-orange); background: rgba(255,102,0,.06); }
+.fs-callout strong { color: var(--fs-green); }
+.fs-callout.risk strong { color: var(--fs-orange); }
+
+.fs-footer { background: var(--fs-navy); color: rgba(255,255,255,.38); font-size: 11px; padding: 16px 32px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 6px; margin-top: 40px; }
+.fs-footer strong { color: rgba(255,255,255,.7); }
+.fs-mono { font-family: var(--fs-mono); }
+
+.plan-meta { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+.plan-meta-item { background: var(--fs-white); border: 1px solid var(--fs-border); border-radius: 10px; padding: 10px 14px; }
+.plan-meta-item .lbl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--fs-muted); margin-bottom: 3px; }
+.plan-meta-item .val { font-size: 12.5px; color: var(--fs-navy); }
+
+.track-legend { display: flex; flex-wrap: wrap; gap: 10px; margin: 12px 0 24px; }
+.track-pill { font-size: 11px; font-weight: 600; color: #fff; padding: 4px 12px; border-radius: 20px; }
+
+.day-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 10px; }
+.day-card { background: var(--fs-white); border: 1px solid var(--fs-border); border-radius: 10px; padding: 12px 13px; display: flex; flex-direction: column; gap: 7px; font-size: 11.5px; }
+.day-card .day-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--fs-muted); }
+.day-card .day-title { font-size: 13px; font-weight: 700; color: var(--fs-navy); margin-bottom: 2px; }
+.day-card .track-tag { display: inline-block; font-size: 9.5px; font-weight: 700; color: #fff; padding: 2px 8px; border-radius: 10px; width: fit-content; }
+.day-card .prereqs { display: flex; flex-wrap: wrap; gap: 4px; }
+.prereq-chip { font-size: 9.5px; background: var(--fs-off-white); border: 1px solid var(--fs-border); color: var(--fs-muted); padding: 2px 7px; border-radius: 8px; }
+.day-card .field-lbl { font-size: 9.5px; font-weight: 700; text-transform: uppercase; color: var(--fs-muted); margin-top: 4px; }
+.day-card .field-val { font-size: 11.5px; }
+.day-card .course-row { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 2px; }
+.course-link { font-size: 10px; background: var(--fs-off-white); border: 1px dashed var(--fs-border); color: var(--fs-navy); padding: 3px 7px; border-radius: 6px; }
+.no-course { font-size: 10px; color: var(--fs-muted); font-style: italic; }
+
+.milestone-strip { background: var(--fs-navy); color: #fff; border-radius: 10px; padding: 12px 18px; font-size: 12px; margin-bottom: 28px; }
+.milestone-strip .lbl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: rgba(255,255,255,.5); margin-bottom: 6px; }
+.milestone-strip ul { margin-left: 16px; }
+.milestone-strip li { margin-bottom: 3px; }
+
+.week-heading { font-size: 15px; font-weight: 700; color: var(--fs-navy); margin: 22px 0 12px; display: flex; align-items: center; gap: 10px; }
+.week-heading .wk-badge { background: var(--fs-green); color: #fff; font-size: 11px; padding: 3px 10px; border-radius: 8px; }
+
+.tool-tag { font-family: var(--fs-mono); font-size: 10px; background: var(--fs-off-white); border: 1px solid var(--fs-border); padding: 2px 6px; border-radius: 5px; }
+</style>
+</head>
+<body>
+
+<div class="fs-header">
+  <div class="fs-header-org">Full Scale — FS Learning / Bench Development</div>
+  <div class="fs-header-title">2-Week Training Plan — Leander Lorenz Lubguban</div>
+  <div class="fs-header-meta">Job Grade 2 — Software Developer · Full-Stack Track (Node.js/NestJS + React/Next.js) · EM: Harvey Martus · 2026-07-28</div>
+</div>
+
+<div class="fs-wrap">
+
+  <!-- ── Technical Competencies ── -->
+  <div class="fs-section-title">Technical Competencies</div>
+  <table class="fs-table">
+    <thead><tr><th style="width:26%">Skill</th><th style="width:16%">Where You Stand</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>NestJS Module Architecture</td><td><span class="fs-badge fs-badge-strongfit">Strong</span></td><td>Your per-module structure and how you scope shared concerns into a common module is solid. Keep using it.</td></tr>
+      <tr><td>Request Validation Design</td><td><span class="fs-badge fs-badge-strongfit">Strong</span></td><td>You placed validation correctly in ValidationPipe and reasoned well about module-scoped vs. cross-cutting logic.</td></tr>
+      <tr><td>Downstream Timeout / Retry Handling</td><td><span class="fs-badge fs-badge-strongfit">Strong</span></td><td>Your retry/backoff and durable-job thinking for handling timeouts was clear and correct.</td></tr>
+      <tr><td>Next.js Rendering Strategy</td><td><span class="fs-badge fs-badge-strongfit">Strong</span></td><td>Server vs. client component split and choosing SSE for live dashboard updates — good calls.</td></tr>
+      <tr><td>Relational Schema &amp; Indexing</td><td><span class="fs-badge fs-badge-strongfit">Strong</span></td><td>Your double-booking prevention via composite uniqueness, and your indexing choices, were both on point.</td></tr>
+      <tr><td>Transactions</td><td><span class="fs-badge fs-badge-strongfit">Strong</span></td><td>Clear understanding of why transactions matter for multi-step writes.</td></tr>
+      <tr><td>Authorization (CASL/RBAC) Request Flow</td><td><span class="fs-badge fs-badge-strongfit">Strong</span></td><td>You walked the full guard → handler → exception filter flow without missing a beat.</td></tr>
+      <tr><td>CI/CD &amp; Deployment Mechanics</td><td><span class="fs-badge fs-badge-strongfit">Strong</span></td><td>Your deployment pipeline knowledge and the call to simplify away from Docker Swarm were both well-reasoned.</td></tr>
+      <tr><td>Container Orchestration at Scale</td><td><span class="fs-badge fs-badge-adequate">Adequate</span></td><td>Good reasoning about the Swarm tradeoff, though you haven't yet run an autoscaled, multi-replica setup yourself. Worth building toward.</td></tr>
+      <tr><td>API Versioning for Multi-Client Delivery</td><td><span class="fs-badge fs-badge-strongfit">Strong</span></td><td>Your approach to versioning endpoints across web/mobile/desktop clients was solid.</td></tr>
+      <tr><td>Cache Invalidation Design</td><td><span class="fs-badge fs-badge-strongfit">Strong</span></td><td>The dependency-graph approach to cache invalidation, and your cache-hit/miss vocabulary, were both precise.</td></tr>
+      <tr><td>Observability / Structured Logging &amp; Telemetry</td><td><span class="fs-badge fs-badge-flag">Growth Area ⚠</span></td><td>You called this out yourself — real telemetry experience is limited. This plan builds it from the ground up: structured logs, metrics, tracing, and alerting.</td></tr>
+      <tr><td>System Design at Production Scale</td><td><span class="fs-badge fs-badge-flag">Growth Area ⚠</span></td><td>This session only covered narrow schema questions. This plan gives you a real end-to-end design prompt, at a bigger scale than your own project, to stretch and validate that skill.</td></tr>
+      <tr><td>Live Code Debugging</td><td><span class="fs-badge fs-badge-strongfit">Strong</span></td><td>You caught an N+1 query, a missing return path, an un-transacted write, and a race condition without being prompted — that instinct is a real asset. Keep sharpening it.</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ── Behavioral Competencies ── -->
+  <div class="fs-section-title">Behavioral Competencies</div>
+  <table class="fs-table">
+    <thead><tr><th style="width:26%">Skill</th><th style="width:16%">Where You Stand</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>Spoken/Written English Communication Clarity</td><td><span class="fs-badge fs-badge-adequate">Adequate</span></td><td>You were clear and easy to follow throughout the interview. This plan asks you to defend a design under live follow-up questions, which is a step up from a Q&amp;A format.</td></tr>
+      <tr><td>Handling Disagreement with Authority</td><td><span class="fs-badge fs-badge-adequate">Adequate</span></td><td>Your example of proposing an alternative and getting alignment was a good one — keep building that habit into a repeatable pattern.</td></tr>
+      <tr><td>Self-Assessment Calibration</td><td><span class="fs-badge fs-badge-adequate">Adequate</span></td><td>Good self-awareness about where you rated yourself lower than your manager did — that kind of reflection is useful, keep it up.</td></tr>
+      <tr><td>AI Tool Fluency &amp; Critical Use</td><td><span class="fs-badge fs-badge-strongfit">Strong</span></td><td>Your range of AI tools and — especially — using unit tests to catch AI mistakes rather than trusting output blindly is exactly the right instinct.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="fs-divider"></div>
+
+  <!-- ── 2-Week Training Plan ── -->
+  <div class="fs-section-title">2-Week Training Plan</div>
+
+  <div class="plan-meta">
+    <div class="plan-meta-item"><div class="lbl">Goal</div><div class="val">Build real observability/structured-logging skills and validate your system-design ability at a bigger scale than your own project.</div></div>
+    <div class="plan-meta-item"><div class="lbl">Starts</div><div class="val">TBD — your EM will confirm before Day 1</div></div>
+    <div class="plan-meta-item"><div class="lbl">Time</div><div class="val">~4 hrs/day</div></div>
+    <div class="plan-meta-item"><div class="lbl">Check-in</div><div class="val">EOD message to your EM: Done · Blocked · Tomorrow</div></div>
+    <div class="plan-meta-item"><div class="lbl">Language</div><div class="val">All updates, PRs &amp; deliverables in English from Day 1</div></div>
+    <div class="plan-meta-item"><div class="lbl">Note</div><div class="val">NestJS architecture, validation pipes, guards, CI/CD, database transactions/indexing, retry design, and Next.js rendering strategy are not part of this plan — you're already solid there.</div></div>
+  </div>
+
+  <div class="fs-eyebrow" style="margin-top:8px">Baseline &amp; Post-Training Assessment</div>
+  <table class="fs-table">
+    <thead><tr><th>Track</th><th>Baseline (Day 1)</th><th>Post-Training (Fri W2)</th><th>Target</th></tr></thead>
+    <tbody>
+      <tr><td><span class="track-pill" style="background:var(--trk-obs)">Observability &amp; Structured Logging</span></td><td class="fs-mono">TBD</td><td class="fs-mono">TBD (Day 10)</td><td>7 / 10</td></tr>
+      <tr><td><span class="track-pill" style="background:var(--trk-sd)">System Design</span></td><td class="fs-mono">TBD</td><td class="fs-mono">TBD (Day 9)</td><td>8 / 12</td></tr>
+    </tbody>
+  </table>
+
+  <div class="fs-eyebrow">Track Legend</div>
+  <div class="track-legend">
+    <span class="track-pill" style="background:var(--trk-obs)">Observability &amp; Structured Logging</span>
+    <span class="track-pill" style="background:var(--trk-sd)">System Design</span>
+  </div>
+
+  <!-- ══ WEEK 1 ══ -->
+  <div class="week-heading"><span class="wk-badge">Week 1</span> Foundations — Baseline, Structured Logging, Metrics, Infra</div>
+  <div class="day-grid">
+
+    <div class="day-card">
+      <div class="day-label">Mon · Day 1</div>
+      <div class="day-title">Baseline Assessments</div>
+      <span class="track-tag" style="background:var(--trk-sd)">Both Tracks</span>
+      <div class="prereqs"></div>
+      <div class="field-lbl">Activity</div>
+      <div class="field-val">Before anything else: complete baseline check-ins for both tracks. Observability is a 5-question written check-in. System Design is a live 15-minute whiteboard/Excalidraw session with your EM.</div>
+      <div class="field-lbl">Deliverable</div>
+      <div class="field-val">Baseline scores logged with your EM, including your System Design diagram.</div>
+      <div class="field-lbl">Tools Needed</div>
+      <div class="field-val"><span class="tool-tag">Doc</span> <span class="tool-tag">Excalidraw</span> <span class="tool-tag">Zoom</span></div>
+      <div class="course-row"><span class="no-course">No course — written check-in + live whiteboard</span></div>
+    </div>
+
+    <div class="day-card">
+      <div class="day-label">Tue · Day 2</div>
+      <div class="day-title">Structured Logging</div>
+      <span class="track-tag" style="background:var(--trk-obs)">Observability</span>
+      <div class="prereqs"><span class="prereq-chip">Day 1 baseline</span></div>
+      <div class="field-lbl">Activity</div>
+      <div class="field-val">Work through the structured-logging part of the course below. Take a small NestJS sample service and replace its console.log calls with structured JSON logging, with a request-id correlated across a single request.</div>
+      <div class="field-lbl">Deliverable</div>
+      <div class="field-val">PR/diff with the structured logger wired in, plus a screenshot of sample JSON log output.</div>
+      <div class="field-lbl">Tools Needed</div>
+      <div class="field-val"><span class="tool-tag">NestJS</span> <span class="tool-tag">Winston</span></div>
+      <div class="course-row"><a class="course-link" href="https://www.pluralsight.com/courses/nodejs-microservices-monitoring-logging" target="_blank" rel="noopener">Pluralsight: Node.js Microservices: Monitoring and Logging</a></div>
+    </div>
+
+    <div class="day-card">
+      <div class="day-label">Wed · Day 3</div>
+      <div class="day-title">Metrics &amp; Alertable Signals</div>
+      <span class="track-tag" style="background:var(--trk-obs)">Observability</span>
+      <div class="prereqs"><span class="prereq-chip">Day 2 structured logger</span></div>
+      <div class="field-lbl">Activity</div>
+      <div class="field-val">Continue the same course (Prometheus/Grafana sections). Add a /metrics endpoint to the sample service exposing request count, error rate, and latency. Write a short note on the one alert you'd wire off this data.</div>
+      <div class="field-lbl">Deliverable</div>
+      <div class="field-val">Working /metrics endpoint + a one-paragraph alerting note.</div>
+      <div class="field-lbl">Tools Needed</div>
+      <div class="field-val"><span class="tool-tag">prom-client</span> <span class="tool-tag">Doc</span></div>
+      <div class="course-row"><a class="course-link" href="https://www.pluralsight.com/courses/nodejs-microservices-monitoring-logging" target="_blank" rel="noopener">Pluralsight: Node.js Microservices: Monitoring and Logging</a></div>
+    </div>
+
+    <div class="day-card">
+      <div class="day-label">Thu · Day 4</div>
+      <div class="day-title">Infrastructure Day — Metrics &amp; Tracing Stack</div>
+      <span class="track-tag" style="background:var(--trk-obs)">Observability</span>
+      <div class="prereqs"><span class="prereq-chip">Day 3 /metrics endpoint</span></div>
+      <div class="field-lbl">Activity</div>
+      <div class="field-val">Build and verify a Docker Compose stack with Prometheus + Grafana + Jaeger + your sample service, so your /metrics endpoint has somewhere to be scraped and visualized, and Jaeger is ready ahead of Day 6. You'll reuse this stack for the rest of Week 2.</div>
+      <div class="field-lbl">Deliverable</div>
+      <div class="field-val">docker-compose.yml (Prometheus + Grafana + Jaeger) + a screenshot of a working Grafana panel + confirmation Jaeger's UI is reachable.</div>
+      <div class="field-lbl">Tools Needed</div>
+      <div class="field-val"><span class="tool-tag">Docker</span> <span class="tool-tag">Prometheus</span> <span class="tool-tag">Grafana</span> <span class="tool-tag">Jaeger</span></div>
+      <div class="course-row"><span class="no-course">No course — hands-on infrastructure build</span></div>
+    </div>
+
+    <div class="day-card">
+      <div class="day-label">Fri · Day 5</div>
+      <div class="day-title">Integration Day</div>
+      <span class="track-tag" style="background:var(--trk-obs)">Observability</span>
+      <div class="prereqs"><span class="prereq-chip">Day 2 structured logger</span><span class="prereq-chip">Day 3 /metrics endpoint</span><span class="prereq-chip">Day 4 Grafana stack</span></div>
+      <div class="field-lbl">Activity</div>
+      <div class="field-val">Bring the week together: your sample service should have structured logs, a live /metrics endpoint, and a Grafana dashboard rendering it. Present it live to your EM.</div>
+      <div class="field-lbl">Deliverable</div>
+      <div class="field-val">Working sample service (logs + metrics + dashboard) demoed live.</div>
+      <div class="field-lbl">Tools Needed</div>
+      <div class="field-val"><span class="tool-tag">Docker</span> <span class="tool-tag">Grafana</span></div>
+      <div class="course-row"><span class="no-course">No course — live review with your EM</span></div>
+    </div>
+  </div>
+
+  <div class="milestone-strip">
+    <div class="lbl">Week 1 Milestones</div>
+    <ul>
+      <li>Structured (JSON) logging with request-id correlation in place</li>
+      <li>/metrics endpoint live, exposing request count / error rate / latency</li>
+      <li>Prometheus + Grafana + Jaeger stack running, dashboard rendering live data</li>
+    </ul>
+  </div>
+
+  <!-- ══ WEEK 2 ══ -->
+  <div class="week-heading"><span class="wk-badge">Week 2</span> Application — Tracing, System Design Transfer, Failure Detection, Final Walkthrough</div>
+  <div class="day-grid">
+
+    <div class="day-card">
+      <div class="day-label">Mon · Day 6</div>
+      <div class="day-title">Distributed Tracing</div>
+      <span class="track-tag" style="background:var(--trk-obs)">Observability</span>
+      <div class="prereqs"><span class="prereq-chip">Day 4 Prometheus/Grafana/Jaeger stack</span></div>
+      <div class="field-lbl">Activity</div>
+      <div class="field-val">Continue the same course from Days 2–3 — its "Distributed Tracing with Jaeger or Zipkin" module (~39 min) covers this directly. Instrument your sample service plus one downstream call and export the trace to the Jaeger instance already running from Day 4.</div>
+      <div class="field-lbl">Deliverable</div>
+      <div class="field-val">Screenshot of a trace in the Jaeger UI spanning both the sample service and the downstream call.</div>
+      <div class="field-lbl">Tools Needed</div>
+      <div class="field-val"><span class="tool-tag">Jaeger</span></div>
+      <div class="course-row"><a class="course-link" href="https://www.pluralsight.com/courses/nodejs-microservices-monitoring-logging" target="_blank" rel="noopener">Pluralsight: Node.js Microservices: Monitoring and Logging — "Distributed Tracing with Jaeger or Zipkin" module</a></div>
+    </div>
+
+    <div class="day-card">
+      <div class="day-label">Tue · Day 7</div>
+      <div class="day-title">Extend the Design — Real-Time Waitlist</div>
+      <span class="track-tag" style="background:var(--trk-sd)">System Design</span>
+      <div class="prereqs"><span class="prereq-chip">Day 1 baseline design</span></div>
+      <div class="field-lbl">Activity</div>
+      <div class="field-val">Watch just the "Managing Complex Scenarios" module (~23 min) from the course below — not the whole thing. Then independently extend your Day 1 design to add a real-time waitlist: when a desk frees up early, it should reallocate to the next waitlisted member without ever double-booking during the handoff.</div>
+      <div class="field-lbl">Deliverable</div>
+      <div class="field-val">Updated diagram (Excalidraw) + written notes on the waitlist extension.</div>
+      <div class="field-lbl">Tools Needed</div>
+      <div class="field-val"><span class="tool-tag">Excalidraw</span> <span class="tool-tag">Doc</span></div>
+      <div class="course-row"><a class="course-link" href="https://www.pluralsight.com/courses/distributed-systems-fundamentals" target="_blank" rel="noopener">Pluralsight: Fundamentals of Distributed Systems — "Managing Complex Scenarios" module only (~23m)</a></div>
+    </div>
+
+    <div class="day-card">
+      <div class="day-label">Wed · Day 8</div>
+      <div class="day-title">Silent Failure Detection</div>
+      <span class="track-tag" style="background:var(--trk-obs)">Observability</span>
+      <div class="prereqs"><span class="prereq-chip">Day 2 structured logger</span><span class="prereq-chip">Day 3 /metrics endpoint</span><span class="prereq-chip">Day 4 Grafana stack</span></div>
+      <div class="field-lbl">Activity</div>
+      <div class="field-val">This is the exact scenario you raised in your interview — a cron job that fails silently. Add a deliberately-flawed cron job to your sample service (fails silently ~1-in-5 runs) and instrument it so a failure shows up as a log entry, a metric, and an alert rule.</div>
+      <div class="field-lbl">Deliverable</div>
+      <div class="field-val">Working instrumented cron job + a written answer to "how would you know this failed before a user reported it," backed by your own instrumentation this time.</div>
+      <div class="field-lbl">Tools Needed</div>
+      <div class="field-val"><span class="tool-tag">Docker</span> <span class="tool-tag">Grafana</span> <span class="tool-tag">Doc</span></div>
+      <div class="course-row"><span class="no-course">No course — apply Days 2–4 to a new failure scenario</span></div>
+    </div>
+
+    <div class="day-card">
+      <div class="day-label">Thu · Day 9</div>
+      <div class="day-title">System Design Live Defense &amp; Retest</div>
+      <span class="track-tag" style="background:var(--trk-sd)">System Design</span>
+      <div class="prereqs"><span class="prereq-chip">Day 1 baseline design</span><span class="prereq-chip">Day 7 waitlist extension</span></div>
+      <div class="field-lbl">Activity</div>
+      <div class="field-val">Live 30-minute session with your EM, in two parts. First, your EM plays a skeptical stakeholder pushing back on the cost of the waitlist feature — practice responding to pushback, not just technical questions. Then, re-present your Day 1 design from scratch, now including the waitlist, and defend it under follow-up. This is your formal System Design post-training assessment.</div>
+      <div class="field-lbl">Deliverable</div>
+      <div class="field-val">Live design defense + your System Design post-training score.</div>
+      <div class="field-lbl">Tools Needed</div>
+      <div class="field-val"><span class="tool-tag">Excalidraw</span> <span class="tool-tag">Zoom</span></div>
+      <div class="course-row"><span class="no-course">No course — live scenario with your EM</span></div>
+    </div>
+
+    <div class="day-card">
+      <div class="day-label">Fri · Day 10</div>
+      <div class="day-title">Integration Day — Final Walkthrough</div>
+      <span class="track-tag" style="background:var(--trk-obs)">Observability (+ recap)</span>
+      <div class="prereqs"><span class="prereq-chip">Day 6 trace</span><span class="prereq-chip">Day 8 instrumented cron job</span><span class="prereq-chip">Day 9 System Design retest (already scored)</span></div>
+      <div class="field-lbl">Activity</div>
+      <div class="field-val">Give a walkthrough of the observability work — structured logging, metrics, tracing, and the silent-failure demo — then complete your Observability post-training assessment using the same format as Day 1. Your System Design retest already happened on Day 9, so today is lighter.</div>
+      <div class="field-lbl">Deliverable</div>
+      <div class="field-val">Recorded walkthrough + your Observability post-training score.</div>
+      <div class="field-lbl">Tools Needed</div>
+      <div class="field-val"><span class="tool-tag">Zoom</span></div>
+      <div class="course-row"><span class="no-course">No Pluralsight course</span></div>
+    </div>
+  </div>
+
+  <div class="milestone-strip">
+    <div class="lbl">Week 2 Milestones</div>
+    <ul>
+      <li>Distributed tracing working across two services, using the Jaeger instance you built in Week 1</li>
+      <li>Your Day 1 design extended with a real-time waitlist and defended live under follow-up questions (Day 9)</li>
+      <li>Silent cron-job failure detectable via log, metric, and alert — closing the exact gap you named in your interview</li>
+      <li>System Design scored on Day 9 (target: 8/12), Observability scored on Day 10 (target: 7/10) — split across two days instead of stacking everything on one Friday</li>
+    </ul>
+  </div>
+
+</div>
+
+<div class="fs-footer">
+  <span><strong>Full Scale</strong> — 2-Week Training Plan · Leander Lorenz Lubguban</span>
+  <span>2026-07-28 · FS Learning</span>
+</div>
+
+</body>
+</html>
