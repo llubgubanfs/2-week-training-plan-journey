@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json.schemastore.org/nest-cli",
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "apps/booking-api/src",
+  "compilerOptions": {
+    "deleteOutDir": true,
+    "webpack": true,
+    "tsConfigPath": "apps/booking-api/tsconfig.app.json"
+  },
+  "monorepo": true,
+  "root": "apps/booking-api",
+  "projects": {
+    "booking-api": {
+      "type": "application",
+      "root": "apps/booking-api",
+      "entryFile": "main",
+      "sourceRoot": "apps/booking-api/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/booking-api/tsconfig.app.json"
+      }
+    },
+    "notifier": {
+      "type": "application",
+      "root": "apps/notifier",
+      "entryFile": "main",
+      "sourceRoot": "apps/notifier/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/notifier/tsconfig.app.json"
+      }
+    },
+    "observability": {
+      "type": "library",
+      "root": "libs/observability",
+      "entryFile": "index",
+      "sourceRoot": "libs/observability/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/observability/tsconfig.lib.json"
+      }
+    }
+  }
+}
