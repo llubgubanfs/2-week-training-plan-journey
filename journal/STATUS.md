@@ -3,8 +3,8 @@
 > Claude: read this before responding to anything. Update it via `/day-end`.
 > Humans: this is "where am I right now."
 
-**Currently:** Day 2 of 10 · Thu 2026-07-30 · Week 1
-**Last updated:** 2026-07-30 (workspace + scaffold session)
+**Currently:** Day 3 of 10 · Fri 2026-07-31 · Week 1
+**Last updated:** 2026-07-30 (Day 2 closed out)
 
 ---
 
@@ -15,35 +15,41 @@
 | Observability & Structured Logging | not yet scored by EM | **7 / 10** | Day 10 |
 | System Design | not yet scored by EM | **8 / 12** | Day 9 |
 
-Baseline answers: `1-baseline/observability-structured-logging-answers.md`. Neither track's baseline number has come back from Harvey yet — **ask for both**, since without them there's no measured delta to show on Days 9/10.
+Baseline answers: `1-baseline/observability-structured-logging-answers.md`. Neither track's baseline number has come back from Harvey yet. Chasing them is **parked** (Leander's call, Day 2) — revisit before Day 9 only if a measured delta is wanted.
 
 ---
 
 ## Real calendar
 
-The plan's Mon–Fri labels don't match the actual dates. Plan issued Tue 2026-07-28; Day 1 live session ran Wed 2026-07-29.
+**Rule:** Day N advances one weekday at a time, anchored to **Day 2 = Thu Jul 30**. The plan's
+own Mon–Fri labels are ignored — Leander's call, confirmed Day 2. This table is the answer; no
+session should re-derive it.
 
 | Day | Date | Topic | Status |
 |---|---|---|---|
-| 1 | Wed Jul 30 — *ran Jul 29* | Baseline assessments | ✅ done |
-| 2 | **Thu Jul 30** | Structured logging | 🔵 in progress |
-| 3 | Fri Jul 31 | Metrics & alertable signals | ⬜ |
+| 1 | Wed Jul 29 | Baseline assessments | ✅ done |
+| 2 | Thu Jul 30 | Structured logging | ✅ done |
+| 3 | **Fri Jul 31** | Metrics & alertable signals | 🔵 next |
 | 4 | Mon Aug 3 | Infra: Prometheus + Grafana + Jaeger | ⬜ |
-| 5 | Tue Aug 4 | Integration + **live EM demo** | ⬜ needs booking |
+| 5 | Tue Aug 4 | Integration + EM demo (live or recorded) | ⬜ |
 | 6 | Wed Aug 5 | Distributed tracing | ⬜ |
 | 7 | Thu Aug 6 | Waitlist design extension | ⬜ |
 | 8 | Fri Aug 7 | Silent failure detection | ⬜ |
-| 9 | Mon Aug 10 | **System Design defense — GRADED** | ⬜ needs booking |
-| 10 | Tue Aug 11 | Walkthrough + **Observability retest — GRADED** | ⬜ needs booking |
+| 9 | Mon Aug 10 | **System Design defense — GRADED** | ⬜ |
+| 10 | Tue Aug 11 | Walkthrough + **Observability retest — GRADED** | ⬜ |
 
 ---
 
 ## Open questions for Harvey (raise at EOD)
 
-1. **Book Days 5, 9, 10.** Day 9 and Day 10 are the two graded sessions. The plan says Thu/Fri; real dates are Mon Aug 10 and Tue Aug 11. ← highest priority
-2. **What were my Day 1 baseline scores** for both tracks?
-3. Is a PR per day into my own repo the delivery format you want, or do you prefer something else?
-4. Does the Day 10 "recorded walkthrough" need to be a specific length or format?
+1. Is a PR per day into my own repo the delivery format you want, or do you prefer something else? *(asked Day 2 EOD)*
+2. Does the Day 10 "recorded walkthrough" need to be a specific length or format?
+3. Should `correlation_id` be renamed to the plan's literal `request_id`? *(raised Day 2 EOD — free to change until Day 4, when Grafana dashboards start querying the field by name)*
+
+**Deprioritised by Leander on Day 2 — do not re-raise unprompted:**
+
+- ~~Booking Days 5, 9, 10~~ — not treated as a blocker. Harvey may accept a recorded submission instead of a live session, so chasing calendar slots is premature.
+- ~~Day 1 baseline scores~~ — parked. Worth revisiting before Day 9 if a measured delta is wanted, but not a blocker now.
 
 ## Decisions made
 
@@ -59,9 +65,12 @@ The plan's Mon–Fri labels don't match the actual dates. Plan issued Tue 2026-0
 
 ## Carry-over into Day 3
 
-- [ ] Booking domain endpoints (only scaffolding exists — no domain code yet)
+- [ ] Booking domain endpoints (only scaffolding exists — no domain code yet). Slipped from Day 2 as planned; the scope fence keeps this thin, so it should not eat Day 3.
 - [x] ORM chosen: **TypeORM**. Not installed yet — it ships in the same PR as the entities so that diff is coherent.
 - [ ] Postgres not yet in the stack (lands Day 4)
+- [ ] **Pluralsight course** — structured-logging sections watched. Note where the Prometheus/Grafana sections start; Day 3 continues in the same course.
+- [ ] **PII / secret redaction and log-level discipline** — neither is in the logger today. Both are plausible Day 10 questions ("what must never go in a log line?"). Not a Day 3 blocker, but it is a known hole.
+- [ ] **Graceful shutdown at app level** — `tini` fixed signal delivery at the container level on Day 2, but `app.enableShutdownHooks()` and draining in-flight work are still unwired. Day 8 concern.
 
 ---
 
@@ -133,22 +142,48 @@ without the words *transaction*, *lock*, or *isolation* appearing anywhere in th
 - ✅ **Correction (Day 2):** the design diagram *was* saved — `design/preassessment diagram.excalidraw`. An earlier note here said it was lost, which drove an unnecessary reconstruction push. A **22-min screen recording** of the session also exists at `~/Videos/2_week_training_plan_videos/recording_system_design_baseline.mp4`.
 - The from-memory reconstruction was still done first, deliberately, to measure retention before the artifacts overwrote it. Result: recall matched the canvas on every component; he *under*-reported his own structure (a numbered flow and a schema-relationships block he didn't credit himself for). Self-assessment is harsher than the evidence supports — relevant to the live-confidence gap below.
 
-### Day 2 — Thu Jul 30 🔵
-**Objective:** structured JSON logging with a request-id correlated across one request.
+### Day 2 — Thu Jul 30 ✅
+**Objective:** structured JSON logging with an id correlated across one request.
+
+**Deliverable — verified on disk and committed:**
+
+| Evidence | Path |
+|---|---|
+| PR (merged) | [#1](https://github.com/y4nder/2-week-training-plan-journey/pull/1) → merge commit `7a9e09c` |
+| Screenshot of JSON log output | `deliverables/day-02/correlated-logs.png` |
+| Raw unfiltered log capture | `deliverables/day-02/booking-api-stdout.jsonl` |
+| What each line proves + repro steps | `deliverables/day-02/README.md` |
+
+Re-verified at day-end from a fresh build of `master`: two requests, six lines, one id per
+request, inbound `x-correlation-id` honoured. Not inferred from a passing test — the service
+was run and the output read.
 
 Done:
 - [x] Workspace structure, `CLAUDE.md`, this file, slash commands, design-track scaffolding
 - [x] NestJS monorepo scaffolded: `apps/booking-api` (:3000), `apps/notifier` (:3001), `libs/observability` (`@app/observability`)
 - [x] Deploy-ready boilerplate: parameterized `Dockerfile`, `.dockerignore`, `.env.example`, root `.gitignore`, pinned pnpm
-- [x] Verified: both apps build, lint clean, 3/3 tests pass, both return 200 on their own ports
+- [x] Verified: both apps build, lint clean, both return 200 on their own ports
 - [x] Verified: both Docker images build, run as non-root `node`, serve 200, and stop in ~150ms
+- [x] Pluralsight structured-logging sections
+- [x] Winston JSON logger + correlation middleware — approach stated before any code was written
+- [x] `design/00-baseline-design.md` reconstructed from memory, *then* diffed against the recovered diagram and a 22-min recording
+- [x] Deliverable: PR merged + screenshot
+- [x] EOD to Harvey
 
-Pending (Leander):
-- [ ] Pluralsight structured-logging module (~45m)
-- [ ] Winston JSON logger in `libs/observability` + ALS request-id middleware — **explain-first**
-- [ ] `design/00-baseline-design.md` — reconstruct the Day 1 design **from memory, alone** (urgent: Day 7 + Day 9 prereq, memory decaying)
-- [ ] Deliverable: PR + screenshot of JSON logs, same `request_id` across multiple lines of one request
-- [ ] EOD to Harvey, **including the Days 5/9/10 booking ask**
+**Checks at close:** `typecheck` clean (5 tsconfigs) · `lint` 0 errors 0 warnings · unit 5/5 ·
+e2e 5+1 both apps · `build` passes.
+
+**Design decisions made today** (all defensible on Day 10):
+- `correlation_id` over `request_id` — Day 8's cron has no request; `context_type` (`http` · `job` · `system`) distinguishes the source
+- Field **omitted**, not sentinelled, when no context is active — matches OTel's handling of `trace_id`
+- `nestjs-cls` over hand-rolled ALS — Leander's call, taken after the tradeoffs were laid out
+- Mounted as middleware, not interceptor or guard — the only mount point with no gap in front of it
+- Logger injected rather than imported, so it mocks through DI
+
+**Three bugs, all invisible to `pnpm build`:**
+1. **Middleware ordering.** `mount: true` gave no ordering guarantee; the logging middleware ran first and read an empty store. Every request threw. Both now mounted explicitly in one `apply()`.
+2. **Nothing was typechecking.** `nest-cli.json` sets `"webpack": true` → ts-loader transpile-only. ESLint is type-aware but never reports compiler diagnostics. Added `pnpm typecheck`, which found an unsound callback signature and a non-portable inferred type immediately. Enabled `strictFunctionTypes`.
+3. **e2e suites broken.** No `moduleNameMapper` for `@app/observability`; both failed to resolve the module once the apps imported it. `test:e2e` also only ran one of the two apps.
 
 Notes — scaffold bugs found and fixed (worth being able to explain on Day 5):
 - Both apps defaulted to **port 3000**, and the notifier read a lowercase `process.env.port`. Would have collided the moment Compose brought both up.
