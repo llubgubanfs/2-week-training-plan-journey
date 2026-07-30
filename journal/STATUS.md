@@ -78,6 +78,25 @@ Seeded from the Day 1 baseline answers:
 | 3 | **Knowing you're down before users report** | health endpoint + notify | Incomplete. A health check can't catch a job that fails *silently* — that needs alerting on **absence of success**, not on errors. This is his own interview scenario. | Day 8 |
 | 4 | **Metric vs log boundary** | called a metric "how long a process took... useful for benchmarks and analytics" | Directionally right but framed as analytics. Metrics are for **alerting on aggregate behavior**; framing them as analytics understates the point. | Day 3 |
 
+Added Day 2 (ALS vs nestjs-cls review):
+
+| # | Gap | Answer given | Reality | Addressed |
+|---|---|---|---|---|
+| 5 | **Why context survives an `await`** | "it has its own managed storage during request time" | Restates the API, not the mechanism. The store attaches to the **async resource** created at the await point, via `async_hooks`' `init` hook — each in-flight request holds its own reference, so there is no shared slot to overwrite. He can explain why a module-level `let` *fails*, not why ALS *works*. Also said Node is "single-threaded by default" — there is no non-default; `worker_threads` are separate isolates. | Day 2 build, re-drill Day 10 |
+| 6 | **"Where is the correlation id created?"** | "at module level" (`ClsModule.forRoot`) | That is where it is **configured**. It is **created** per-request by the `idGenerator` inside the mount middleware. Config site ≠ creation site — a one-question-deep answer, and Day 10 is a follow-up format. | Day 10 walkthrough rehearsal |
+| 7 | **Background work needs its own identity** | inheriting the originating `request_id` is enough | Necessary but not sufficient. A fire-and-forget that fails at t+30s logs the id of a request that returned 201 at t+0 — the correlation is intact and the alert is still useless. Needs a countable signal you can alert on the **absence** of. Same shape as gap #3 and as the Day 8 cron. | Day 8 |
+| 8 | **`res.on('finish')` semantics** | assumed the completion line always fires, so a client abort still yields 3 log lines | `'finish'` fires only when `end()` has been called *and* all data is flushed. A client that disconnects mid-response never satisfies it — Node emits `'close'` instead, which nothing listens for. So an aborted request logs **2** lines, not 3, and the completion line silently vanishes. Got there after being pointed at the event name, not unaided. | Day 3 (metrics), Day 8 |
+
+**Day 2 quiz (5 questions, 4/5 with one nudge).** Gap #3 has partially closed: on Day 1 the
+answer was "health endpoint + notify"; today he independently produced two further
+instances of the same failure class (a cron that finishes without notifying, a welcome
+email that never sends) and named it as silent failure unprompted.
+
+Residual on #3 — he framed the fix as "we should see an error log entry for those." That
+inverts it: if an error existed to log, it would not be a silent failure. The detection
+has to key on the **absence of an expected success**, not on the presence of an error.
+Drill this exact sentence before Day 8 and again before the Day 10 retest.
+
 ### Live-skill gaps (self-identified, Day 1 system design session)
 
 | Gap | Plan |
@@ -85,6 +104,22 @@ Seeded from the Day 1 baseline answers:
 | Thinking on his feet under live follow-up | Rehearsals Days 5 and 9; `/design-drill` × 4 |
 | Drawing diagrams under time pressure | Fixed 90-second skeleton in `design/skeleton.md`, drilled to muscle memory |
 | Structuring a design walkthrough out loud | 9-section script in `design/talk-track.md` |
+
+**Revised Day 2 after transcribing the session** (`design/01-baseline-session-transcript.md`).
+Diagramming is *not* the real gap — the canvas was recalled accurately two days later. Three
+sharper gaps replace it:
+
+| # | Gap | Evidence | Plan |
+|---|---|---|---|
+| 9 | **Loses track of the prompt under load** | Background jobs — a quarter of the question — went untouched for 17 minutes until Harvey re-prompted at [17:04]. Remembered afterwards as a strength rather than a rescue. | Read the prompt back and keep it visible as a checklist; tick items off aloud. Drill in `/design-drill`. |
+| 10 | **Doesn't register being corrected** | At [04:26] Harvey corrected the room/desk model via the internet-cafe analogy. Recorded afterwards as Leander clarifying, not being corrected. | Say corrections back out loud ("so a desk is independent of a room — noted"). Makes it stick and shows the interviewer it landed. |
+| 11 | **Answers "how does this scale?" with a data model** | [09:07] acknowledged 200 locations and moved on; [15:01] returned with entity relationships. No scaling mechanism named anywhere in 22 min, no arithmetic. | Days 7 + 9. **Do not hand him the answer** — this is graded on independent reasoning. |
+| 12 | **Reconstructs answers he never gave** | Multi-tenancy: "tenant" occurs twice, both in the prompt. Section 8 of the baseline doc describes a strategy never spoken in the session. | The habit, not the topic, is the risk: believing a topic was covered when it wasn't. Verify against notes before claiming coverage on Day 9. |
+
+Strength confirmed on tape: double-booking [13:52–15:01] — app-level validation, composite
+unique constraint, and explicit reasoning about two concurrent requests racing. The **Strong**
+relational rating is real. Note the vocabulary gap though — the right answer was reached
+without the words *transaction*, *lock*, or *isolation* appearing anywhere in the session.
 
 ---
 
@@ -94,7 +129,9 @@ Seeded from the Day 1 baseline answers:
 - Observability: 5-question written check-in → `1-baseline/observability-structured-logging-answers.md`
 - System Design: live 15-min session with Harvey. Prompt: multi-tenant co-working platform, members reserve desks and meeting rooms across many locations, a desk can never be double-booked, must scale to 200 locations. Walk components, data flow, caching, background jobs.
 - Self-assessment: constraints and flows went adequately; diagramming and thinking on his feet were weak.
-- ⚠️ Baseline scores not yet received. Design diagram **not saved** — being reconstructed from memory on Day 2.
+- ⚠️ Baseline scores not yet received.
+- ✅ **Correction (Day 2):** the design diagram *was* saved — `design/preassessment diagram.excalidraw`. An earlier note here said it was lost, which drove an unnecessary reconstruction push. A **22-min screen recording** of the session also exists at `~/Videos/2_week_training_plan_videos/recording_system_design_baseline.mp4`.
+- The from-memory reconstruction was still done first, deliberately, to measure retention before the artifacts overwrote it. Result: recall matched the canvas on every component; he *under*-reported his own structure (a numbered flow and a schema-relationships block he didn't credit himself for). Self-assessment is harsher than the evidence supports — relevant to the live-confidence gap below.
 
 ### Day 2 — Thu Jul 30 🔵
 **Objective:** structured JSON logging with a request-id correlated across one request.
