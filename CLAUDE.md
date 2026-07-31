@@ -57,6 +57,14 @@ If he starts designing the domain properly, remind him of this fence. The assess
 
 Day 2's deliverable is literally "PR/diff", so: **one branch per day** (`day-02-structured-logging`, `day-03-metrics`, …), PR into `master`, English title and body. This hands Harvey reviewable diffs for free.
 
+**The day branch carries code and `deliverables/` only.** `journal/STATUS.md`, the day journal, and `deliverables/eod-updates.md` are committed **directly to `master` after the PR merges** — one `docs(journal): close out Day N` commit, matching Day 2 (`81da334`) and Day 3 (`56f45e9`).
+
+Two reasons, and the second is the one that bites: it keeps each PR a clean code diff instead of code plus 200 lines of journal churn — and `STATUS.md` is a single-writer file rewritten every day, so the moment a branch outlives an afternoon it conflicts in the one file that is supposed to be the source of truth. Keeping it off branches removes that class of problem entirely.
+
+**PRs must be opened in the browser.** `gh` is authenticated as `y4nder`, which has no write access to `llubgubanfs/2-week-training-plan-journey`, so `gh pr create` fails with *"must be a collaborator"*. `git push` is unaffected (SSH). Push the branch, then open:
+`https://github.com/llubgubanfs/2-week-training-plan-journey/compare/master...<branch>?expand=1`
+Do not "fix" this with `gh auth login` — it switches the active account globally and affects Leander's other projects.
+
 ## Definition of done
 
 A day is **not** done because the code works. It is done when **the evidence Harvey will look at exists on disk, is committed, and its path is recorded in STATUS.md.** `/day-end` verifies this. Deliverables live in `deliverables/`.
