@@ -40,11 +40,13 @@ session should re-derive it.
 
 ---
 
-## Open questions for Harvey (raise at EOD)
+## Open questions for Harvey
 
-1. Is a PR per day into my own repo the delivery format you want, or do you prefer something else? *(asked Day 2 EOD)*
-2. Does the Day 10 "recorded walkthrough" need to be a specific length or format?
-3. Should `correlation_id` be renamed to the plan's literal `request_id`? *(raised Day 2 EOD — free to change until Day 4, when Grafana dashboards start querying the field by name)*
+1. Does the Day 10 "recorded walkthrough" need to be a specific length or format?
+
+**Answered Day 3 — do not re-raise:**
+
+- ~~"Is a PR per day the delivery format you want?"~~ and ~~"is chat the right channel for daily progress?"~~ — both settled by Harvey's reply: *"For now, the daily progress should be in Daily Status Report in Rocks. PR Links, docs, video, stays here in the chat for now."* Two channels, recorded in `CLAUDE.md` and in `/day-end`.
 
 **Deprioritised by Leander on Day 2 — do not re-raise unprompted:**
 
@@ -65,6 +67,7 @@ session should re-derive it.
 | **`llubgubanfs/…` is the canonical repo** | Leander's call, Day 3. Two same-named repos existed with identical `master`; Days 1–2 happened in `y4nder/…`, Day 3 onward is `llubgubanfs/…`. |
 | Route **template** as the metric label, never `req.originalUrl` | Day 3. Bounds cardinality at ~135 series instead of ~131,500 and growing. Full arithmetic in `journal/day-03-metrics.md`. |
 | Error ratio **derived in PromQL**, not a second counter | Day 3. One labelled counter cannot drift out of sync with itself. |
+| **`correlation_id` kept — `request_id` not adopted** | Day 3, by decision rather than by answer. Raised at Day 2 EOD and Day 3 EOD; Leander removed it from the Day 3 message before sending, so it was never asked. **Closed deliberately, not left pending.** Rationale is sound and defensible on Day 10: Day 8's cron has no HTTP request behind it but still needs correlating through the same logger, and `context_type` (`http` · `job` · `system`) distinguishes the source. From Day 4 the Grafana dashboards query the field by name, so a rename now costs dashboards too. **If Harvey asks on Day 10 why it differs from the plan, that is the answer — do not present it as an oversight.** |
 
 ### ⚠️ Known workflow friction — PRs must be opened in the browser
 

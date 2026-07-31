@@ -15,7 +15,16 @@ Leander's 10-day Full Scale training plan (Job Grade 2, Full-Stack Node/NestJS +
 | Observability & Structured Logging | Day 1, written, 5 questions | **Day 10** | 7 / 10 |
 | System Design | Day 1, live whiteboard | **Day 9** | 8 / 12 |
 
-EM: Harvey Martus. ~4 hrs/day. EOD `Done · Blocked · Tomorrow` message to Harvey every day. All updates, PRs, and deliverables in English.
+EM: Harvey Martus. ~4 hrs/day. All updates, PRs, and deliverables in English.
+
+**Reporting split — Harvey's instruction, Day 3. Two channels, do not merge them:**
+
+| Channel | Carries |
+|---|---|
+| **Rocks — Daily Status Report** | the daily progress narrative: `# What I did today` / `# What I will be doing the next working day` |
+| **Chat with Harvey** | PR links, docs, video — and anything needing a decision from him |
+
+Progress prose does **not** go in chat, and links are not a substitute for the Rocks entry. The reasoning lives in the committed deliverable (e.g. the alerting note); chat points at it rather than restating it.
 
 `coworking-obs/` is one continuous project spanning Days 2–10 — not per-day throwaways. Day 2's service *is* Day 6's and Day 8's. The Day 4 Docker Compose stack is explicitly reused for all of Week 2.
 

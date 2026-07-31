@@ -85,62 +85,72 @@ Thanks!
   never fires on an abandoned request, so a client who gave up produced a "request received"
   log with no completion line — and would have gone uncounted in the metrics too
 
-**Blocked:**
-- Nothing blocking.
-- **Repo link changed.** Day 2's PR was opened on a duplicate repo (`y4nder/…`). Everything from
-  Day 3 onward is on `llubgubanfs/…`. If the Day 2 link was saved, it needs replacing.
-- **Decision needed today, locks tomorrow:** `correlation_id` vs the plan's literal `request_id`
-  (raised Day 2). Day 4 wires Grafana dashboards that query the field by name, so renaming after
-  tomorrow means touching dashboards too.
+**Blocked:** Nothing blocking.
 
 **Tomorrow — Day 4: Infrastructure Day (Metrics & Tracing Stack):**
 - Docker Compose stack: Prometheus + Grafana + Jaeger + the service
 - Grafana panel screenshot + confirmation Jaeger's UI is reachable
 - This stack gets reused for the rest of Week 2
 
+---
+
+> **Format changed today.** Harvey: *"For now, the daily progress should be in Daily Status
+> Report in Rocks. PR Links, docs, video, stays here in the chat for now."* From Day 3 there are
+> two artifacts per day, not one. Both are recorded below as sent.
+
 <details>
-<summary>Message as sent</summary>
+<summary>Rocks — Daily Status Report, as sent</summary>
+
+```markdown
+# What I did today
+
+- Transferred origin of my 2 week training plan journey from my personal account to the company Github account.
+- Day 3: Metrics & Alertable Signals.
+- Added a `/metrics` endpoint to the booking API exposing request count, error rate and latency in a format Prometheus can scrape.
+- Added a requests-in-flight gauge on top of the plan's list. If the database hangs and callers give up waiting, nothing ever completes, so both sides of an error-rate alert go to zero and it never fires. This gauge is driven by requests arriving rather than finishing, so it still climbs during that kind of outage.
+- Wrote the alerting note: alert on the *ratio* of 5xx to total requests rather than an absolute error count, with a minimum-traffic guard so one error on a quiet night can't page anyone.
+- Fixed a bug in Day 2's logger found while doing this. It listened for the `finish` event, which never fires if a client disconnects mid-request, so abandoned requests were logging a "received" line with no completion and would have been missing from the metrics too. Now listens for `close` and records them as 499.
+- PR merged: https://github.com/llubgubanfs/2-week-training-plan-journey/pull/1
+
+---
+
+# What I will be doing the next working day
+
+- Day 4: Infrastructure Day — Metrics & Tracing Stack.
+- Build a Docker Compose stack with Prometheus, Grafana and Jaeger alongside the service, so `/metrics` has somewhere to be scraped and visualised, and Jaeger is ready ahead of Day 6's distributed tracing. This stack gets reused for the rest of Week 2.
+- Deliverable: `docker-compose.yml`, a screenshot of a working Grafana panel, and confirmation Jaeger's UI is reachable.
+- Wire the two alert rules from today's note into the running Prometheus.
+- Start the booking domain endpoints carried over from Day 2 — deliberately thin, three endpoints.
+```
+
+</details>
+
+<details>
+<summary>Chat with Harvey, as sent</summary>
 
 ```
 Hi Sir Harvey,
 
-DONE — Day 3: Metrics & Alertable Signals
-PR: https://github.com/llubgubanfs/2-week-training-plan-journey/pull/1
+Noted on Rocks — Day 3's status report is in there.
 
-The booking-api now exposes GET /metrics with request count, latency and
-requests-in-flight, plus the Node process defaults. A real scrape and the
-alerting note are committed under deliverables/day-03/.
+Day 3 PR (Metrics & Alertable Signals):
+https://github.com/llubgubanfs/2-week-training-plan-journey/pull/1
 
-The alert I'd wire is on the *ratio* of 5xx to total requests, not an
-absolute error count. An absolute threshold is inverted in practice — at
-2 req/min it stays silent through a total outage, and at 50 rps it fires
-on a healthy 1% error rate. The note has the rule and the numbers.
+Note the repo moved from my personal account to the company account, so this
+link is on a different org than the Day 2 one.
 
-I also added an in-flight gauge, which isn't in the plan's list. If the
-database hangs and callers give up, nothing completes, so both sides of
-the error ratio go to zero and the alert never fires. The gauge is driven
-by requests arriving rather than finishing, so it still climbs.
-
-While doing this I found a bug in Day 2's logger: it listened for 'finish',
-which never fires if the client disconnects mid-request. Those requests
-were logging a "received" line with no completion, and would have been
-missing from the metrics as well. Both now use 'close' and record 499.
-
-BLOCKED — nothing.
-
-Two flags:
-1. Day 2's PR was on a duplicate repo. Everything from Day 3 is on
-   llubgubanfs/2-week-training-plan-journey — worth replacing the old link
-   if you saved it.
-2. Still open from Day 2: correlation_id vs the plan's request_id. Day 4
-   wires Grafana dashboards that query the field by name, so this is the
-   last day it's a cheap rename. Happy either way — just need the call.
-
-TOMORROW — Day 4: Infrastructure Day
-Docker Compose stack with Prometheus, Grafana and Jaeger so /metrics has
-somewhere to be scraped and visualized, with Jaeger ready ahead of Day 6.
+Docs in the repo, if useful:
+- deliverables/day-03/alerting-note.md — the alert I'd wire off this data and
+  why the obvious threshold is wrong in both directions
+- deliverables/day-03/metrics-scrape.txt — actual scrape output
 
 Thanks!
 ```
+
+**Cut before sending:** a paragraph asking for a decision on `correlation_id` vs the plan's
+`request_id`. It had been raised at Day 2 EOD and gone unanswered; removing it from the Day 3
+message means it was never asked a second time. Treated from here as a **decision taken**, not a
+pending question — see the Decisions table in `STATUS.md`. The rationale is defensible on its own
+merits and should be presented that way on Day 10, not as an oversight.
 
 </details>

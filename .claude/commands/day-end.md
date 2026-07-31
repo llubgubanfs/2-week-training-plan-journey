@@ -26,21 +26,32 @@ A day is not done because the code works. It is done when the artifact Harvey wi
 
 Complete `journal/day-NN-*.md` — especially *what he got stuck on*, which is the highest-value part for Day 9/10 prep.
 
-## 4. Draft the EOD message
+## 4. Draft the two daily updates
 
-Append to `deliverables/eod-updates.md` and show it for approval before he sends it. Format, in English, short enough to paste into chat:
+Harvey's instruction (Day 3): **progress goes to Rocks, links and docs go to chat.** Draft both, in English, and show them for approval before he sends. Record both in `deliverables/eod-updates.md`.
+
+### 4a. Rocks — Daily Status Report
+
+The progress narrative. Bullets, plain, first person:
 
 ```
-Day N — <topic>
+# What I did today
 
-Done:
-- <specific, with evidence: PR link, screenshot name, endpoint that responds>
+- <what shipped, specific>
+- <anything done beyond what the plan asked for — this is the signal>
 
-Blocked:
-- <blocker, or "Nothing blocking">
+---
 
-Tomorrow:
-- <Day N+1 objective from the plan>
+# What I will be doing the next working day
+
+- Day N+1: <topic from the plan>
+- <the concrete deliverable>
 ```
 
-Keep it factual. If something didn't get finished, it goes under Blocked or Tomorrow — not omitted.
+Lead with judgement, not compliance. "Built the endpoint the plan asked for" is table stakes; the decisions taken *around* it are what move the Growth Area rating. If a bug was found in his own earlier work, say so — voluntarily reporting it reads better than it costs.
+
+### 4b. Chat with Harvey
+
+Short and operational: PR link, pointers to the committed docs, and **anything needing a decision from him**. No progress prose — that's Rocks' job, and duplicating it ignores an explicit instruction.
+
+Keep both factual. If something didn't get finished it goes in the next-day list — not omitted.
