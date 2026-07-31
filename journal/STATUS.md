@@ -3,8 +3,8 @@
 > Claude: read this before responding to anything. Update it via `/day-end`.
 > Humans: this is "where am I right now."
 
-**Currently:** Day 3 of 10 · Fri 2026-07-31 · Week 1
-**Last updated:** 2026-07-30 (Day 2 closed out)
+**Currently:** Day 4 of 10 · next working day Mon 2026-08-03 · Week 2 begins
+**Last updated:** 2026-07-31 (Day 3 closed out)
 
 ---
 
@@ -29,8 +29,8 @@ session should re-derive it.
 |---|---|---|---|
 | 1 | Wed Jul 29 | Baseline assessments | ✅ done |
 | 2 | Thu Jul 30 | Structured logging | ✅ done |
-| 3 | **Fri Jul 31** | Metrics & alertable signals | 🔵 next |
-| 4 | Mon Aug 3 | Infra: Prometheus + Grafana + Jaeger | ⬜ |
+| 3 | Fri Jul 31 | Metrics & alertable signals | ✅ done |
+| 4 | **Mon Aug 3** | Infra: Prometheus + Grafana + Jaeger | 🔵 next |
 | 5 | Tue Aug 4 | Integration + EM demo (live or recorded) | ⬜ |
 | 6 | Wed Aug 5 | Distributed tracing | ⬜ |
 | 7 | Thu Aug 6 | Waitlist design extension | ⬜ |
@@ -62,15 +62,32 @@ session should re-derive it.
 | Deploy-ready, deploy decision deferred to Day 8 | 12-factor costs ~nothing now; hosting hours aren't in the plan |
 | Winston over pino | Plan names Winston. Know the tradeoff for Day 10 follow-ups. |
 | **TypeORM** over Prisma | Leander's call, Day 2. Not assessed — chosen for speed. Lands with the domain work, not before. |
+| **`llubgubanfs/…` is the canonical repo** | Leander's call, Day 3. Two same-named repos existed with identical `master`; Days 1–2 happened in `y4nder/…`, Day 3 onward is `llubgubanfs/…`. |
+| Route **template** as the metric label, never `req.originalUrl` | Day 3. Bounds cardinality at ~135 series instead of ~131,500 and growing. Full arithmetic in `journal/day-03-metrics.md`. |
+| Error ratio **derived in PromQL**, not a second counter | Day 3. One labelled counter cannot drift out of sync with itself. |
 
-## Carry-over into Day 3
+### ⚠️ Known workflow friction — PRs must be opened in the browser
 
-- [ ] Booking domain endpoints (only scaffolding exists — no domain code yet). Slipped from Day 2 as planned; the scope fence keeps this thin, so it should not eat Day 3.
+`gh` is authenticated as **`y4nder`**, which has no write access to `llubgubanfs/…`, so
+`gh pr create` fails with *"must be a collaborator"*. `git push` is unaffected (SSH, as
+`llubgubanfs`). **Every day from here: push the branch, then open the PR via**
+`https://github.com/llubgubanfs/2-week-training-plan-journey/compare/master...<branch>?expand=1`.
+Fixable with `gh auth login` as `llubgubanfs`, but that switches the active account globally
+and would affect Leander's other projects — deliberately not done.
+
+Also: **Day 2's PR link is orphaned.** It lives at `y4nder/…/pull/1` and that repo has no Day 3+
+work. If Harvey was given that link, he needs the new one.
+
+## Carry-over into Day 4
+
+- [ ] Booking domain endpoints (only scaffolding exists — no domain code yet). Slipped from Day 2, then from Day 3. **Day 4 is the natural home** — the entities, TypeORM and Postgres all land together, and the scope fence keeps it thin (3 endpoints, ~300 lines).
 - [x] ORM chosen: **TypeORM**. Not installed yet — it ships in the same PR as the entities so that diff is coherent.
 - [ ] Postgres not yet in the stack (lands Day 4)
-- [ ] **Pluralsight course** — structured-logging sections watched. Note where the Prometheus/Grafana sections start; Day 3 continues in the same course.
-- [ ] **PII / secret redaction and log-level discipline** — neither is in the logger today. Both are plausible Day 10 questions ("what must never go in a log line?"). Not a Day 3 blocker, but it is a known hole.
+- [x] **Pluralsight** — Prometheus/Grafana sections watched Day 3. Deck saved at `plural-sight-resources/` (gitignored: licensed content, 11 MB). Its alert example is *wrong* in a useful way — see the Day 3 journal.
+- [ ] **The `499` branch is written but never fired.** Every test request completed, so `res.writableFinished` was always true. Needs a slow endpoint to abandon — verify on Day 4 once there is a real DB call.
+- [ ] **PII / secret redaction and log-level discipline** — still not in the logger. Plausible Day 10 question ("what must never go in a log line?"). Known hole.
 - [ ] **Graceful shutdown at app level** — `tini` fixed signal delivery at the container level on Day 2, but `app.enableShutdownHooks()` and draining in-flight work are still unwired. Day 8 concern.
+- [ ] **No dashboard yet.** The metrics exist and nothing renders them. That is Day 4's job, and the alert rules in the Day 3 note are written but not wired into a running Prometheus.
 
 ---
 
@@ -239,3 +256,53 @@ Notes — scaffold bugs found and fixed (worth being able to explain on Day 5):
 
   Relevant on Day 8: a container that ignores SIGTERM gives an in-flight cron run no chance to finish or record its outcome — which is exactly the silent-failure class being studied.
   Still open at app level: `app.enableShutdownHooks()` + closing the server for *graceful* drain. Not wired yet — that's a Day 8 concern, not just an infra one.
+
+### Day 3 — Fri Jul 31 ✅
+**Objective:** expose `/metrics` carrying request count, error rate and latency, and write the one alert worth wiring off it.
+
+**Deliverable — verified on disk and committed:**
+
+| Evidence | Path |
+|---|---|
+| PR (open) | [#1](https://github.com/llubgubanfs/2-week-training-plan-journey/pull/1) → branch `day-03-metrics`, commit `114e76a` |
+| `curl /metrics` capture | `deliverables/day-03/metrics-scrape.txt` |
+| Alerting note (one paragraph + 2 rules) | `deliverables/day-03/alerting-note.md` |
+| Reasoning behind all of it | `journal/day-03-metrics.md` |
+
+Re-verified at day-end from the committed build, not inferred from a green test: `GET /metrics`
+returns **200** with `Content-Type: text/plain; version=0.0.4`, all three metrics present, plus
+77 `process_`/`nodejs_` default series.
+
+**Screenshot deliberately skipped.** The plan listed a `metrics-endpoint.png`; the committed
+scrape text is strictly better evidence (greppable, diffable, shows every series). Leander's call.
+
+Done:
+- [x] Pluralsight Prometheus/Grafana sections
+- [x] `prom-client` + dedicated `Registry` + `collectDefaultMetrics` in `@app/observability`
+- [x] `http_requests_total` (counter), `http_request_duration_seconds` (histogram),
+      `http_requests_in_flight` (gauge) — **approach stated and defended before any code**
+- [x] `GET /metrics` via `MetricsController`; excluded from its own middleware
+- [x] Alerting note, PR, EOD
+
+**Bug found and fixed — carried over from Day 2's logger.** `HttpLoggingMiddleware` hooked
+`res.on('finish')`, which fires only on a flushed response. A client who gave up mid-request
+produced `request received` with no completion line, and would never have incremented the
+counter either. Both middlewares now hook `'close'` and read `res.writableFinished`; abandoned
+requests record **499**. `res.statusCode` cannot be used for this — Node initialises it to `200`,
+so an abandoned request would have been counted as a **success**, which is worse than not
+counting it at all.
+
+**The day's real content was the cardinality decision.** Correctly labelled this service is
+~135 time series; labelled with `req.originalUrl` it is ~131,500 and grows every day forever.
+Full arithmetic in the journal. The scrape proves the guard: three different probe URLs
+(`/wp-admin`, `/.env`, `/nope?id=…`) collapse to one `route="unmatched"` series.
+
+**Quiz/drill result: gaps #4 and #8 closed, #13 opened.** See the weak-spot list. The technique
+that worked — **banning the borrowed vocabulary** — is recorded there and should be reused on #5.
+
+**Checks at close:** `typecheck` clean · `lint` 0 errors 0 warnings · `build` passes both apps ·
+working tree clean · branch in sync with origin.
+
+**Time:** ran long. The drill on histogram-vs-summary, cardinality and the alert threshold ate
+most of the budget, and the booking domain slipped again. Judged worth it — those are Day 10
+retest content, the domain is not assessed at all.

@@ -14,10 +14,10 @@ in a format Prometheus can scrape — and write down the **one alert** worth wir
 
 | Evidence | Path |
 |---|---|
-| PR into `master` from `day-03-metrics` | *(pending)* |
-| `curl /metrics` output capture | `deliverables/day-03/metrics-scrape.txt` *(pending)* |
-| Screenshot of the endpoint | `deliverables/day-03/metrics-endpoint.png` *(pending)* |
-| One-paragraph alerting note | `deliverables/day-03/alerting-note.md` *(pending)* |
+| PR into `master` from `day-03-metrics` | ✅ [#1](https://github.com/llubgubanfs/2-week-training-plan-journey/pull/1) — commit `114e76a` |
+| `curl /metrics` output capture | ✅ `deliverables/day-03/metrics-scrape.txt` |
+| Screenshot of the endpoint | ⏭️ **skipped** — the scrape text is greppable, diffable and shows every series; a PNG adds nothing |
+| One-paragraph alerting note | ✅ `deliverables/day-03/alerting-note.md` |
 
 ## Time budget (~4 hrs)
 
@@ -138,7 +138,23 @@ A gauge is driven by *arrival* — the half that always happens — so it climbs
 
 ## Evidence
 
-- [ ] PR opened against `master`, English title and body
-- [ ] `/metrics` output captured
-- [ ] Alerting note written
-- [ ] Paths recorded in `journal/STATUS.md`
+- [x] PR opened against `master`, English title and body — [#1](https://github.com/llubgubanfs/2-week-training-plan-journey/pull/1)
+- [x] `/metrics` output captured
+- [x] Alerting note written
+- [x] Paths recorded in `journal/STATUS.md`
+
+**Re-verified at day-end from the committed build** (not inferred from a passing test):
+
+```
+$ curl -s -o /dev/null -D - http://localhost:3000/metrics | head -3
+HTTP/1.1 200 OK
+X-Powered-By: Express
+Content-Type: text/plain; charset=utf-8; version=0.0.4
+
+$ curl -s http://localhost:3000/metrics | grep -E '^(http_requests_total|http_requests_in_flight)'
+http_requests_total{method="GET",route="/",status_code="200",service="booking-api"} 2
+http_requests_total{method="GET",route="unmatched",status_code="404",service="booking-api"} 1
+http_requests_in_flight{service="booking-api"} 0
+```
+
+Plus 77 `process_`/`nodejs_` default series, including `nodejs_eventloop_lag_seconds`.
