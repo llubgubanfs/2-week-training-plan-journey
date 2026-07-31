@@ -19,6 +19,11 @@ coverage/
 coworking-obs/infra/grafana/data/
 coworking-obs/infra/prometheus/data/
 
+# ── third-party course material ──
+# Pluralsight slide decks are licensed content and ~11 MB of binary. Git keeps
+# blobs forever, so committing them can't be cleanly undone later.
+plural-sight-resources/
+
 # ── editor & OS ──
 .DS_Store
 .idea/

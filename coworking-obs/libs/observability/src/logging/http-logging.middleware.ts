@@ -3,6 +3,7 @@ import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { ClsService } from 'nestjs-cls';
 import { Logger } from 'winston';
 import type { NextFunction, Request, Response } from 'express';
+import { statusLabel } from '../metrics/request-labels';
 
 /**
  * Emits the open/close pair for every request. Runs after ClsMiddleware, so a
@@ -17,6 +18,11 @@ export class HttpLoggingMiddleware implements NestMiddleware {
 
   use(req: Request, res: Response, next: NextFunction): void {
     const method = req.method;
+    // The full URL, query string and all — and that is correct *here*. A log
+    // line is a one-off record; the specific ?locationId=7&date=2026-08-14 is
+    // the whole reason you opened it. The metric next door must use the route
+    // template instead, because there every distinct value becomes a permanent
+    // time series. Same source, opposite requirement.
     const path = req.originalUrl;
 
     this.logger.info('request received', { method, path });
@@ -33,12 +39,18 @@ export class HttpLoggingMiddleware implements NestMiddleware {
     const store = this.cls.get();
     const startedAt = store.startedAt;
 
-    res.on('finish', () => {
+    // 'close' rather than 'finish'. 'finish' fires only on a response that was
+    // actually flushed, so a caller who gave up and closed the tab produced a
+    // 'request received' line with no matching completion — the pair silently
+    // broke on exactly the requests worth investigating. 'close' fires either
+    // way; statusLabel() reads writableFinished to tell a real status from an
+    // abandoned connection (499).
+    res.on('close', () => {
       this.cls.runWith(store, () => {
         this.logger.info('request completed', {
           method,
           path,
-          status_code: res.statusCode,
+          status_code: statusLabel(res),
           duration_ms: Date.now() - startedAt,
         });
       });
