@@ -85,16 +85,59 @@ Seeded from the Day 1 baseline answers:
 | 1 | **What a trace is** | "information that tells where the log originated or has come about to" | That describes a log's source. A trace is the causal chain of **spans** across services for **one request**, tied by a shared trace id. | Day 6 |
 | 2 | **Prometheus scrape model** | "I do not have knowledge nor experience with Prometheus" | Pull model: Prometheus periodically GETs `/metrics`; the app just exposes current values, it does not push. | Days 3–4 |
 | 3 | **Knowing you're down before users report** | health endpoint + notify | Incomplete. A health check can't catch a job that fails *silently* — that needs alerting on **absence of success**, not on errors. This is his own interview scenario. | Day 8 |
-| 4 | **Metric vs log boundary** | called a metric "how long a process took... useful for benchmarks and analytics" | Directionally right but framed as analytics. Metrics are for **alerting on aggregate behavior**; framing them as analytics understates the point. | Day 3 |
+| 4 | **Metric vs log boundary** | called a metric "how long a process took... useful for benchmarks and analytics" | Directionally right but framed as analytics. Metrics are for **alerting on aggregate behavior**; framing them as analytics understates the point. | ✅ **closed Day 3** (3rd pass) — see below |
 
 Added Day 2 (ALS vs nestjs-cls review):
 
 | # | Gap | Answer given | Reality | Addressed |
 |---|---|---|---|---|
-| 5 | **Why context survives an `await`** | "it has its own managed storage during request time" | Restates the API, not the mechanism. The store attaches to the **async resource** created at the await point, via `async_hooks`' `init` hook — each in-flight request holds its own reference, so there is no shared slot to overwrite. He can explain why a module-level `let` *fails*, not why ALS *works*. Also said Node is "single-threaded by default" — there is no non-default; `worker_threads` are separate isolates. | Day 2 build, re-drill Day 10 |
-| 6 | **"Where is the correlation id created?"** | "at module level" (`ClsModule.forRoot`) | That is where it is **configured**. It is **created** per-request by the `idGenerator` inside the mount middleware. Config site ≠ creation site — a one-question-deep answer, and Day 10 is a follow-up format. | Day 10 walkthrough rehearsal |
+| 5 | **Why context survives an `await`** | "it has its own managed storage during request time" | Restates the API, not the mechanism. The store attaches to the **async resource** created at the await point, via `async_hooks`' `init` hook — each in-flight request holds its own reference, so there is no shared slot to overwrite. He can explain why a module-level `let` *fails*, not why ALS *works*. Also said Node is "single-threaded by default" — there is no non-default; `worker_threads` are separate isolates. | ⚠️ re-missed Day 3 (2nd) — `/explain-back` required |
+| 6 | **"Where is the correlation id created?"** | "at module level" (`ClsModule.forRoot`) | That is where it is **configured**. It is **created** per-request by the `idGenerator` inside the mount middleware. Config site ≠ creation site — a one-question-deep answer, and Day 10 is a follow-up format. | ✅ **closed Day 3** — answered "in the middleware" unprompted |
 | 7 | **Background work needs its own identity** | inheriting the originating `request_id` is enough | Necessary but not sufficient. A fire-and-forget that fails at t+30s logs the id of a request that returned 201 at t+0 — the correlation is intact and the alert is still useless. Needs a countable signal you can alert on the **absence** of. Same shape as gap #3 and as the Day 8 cron. | Day 8 |
-| 8 | **`res.on('finish')` semantics** | assumed the completion line always fires, so a client abort still yields 3 log lines | `'finish'` fires only when `end()` has been called *and* all data is flushed. A client that disconnects mid-response never satisfies it — Node emits `'close'` instead, which nothing listens for. So an aborted request logs **2** lines, not 3, and the completion line silently vanishes. Got there after being pointed at the event name, not unaided. | Day 3 (metrics), Day 8 |
+| 8 | **`res.on('finish')` semantics** | assumed the completion line always fires, so a client abort still yields 3 log lines | `'finish'` fires only when `end()` has been called *and* all data is flushed. A client that disconnects mid-response never satisfies it — Node emits `'close'` instead, which nothing listens for. So an aborted request logs **2** lines, not 3, and the completion line silently vanishes. Got there after being pointed at the event name, not unaided. | ✅ **closed Day 3** — produced the 2-lines answer unaided, then fixed the code |
+
+**Day 3 warm-up quiz (3 questions, ~1.5/3).**
+
+- **#6 CLOSED.** Asked where the correlation id is created, he answered "in the middleware,"
+  unprompted. Config site vs creation site has stuck. No further drilling needed.
+- **#5 RE-MISSED (2nd time).** Same shape of answer as Day 2 — "both get their own context,
+  the store holds the reference." Restates isolation, does not explain it. Mechanism was
+  handed to him on Day 3 (`async_hooks` `init` copies the store pointer onto each new async
+  resource; `before` restores it when the callback runs — the store rides the resource, not a
+  variable). **Not creditable until he produces it unprompted.** → `/explain-back` before Day 10.
+- **#4 RE-MISSED**, plus a new misconception. Asked why `/metrics` is needed when the
+  completion log already carries `status_code` and `duration_ms`, he called the metrics
+  endpoint "an aggregator for those lines" — it reads nothing from the log stream; it is a
+  separate in-process counter path. His justification (received-with-no-completed) is also a
+  pure log-aggregator query, so it doesn't distinguish the two signals. Missing concept:
+  **query-time vs write-time aggregation** — histograms pre-aggregate into fixed buckets, so
+  cost is flat in RPS, retention is cheap, and rules can evaluate every 15s; log-derived
+  percentiles scale with traffic and are computed from *sampled* data at volume. Corrected
+  Day 3; verify it holds when he writes the alerting note.
+
+Added Day 3 (metrics build session):
+
+| # | Gap | Answer given | Reality | Addressed |
+|---|---|---|---|---|
+| 13 | **Knows a gauge, doesn't reach for one** | asked which metric would survive an outage where nothing completes, answered "the count, derived to rate" | He had already rejected gauges correctly for error rate an hour earlier, so the *definition* is solid — but when a problem called for "state right now" rather than "events completed," he reached for a counter again. Counters are driven by completion; during a hang nothing completes, both numerator and denominator read ~0, and `errors/total` is `NaN`, which crosses no threshold. The gauge is driven by **arrival** — the half that always happens. Definition owned, tool not owned. | drill before Day 10 |
+
+**Day 3 build session — gaps #4 and #8 both closed.**
+
+- **#8 CLOSED.** Asked what an abandoned request logs under the Day 2 code, he answered
+  "two lines — request received, and the service log" unaided, and correctly said the
+  counter would never increment. Day 2's nudge has stuck. Code now hooks `'close'` and
+  branches on `res.writableFinished`.
+- **#4 CLOSED on the third pass.** After the schools/tally-sheet analogy and a walk through
+  the log-vs-metric pair in the middleware, his first restatement was a pure vocabulary swap
+  ("identify an event" / "classify it") with no mechanism — *not* credited, and called out as
+  the same failure shape as #5. Re-asked with those two words **banned**, he produced it
+  cleanly and unprompted: a log stores one record per request so `originalUrl` is just a field,
+  whereas every distinct label value creates a separate time series Prometheus must store,
+  index and update — so dynamic paths generate unbounded cardinality, memory growth and
+  slower queries. That version survives a follow-up. Closed.
+- **Technique note that worked:** banning the borrowed vocabulary is what separated recall
+  from understanding. Reuse this on #5 — make him explain ALS without the words "context",
+  "store", or "isolated".
 
 **Day 2 quiz (5 questions, 4/5 with one nudge).** Gap #3 has partially closed: on Day 1 the
 answer was "health endpoint + notify"; today he independently produced two further

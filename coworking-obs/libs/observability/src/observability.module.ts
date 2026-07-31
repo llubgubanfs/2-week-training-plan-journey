@@ -4,6 +4,7 @@ import {
   MiddlewareConsumer,
   Module,
   NestModule,
+  RequestMethod,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { WinstonModule } from 'nest-winston';
@@ -12,6 +13,13 @@ import type { Request } from 'express';
 import { CORRELATION_ID_HEADERS } from './cls/app-cls-store';
 import { HttpLoggingMiddleware } from './logging/http-logging.middleware';
 import { buildWinstonOptions } from './logging/winston-options.factory';
+import { HttpMetrics } from './metrics/http.metrics';
+import { HttpMetricsMiddleware } from './metrics/http-metrics.middleware';
+import { MetricsController } from './metrics/metrics.controller';
+import {
+  METRICS_REGISTRY,
+  createMetricsRegistry,
+} from './metrics/metrics.registry';
 
 export interface ObservabilityModuleOptions {
   /** Stamped on every line as `service` — what tells the two apps apart in one stream. */
@@ -63,8 +71,17 @@ export class ObservabilityModule implements NestModule {
             buildWinstonOptions(config, cls, options.service),
         }),
       ],
-      providers: [HttpLoggingMiddleware],
-      exports: [ClsModule, WinstonModule],
+      controllers: [MetricsController],
+      providers: [
+        {
+          provide: METRICS_REGISTRY,
+          useFactory: () => createMetricsRegistry(options.service),
+        },
+        HttpMetrics,
+        HttpLoggingMiddleware,
+        HttpMetricsMiddleware,
+      ],
+      exports: [ClsModule, WinstonModule, HttpMetrics, METRICS_REGISTRY],
     };
   }
 
@@ -82,6 +99,16 @@ export class ObservabilityModule implements NestModule {
       // '{*splat}' rather than '*': Express 5 routes through path-to-regexp v8,
       // where a bare '*' is a syntax error. The braces make the segment optional,
       // so this matches '/' as well as '/anything/nested'.
+      .forRoutes('{*splat}');
+
+    // Separate apply() because this one needs a different route set. Ordering
+    // against the pair above does not matter: nothing here reads CLS.
+    consumer
+      .apply(HttpMetricsMiddleware)
+      // Prometheus scrapes /metrics every 15s. Counting those would swamp the
+      // real traffic — at low volume the scrape *is* the traffic — and inflate
+      // the denominator of the error ratio with requests no user ever made.
+      .exclude({ path: 'metrics', method: RequestMethod.ALL })
       .forRoutes('{*splat}');
   }
 }
