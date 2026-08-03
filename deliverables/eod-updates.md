@@ -154,3 +154,95 @@ pending question — see the Decisions table in `STATUS.md`. The rationale is de
 merits and should be presented that way on Day 10, not as an oversight.
 
 </details>
+
+---
+
+## Day 4 — Mon 3 Aug 2026 · Infrastructure: Prometheus + Grafana + Jaeger
+
+<details>
+<summary>Rocks — Daily Status Report</summary>
+
+```
+# What I did today
+
+- Built the Day 4 stack: Prometheus, Grafana, Jaeger and the booking service in Docker
+  Compose. Prometheus scrapes the /metrics endpoint from Day 3, Grafana renders it, and
+  Jaeger runs a day early so Day 6's tracing has an export target. Reused for the rest of
+  Week 2.
+- Grafana is provisioned as code, not click-configured. The datasource and dashboard are
+  JSON files in the repo read at startup, so the dashboard survives the volumes being
+  deleted and exists on a fresh clone. A click-built dashboard lives in Grafana's local
+  database and cannot be reviewed or diffed.
+- Wired Day 3's two alert rules into the running Prometheus and added a third of my own.
+  Without a TargetDown rule, a scrape target disappearing silences every other rule for the
+  best possible reason and the worst possible cause.
+- Spent real time on why the in-flight gauge would not move under load. I assumed the
+  metric was broken; it was not. It counts requests held inside the handler, and this
+  service answers in 0.19 ms, so there was nothing to count — the queueing was in the
+  operating system, upstream of where the metric can see it. Three explanations I found
+  convincing were wrong before I measured properly. It is not a load gauge: it moves when
+  something the handler is waiting on stops responding, which is the Day 8 failure mode.
+- Added endpoints that stall and fail on demand so the signals can be exercised — three of
+  the four had only ever shown a healthy service. This also fired the 499 branch for
+  abandoned requests for the first time; it was written on Day 3 and had never executed,
+  because nothing was slow enough to abandon.
+- Found a bug in my own Day 2 logging. The metrics middleware excludes /metrics but the
+  logging middleware does not, so every scrape and health check writes two log lines —
+  about 28,800 a day with no users. The dashboard surfaced it within an hour of existing.
+  Deciding on the fix rather than patching it quickly.
+
+---
+
+# What I will be doing the next working day
+
+- Day 5: Integration Day — logs, metrics and dashboard demoed end to end. I will record it
+  either way so there is an artifact rather than just a conversation.
+- Fixing the logging noise above, and adding the event-loop lag metric to the dashboard.
+  It is already collected, and it caught the saturation the in-flight gauge could not.
+- The booking domain endpoints have slipped three days. They earn no assessment points and
+  compete directly with the observability work, so I am not forcing them in.
+```
+
+</details>
+
+<details>
+<summary>Chat with Harvey</summary>
+
+```
+Hi Sir Harvey,
+
+Day 4 status report is in Rocks.
+
+Day 4 PR (Infrastructure — Prometheus, Grafana, Jaeger):
+https://github.com/llubgubanfs/2-week-training-plan-journey/pull/2
+
+Screenshots of the Grafana dashboard, the Prometheus targets and the Jaeger UI are
+embedded at the top of the PR description.
+
+Docs in the repo, if useful:
+- coworking-obs/infra/README.md — how to bring the stack up from scratch, and
+  what each volume does and does not persist
+- deliverables/day-04/stack-verification.txt — targets, loaded alert rules and
+  the cardinality check as text
+- infra/scripts/verify.sh — 18 checks against a running stack, if you would like
+  to confirm it yourself rather than take the screenshots on trust
+
+One thing I need a decision on:
+
+Day 5 is Integration Day and the plan says to present it live to you. Would you
+prefer a live session tomorrow, or should I record a walkthrough and send it
+over? I am happy either way — I just want to make sure I do not hold you to a
+slot at short notice. If live, any time tomorrow works on my side.
+
+While I have you: does the Day 10 walkthrough need to be a particular length or
+format? Knowing that now would let me practise against the right target.
+
+Thanks!
+```
+
+**Note on the chat message:** no progress prose — that is Rocks' job per your Day 3
+instruction. The only ask is the Day 5 format decision, which is genuinely blocking because
+the demo is tomorrow and no slot exists. The Day 10 format question has been open since Day 1
+and is folded in rather than sent as a separate message.
+
+</details>

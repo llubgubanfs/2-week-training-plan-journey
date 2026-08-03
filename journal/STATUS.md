@@ -3,8 +3,8 @@
 > Claude: read this before responding to anything. Update it via `/day-end`.
 > Humans: this is "where am I right now."
 
-**Currently:** Day 4 of 10 · next working day Mon 2026-08-03 · Week 2 begins
-**Last updated:** 2026-07-31 (Day 3 closed out)
+**Currently:** Day 5 of 10 · next working day Tue 2026-08-04 · **live EM demo**
+**Last updated:** 2026-08-03 (Day 4 closed out)
 
 ---
 
@@ -30,8 +30,8 @@ session should re-derive it.
 | 1 | Wed Jul 29 | Baseline assessments | ✅ done |
 | 2 | Thu Jul 30 | Structured logging | ✅ done |
 | 3 | Fri Jul 31 | Metrics & alertable signals | ✅ done |
-| 4 | **Mon Aug 3** | Infra: Prometheus + Grafana + Jaeger | 🔵 next |
-| 5 | Tue Aug 4 | Integration + EM demo (live or recorded) | ⬜ |
+| 4 | Mon Aug 3 | Infra: Prometheus + Grafana + Jaeger | ✅ done |
+| 5 | **Tue Aug 4** | Integration + EM demo (live or recorded) | 🔵 next |
 | 6 | Wed Aug 5 | Distributed tracing | ⬜ |
 | 7 | Thu Aug 6 | Waitlist design extension | ⬜ |
 | 8 | Fri Aug 7 | Silent failure detection | ⬜ |
@@ -42,7 +42,8 @@ session should re-derive it.
 
 ## Open questions for Harvey
 
-1. Does the Day 10 "recorded walkthrough" need to be a specific length or format?
+1. **Day 5 demo — live session or recorded submission?** ⚠️ **Tomorrow, Tue Aug 4, no slot booked.** Asked in the Day 4 chat message.
+2. Does the Day 10 "recorded walkthrough" need to be a specific length or format? Folded into the same message.
 
 **Answered Day 3 — do not re-raise:**
 
@@ -81,16 +82,26 @@ and would affect Leander's other projects — deliberately not done.
 Also: **Day 2's PR link is orphaned.** It lives at `y4nder/…/pull/1` and that repo has no Day 3+
 work. If Harvey was given that link, he needs the new one.
 
-## Carry-over into Day 4
+## Carry-over into Day 5
 
-- [ ] Booking domain endpoints (only scaffolding exists — no domain code yet). Slipped from Day 2, then from Day 3. **Day 4 is the natural home** — the entities, TypeORM and Postgres all land together, and the scope fence keeps it thin (3 endpoints, ~300 lines).
-- [x] ORM chosen: **TypeORM**. Not installed yet — it ships in the same PR as the entities so that diff is coherent.
-- [ ] Postgres not yet in the stack (lands Day 4)
-- [x] **Pluralsight** — Prometheus/Grafana sections watched Day 3. Deck saved at `plural-sight-resources/` (gitignored: licensed content, 11 MB). Its alert example is *wrong* in a useful way — see the Day 3 journal.
-- [ ] **The `499` branch is written but never fired.** Every test request completed, so `res.writableFinished` was always true. Needs a slow endpoint to abandon — verify on Day 4 once there is a real DB call.
-- [ ] **PII / secret redaction and log-level discipline** — still not in the logger. Plausible Day 10 question ("what must never go in a log line?"). Known hole.
-- [ ] **Graceful shutdown at app level** — `tini` fixed signal delivery at the container level on Day 2, but `app.enableShutdownHooks()` and draining in-flight work are still unwired. Day 8 concern.
-- [ ] **No dashboard yet.** The metrics exist and nothing renders them. That is Day 4's job, and the alert rules in the Day 3 note are written but not wired into a running Prometheus.
+**Decide tonight, it has a deadline you don't control:**
+
+- [ ] ⚠️ **No slot booked with Harvey for the Day 5 demo, which is tomorrow.** Live or recorded is still undecided. Deprioritised on Day 2 on the reasoning that a recording might be acceptable — that reasoning is intact, but "tomorrow" changes the calculus. Goes in the chat message tonight, folded in with the open Day 10 format question.
+- [ ] **Should `/metrics` be excluded from the logging middleware?** Open decision, raised by today's finding. Three options: exclude it; drop it to `debug` level; leave it and rely on Prometheus's own `up` series for scrape visibility.
+
+**Open from before:**
+
+- [ ] Booking domain endpoints + Postgres + TypeORM. Slipped from Day 2, Day 3, and now **Day 4 — third time, deliberately.** Zero assessment points and it competes directly with the Growth Area. Realistic homes now: a Day 7 side-slot, or accept it does not land at all.
+- [x] ORM chosen: **TypeORM**. Not installed.
+- [x] **Pluralsight** — Prometheus/Grafana sections watched Day 3.
+- [x] ✅ **The `499` branch has now fired.** Closed Day 4 as a side effect of the in-flight investigation: `--max-time 1` against `/debug/slow?ms=8000` produced `status_code=499`, `duration_ms: 1005`. Written Day 3, first executed Day 4.
+- [ ] **PII / secret redaction and log-level discipline** — still not in the logger. Plausible Day 10 question. Known hole, untouched for three days.
+- [ ] **Graceful shutdown at app level** — `app.enableShutdownHooks()` and draining in-flight work still unwired. Day 8.
+- [ ] **No Alertmanager.** Rules evaluate and reach `firing` but notify nobody. Day 8 decides whether it is worth adding.
+- [ ] **~28,800 log lines/day with zero users** — `/metrics` is excluded from the metrics middleware but not the logging middleware, so every scrape and healthcheck writes two lines. See the open decision above.
+- [ ] **No `/health` endpoint.** The container healthcheck hits `/metrics`, which renders the entire registry every 10s. Day 8, alongside graceful shutdown.
+- [ ] **`nodejs_eventloop_lag_p99_seconds` is exposed and unused.** It is the signal that registered today's saturation when the in-flight gauge could not (sub-ms idle → 10.5 ms under load). Not on the dashboard. Cheap ninth panel.
+- [ ] **Nothing demonstrates a partial outage below 1 req/s** — the `HighErrorRatio` denominator guard gives that up by design. Day 8's absence-of-success work.
 
 ---
 
@@ -140,6 +151,46 @@ Added Day 3 (metrics build session):
 | # | Gap | Answer given | Reality | Addressed |
 |---|---|---|---|---|
 | 13 | **Knows a gauge, doesn't reach for one** | asked which metric would survive an outage where nothing completes, answered "the count, derived to rate" | He had already rejected gauges correctly for error rate an hour earlier, so the *definition* is solid — but when a problem called for "state right now" rather than "events completed," he reached for a counter again. Counters are driven by completion; during a hang nothing completes, both numerator and denominator read ~0, and `errors/total` is `NaN`, which crosses no threshold. The gauge is driven by **arrival** — the half that always happens. Definition owned, tool not owned. | drill before Day 10 |
+
+Added Day 4 (warm-up quiz, 1.5/3):
+
+| # | Gap | Answer given | Reality | Addressed |
+|---|---|---|---|---|
+| 14 | **Thinks the app's counters persist on a volume** | asked what `http_requests_total` looks like after the container restarts: "the same thing happens… there will be volumes being set up for the container so it is persistent" | `http_requests_total` is a **number in the Node process's heap**, held by prom-client's `Registry`. No volume touches it. On restart it resets to 0, so Prometheus sees the series fall 40,000 → 12: a **counter reset**. Volumes persist *Prometheus's* TSDB, not the app's counters. The payoff: `rate()` treats any decrease as a reset and compensates — which is the actual reason you always `rate()` a counter instead of subtracting raw values. Sibling of #2. | drill before Day 10 |
+| 15 | **Thinks Grafana stores the time-series data** | "data is physically stored inside the configured volumes when the container of grafana was created" | Grafana stores **no** time series. It is a query front-end: the panel issues a PromQL query at render time and Prometheus's TSDB answers. Grafana's own volume holds sqlite — users, orgs, and dashboards *created through the UI*. Missing the second half too: a click-configured dashboard dies with that volume, a **provisioned** one is a JSON file bind-mounted from the repo and is rebuilt on every boot regardless of volumes. That distinction is the entire reason for the provisioned-as-code decision, and he argued for the side that loses the dashboard. | Day 4 build — verify it holds |
+
+**Day 4 warm-up quiz (3 questions, ~1.5/3).**
+
+- **#13 — first clean pass.** Given a fresh symptom (Postgres pool saturation) with no mention
+  of metric types, he reached for a **gauge** unprompted and framed it as *state right now*
+  — the exact framing he failed to reach for on Day 3. Definition and tool selection now
+  agree. **One more unprompted pass and this closes.** He did not answer the second half —
+  why a counter of `connections_acquired` can't substitute: acquire and release are both
+  events, so a counter gives throughput, never occupancy; recovering occupancy needs two
+  counters that can drift and still goes negative across a restart.
+- **Transfer miss worth noting.** He framed the pool alert as an absolute threshold. Day 3's
+  own alerting note argues absolutes over ratios are the wrong shape — the useful signal is
+  saturation (`in_use / pool_size`). He got this right yesterday for error rate and did not
+  carry it one scenario sideways. Same class as #11 (reasoning doesn't transfer under a new
+  frame).
+- **#14 and #15 opened.** Both are "where does the state actually live" — the same underlying
+  hole from two directions. Both land in today's build, so they get corrected against a
+  running stack rather than on paper.
+
+**Day 4 build session.**
+
+- **#14 and #15 both closed in practice, not just corrected.** #15 got settled by editing the
+  dashboard JSON on disk mid-session and watching Grafana's provider rescan pick it up with no
+  restart — the file *is* the dashboard. #14 got settled by the in-flight investigation, which
+  ended in exactly the right place: metric values live in the process heap, and the only
+  durable copy is Prometheus's TSDB. **Verify both hold unprompted before Day 10** — they were
+  learned by doing rather than produced on demand.
+- **#13 CLOSED (2nd clean pass).** Asked which signal survives a hang, he had the gauge answer
+  and the reason: driven by arrival, not completion. Two unprompted passes. Closed.
+
+| # | Gap | What happened | Reality | Addressed |
+|---|---|---|---|---|
+| 16 | **Declares something broken before measuring it** | `http_requests_in_flight` would not move, and the working assumption was that the metric was faulty | It was correct the whole time. Three explanations were found convincing and all three were wrong — Prometheus's sampling interval, curl spawn cost, undici connection pooling — each killed by a measurement that took under two minutes. The real answer came from a number already being collected: the histogram spans the same region as the gauge and read 0.19 ms, so by Little's Law the gauge could not exceed 1. **The habit is the risk, not the topic** — same shape as #12 (reconstructing answers never given). Day 9 is live, and a confident wrong explanation costs more there than "let me check". | drill: on Days 7 and 9, say *"that's a guess — here's how I'd check it"* out loud before committing to a cause |
 
 **Day 3 build session — gaps #4 and #8 both closed.**
 
@@ -309,3 +360,57 @@ working tree clean · branch in sync with origin.
 **Time:** ran long. The drill on histogram-vs-summary, cardinality and the alert threshold ate
 most of the budget, and the booking domain slipped again. Judged worth it — those are Day 10
 retest content, the domain is not assessed at all.
+
+### Day 4 — Mon Aug 3 ✅
+**Objective:** stand up Prometheus + Grafana + Jaeger + the service so `/metrics` has somewhere
+to be scraped and rendered, and Jaeger is running ahead of Day 6.
+
+**Deliverable — verified on disk and committed:**
+
+| Evidence | Path |
+|---|---|
+| PR (open) | [#2](https://github.com/llubgubanfs/2-week-training-plan-journey/pull/2) → branch `day-04-infra-stack`, 4 commits, 19 files |
+| Compose stack | `coworking-obs/infra/docker-compose.yml` |
+| Grafana panel screenshot | `deliverables/day-04/grafana-dashboard.jpg` |
+| Jaeger UI reachable | `deliverables/day-04/jaeger-ui.jpg` |
+| Both targets UP | `deliverables/day-04/prometheus-targets.jpg` |
+| Targets + rules + cardinality as text | `deliverables/day-04/stack-verification.txt` |
+| Reasoning | `journal/day-04-infra-stack.md` |
+
+Re-verified at day-end by running `infra/scripts/verify.sh` against the live stack: **18/18
+checks pass** — both targets UP, three rules loaded healthy, and a live PromQL query travelling
+Grafana → Prometheus → TSDB and back.
+
+Done:
+- [x] Compose stack, all four services, every port env-overridable
+- [x] Prometheus scraping booking-api + itself at 15s; notifier deliberately excluded
+- [x] The two Day 3 alert rules **loaded into a running Prometheus**, plus `TargetDown`
+- [x] Grafana **provisioned as code** — datasource + 8-panel dashboard, `allowUiUpdates: false`
+- [x] `infra/README.md`, `verify.sh` (18 checks), `traffic.sh` (8 modes)
+- [x] `/debug/slow` + `/debug/fail` so the failure signals can be driven
+- [x] PR description rewritten with the three screenshots embedded, pinned to a commit SHA so
+      the links survive branch deletion
+
+**The day's real content was the in-flight investigation.** `http_requests_in_flight` would not
+move under any load, and it was assumed broken. It is not. Four hypotheses died to measurement:
+Prometheus sampling, curl spawn cost, undici pooling (killed by 401 established TCP
+connections), and finally a decisive in-container run — 14,624 requests served, 96 gauge
+samples, max 0. **Root cause:** the gauge spans middleware entry to `res` `'close'`, which is
+0.19 ms for a handler returning a static string, so by Little's Law its occupancy is under 1
+even at 4,900 req/s. Requests queue in the kernel and libuv, upstream of the instrumented span.
+It is not a load gauge — it counts requests held *inside* the handler, which is exactly the
+Day 8 failure mode. Confirmed once `/debug/slow` existed: 0 → 30 → 0.
+
+**Two Day 3 items closed as side effects.** The `499` branch fired for the first time
+(`duration_ms: 1005`), and `HighErrorRatio` reached `pending` off a real 36% error ratio.
+
+**A bug found in his own earlier work:** `/metrics` is excluded from the metrics middleware but
+not the logging middleware, so every scrape and healthcheck writes two log lines — ~28,800/day
+with no users. Found by the dashboard within an hour of it existing. Decision on the fix is
+still open and is carry-over.
+
+**Checks at close:** `typecheck` clean · `lint` 0/0 · unit 5/5 · `verify.sh` 18/18 · branch in
+sync with origin · working tree clean apart from journal files, which go to `master` after merge.
+
+**Time:** ran long and lopsided — infra was ~2h, the rest went on warm-up material and the
+in-flight investigation.
