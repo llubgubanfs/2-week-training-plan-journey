@@ -70,6 +70,38 @@ session should re-derive it.
 | Error ratio **derived in PromQL**, not a second counter | Day 3. One labelled counter cannot drift out of sync with itself. |
 | **`correlation_id` kept — `request_id` not adopted** | Day 3, by decision rather than by answer. Raised at Day 2 EOD and Day 3 EOD; Leander removed it from the Day 3 message before sending, so it was never asked. **Closed deliberately, not left pending.** Rationale is sound and defensible on Day 10: Day 8's cron has no HTTP request behind it but still needs correlating through the same logger, and `context_type` (`http` · `job` · `system`) distinguishes the source. From Day 4 the Grafana dashboards query the field by name, so a rename now costs dashboards too. **If Harvey asks on Day 10 why it differs from the plan, that is the answer — do not present it as an oversight.** |
 
+### 💻 Machine change — Day 5 (Tue Aug 4) onward
+
+**Days 1–4 happened on one machine; Day 5 onward is on a different one.** If a session finds
+missing files or a stack that will not start, this is the first thing to check.
+
+**Comes with the clone — nothing to do:** `CLAUDE.md`, this file, all journals and
+deliverables, the whole `coworking-obs/` tree including `infra/`, and **the slash commands**
+(`.claude/commands/` is tracked, so `/day-start`, `/day-end`, `/quiz`, `/design-drill` and
+`/explain-back` all come across). `coworking-obs/.env` was byte-identical to `.env.example`,
+so there was no local config to carry.
+
+**Prerequisites on the new machine:** Docker Engine 24+ with the Compose v2 plugin, and git.
+Nothing else — the app compiles inside the image. See `coworking-obs/infra/README.md`.
+
+**Does not transfer, and each was a deliberate call:**
+
+| Item | Status |
+|---|---|
+| Docker volumes (`prometheus-data`, `grafana-data`) | **Accepted loss.** The dashboard and datasource rebuild from the provisioning files; only metric *history* is gone. This is exactly the property provisioning-as-code was chosen for on Day 4. |
+| `plural-sight-resources/` (11 MB, gitignored licensed content) | copy manually if needed |
+| Day 1 baseline recording, `~/Videos/2_week_training_plan_videos/` (155 MB) | outside the repo; referenced in the Day 1 log |
+| Agent memory files | outside the repo. **Deliberately not committed — this repo is public and they hold internal context.** |
+
+**Opportunity, not friction:** `gh` on the new machine has no account attached yet. Authenticating
+as `llubgubanfs` from the start removes the browser-only PR workaround below entirely. The warning
+in `CLAUDE.md` about not switching accounts applies to the *old* machine, where it would disturb
+other projects.
+
+**Before the Day 5 demo:** do the setup early, not at T-30. A first `docker compose up -d --build`
+takes 2–4 minutes on a cold machine and can fail in new ways. `infra/scripts/verify.sh` exiting 0
+is the signal that the environment is genuinely ready.
+
 ### ⚠️ Known workflow friction — PRs must be opened in the browser
 
 `gh` is authenticated as **`y4nder`**, which has no write access to `llubgubanfs/…`, so
