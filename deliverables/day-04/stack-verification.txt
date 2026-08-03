@@ -1,0 +1,18 @@
+# Prometheus scrape targets — captured 2026-08-03T10:44:19Z
+
+booking-api  http://booking-api:3000/metrics          UP  lastScrape=2026-08-03T10:44:10  err=''
+prometheus   http://localhost:9090/metrics            UP  lastScrape=2026-08-03T10:44:08  err=''
+
+# Loaded alerting rules
+
+group: booking-api  (file /etc/prometheus/rules/booking-api.yml)
+  HighErrorRatio           state=inactive  for=300s  health=ok
+  RequestsStuckInFlight    state=inactive  for=300s  health=ok
+  TargetDown               state=inactive  for=60s  health=ok
+
+# Cardinality — the Day 3 guard, verified against live traffic
+
+Probe URLs sent: /wp-admin, /.env, /nope?id=<changing unix timestamp>
+  route=/            status=200   3177
+  route=unmatched    status=404   1191
+  distinct http_requests_total series: 2

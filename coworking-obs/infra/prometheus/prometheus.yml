@@ -1,0 +1,43 @@
+# Prometheus pulls. Nothing in booking-api knows this file exists — the app just
+# renders its in-process counters at /metrics and Prometheus comes and reads them.
+
+global:
+  # 15s is the value in the prometheus.yml shipped in the release tarball. The
+  # config spec's own default is 1m; almost everyone inherits 15s from this file.
+  #
+  # It is chosen here for resolution, not cost: this service is ~135 series, so
+  # 15s scraping is roughly 1 MB/day. The scrape interval is also the resolution
+  # floor for every panel and rule below — nothing shorter than 15s is
+  # describable, and a burst inside one interval is stored as a single jump.
+  scrape_interval: 15s
+
+  # How often the rules in rules/ are evaluated. Separate from scrape_interval,
+  # and additive to alert latency: a rule can be up to one evaluation_interval
+  # behind the data it reads.
+  evaluation_interval: 15s
+
+  external_labels:
+    stack: coworking-obs
+
+rule_files:
+  - /etc/prometheus/rules/*.yml
+
+scrape_configs:
+  - job_name: booking-api
+    metrics_path: /metrics
+    static_configs:
+      # Service name and the container-internal port — not localhost, and not the
+      # published port. Prometheus resolves this over the compose network.
+      - targets: ["booking-api:3000"]
+        labels:
+          service: booking-api
+
+  # Prometheus scraping itself. Cheap, and it is the control: if this target is
+  # UP while booking-api is DOWN, the problem is the app, not the stack.
+  - job_name: prometheus
+    static_configs:
+      - targets: ["localhost:9090"]
+
+  # Deliberately NOT scraped: notifier. It runs no metrics middleware yet, so a
+  # target here would sit permanently DOWN and train us to ignore a red row on
+  # /targets. It gets added on Day 6 when it has something to expose.

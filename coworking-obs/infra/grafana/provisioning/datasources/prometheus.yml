@@ -1,0 +1,18 @@
+# Provisioned datasource. Grafana reads this at startup and recreates the
+# connection every boot — so it survives `docker compose down -v`, and it exists
+# on a fresh clone without anyone clicking through Connections → Add data source.
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    uid: prometheus          # dashboards reference this uid, so it must be stable
+    access: proxy            # Grafana's backend queries Prometheus, not the browser
+    url: http://prometheus:9090
+    isDefault: true
+    editable: false
+    jsonData:
+      # Tells Grafana the resolution of the underlying data so $__rate_interval
+      # computes a window that always contains enough samples for rate().
+      timeInterval: 15s
+      httpMethod: POST

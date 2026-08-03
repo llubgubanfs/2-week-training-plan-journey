@@ -1,0 +1,18 @@
+# The dashboard *provider*: tells Grafana where to find dashboard JSON on disk.
+# The JSON itself lives in ../../dashboards and is mounted read-only, which is
+# what makes the dashboard a reviewable file in git rather than a row in sqlite.
+apiVersion: 1
+
+providers:
+  - name: coworking-obs
+    orgId: 1
+    folder: ""              # top level, so it is the first thing seen
+    type: file
+    disableDeletion: false
+    # Grafana rescans on this interval, so editing the JSON on disk shows up
+    # without restarting the container.
+    updateIntervalSeconds: 15
+    allowUiUpdates: false   # the file is the source of truth; Save is disabled
+    options:
+      path: /var/lib/grafana/dashboards
+      foldersFromFilesStructure: false

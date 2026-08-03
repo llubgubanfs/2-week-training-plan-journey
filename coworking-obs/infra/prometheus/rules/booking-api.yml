@@ -1,0 +1,69 @@
+# The two rules written on Day 3, now actually loaded by a running Prometheus
+# instead of living in a markdown file. Verify at http://localhost:9090/rules.
+#
+# Detection latency for these is additive and worth being able to state:
+#   scrape_interval (≤15s) + evaluation_interval (≤15s) + threshold crossing
+#   + for: + Alertmanager group_wait.
+# Threshold crossing is the term that moves: because rate() over a window is a
+# moving average, an instant break reaches the threshold at t = (T/E) × W. A
+# total outage crosses 5% in 15s; a 6% error rate takes 250s. Roughly 6–10
+# minutes end to end depending on severity.
+
+groups:
+  - name: booking-api
+    rules:
+      # Ratio, not an absolute count. An absolute threshold is inverted in
+      # practice: at 2 req/min it stays silent through a total outage, and at
+      # 50 rps it fires on a healthy 1% error rate.
+      #
+      # rate() on both halves, never raw subtraction — every deploy resets the
+      # counter to zero and raw subtraction would go hugely negative.
+      - alert: HighErrorRatio
+        expr: |
+          sum(rate(http_requests_total{status_code=~"5.."}[5m]))
+            / sum(rate(http_requests_total[5m]))
+            > 0.05
+          and
+          sum(rate(http_requests_total[5m])) > 1
+        for: 5m
+        labels:
+          severity: critical
+          service: booking-api
+        annotations:
+          summary: "booking-api 5xx ratio above 5% for 5m"
+          description: >-
+            {{ $value | humanizePercentage }} of requests are returning 5xx.
+            The denominator guard means this is silent below 1 req/s — an outage
+            at low traffic needs the absence-of-success alerting from Day 8.
+
+      # The companion the ratio cannot replace. During a hang nothing completes,
+      # so both halves of the ratio fall to ~0 and errors/total evaluates to NaN,
+      # which crosses no threshold. This gauge is driven by request *arrival* —
+      # the half that always happens — so it climbs and stays there.
+      - alert: RequestsStuckInFlight
+        expr: http_requests_in_flight > 50
+        for: 5m
+        labels:
+          severity: critical
+          service: booking-api
+        annotations:
+          summary: "booking-api has >50 requests in flight for 5m"
+          description: >-
+            Requests are arriving and not completing. The error-ratio rule is
+            blind to this: with nothing completing, its numerator and denominator
+            are both near zero.
+
+      # Not from the Day 3 note. The stack needs to notice its own scrape target
+      # disappearing, otherwise every rule above goes quiet for the best possible
+      # reason and the worst possible cause.
+      - alert: TargetDown
+        expr: up{job="booking-api"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: booking-api
+        annotations:
+          summary: "Prometheus cannot scrape booking-api"
+          description: >-
+            No successful scrape for 1m. Every other rule for this service is
+            now evaluating against stale or absent data.
