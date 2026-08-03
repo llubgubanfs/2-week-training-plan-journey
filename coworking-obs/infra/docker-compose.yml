@@ -1,0 +1,126 @@
+# Day 4 — the observability stack. Reused unchanged for the rest of Week 2:
+# Day 6 exports traces into this Jaeger, Day 8 alerts off this Prometheus,
+# Day 10 walks through this Grafana.
+#
+# Run from this directory:
+#   docker compose up -d --build
+#   docker compose ps
+#
+#   booking-api   http://localhost:3000        /metrics is the scrape target
+#   Prometheus    http://localhost:9090        /targets should show 2 UP
+#   Grafana       http://localhost:3030        dashboard is provisioned, not clicked
+#   Jaeger        http://localhost:16686       empty until Day 6 — that is expected
+#
+# Every port is overridable from the environment. Nothing here is hardcoded to a
+# host, so the same file runs on a laptop or a box if Day 8 decides to deploy.
+
+name: coworking-obs
+
+services:
+  booking-api:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+      args:
+        APP: booking-api
+    image: coworking-obs/booking-api:dev
+    container_name: coworking-booking-api
+    restart: unless-stopped
+    environment:
+      # Container-internal port. The published port below is the only thing that
+      # changes between environments.
+      BOOKING_API_PORT: 3000
+      NODE_ENV: production
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      LOG_PRETTY: "false"
+      # Service names, not localhost — inside the network each container's
+      # localhost is its own loopback, so these would resolve to nothing.
+      NOTIFIER_URL: http://notifier:3001
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4318
+      OTEL_TRACES_SAMPLER: ${OTEL_TRACES_SAMPLER:-parentbased_always_on}
+    ports:
+      - "${BOOKING_API_PORT:-3000}:3000"
+    networks: [obs]
+    healthcheck:
+      # No curl in the alpine image and no wget with --spider on busybox that we
+      # can rely on, so use node itself — it is guaranteed present.
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/metrics').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 15s
+
+  prometheus:
+    image: prom/prometheus:v3.1.0
+    container_name: coworking-prometheus
+    restart: unless-stopped
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      # 15d is plenty for a 10-day exercise and keeps the volume small.
+      - --storage.tsdb.retention.time=15d
+      # Needed for the reload endpoint used when iterating on rules:
+      #   curl -XPOST localhost:9090/-/reload
+      - --web.enable-lifecycle
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./prometheus/rules:/etc/prometheus/rules:ro
+      # THE volume that matters. This is where the metric history physically
+      # lives — not in Grafana. Drop this and every dashboard renders empty.
+      - prometheus-data:/prometheus
+    ports:
+      - "${PROMETHEUS_PORT:-9090}:9090"
+    networks: [obs]
+    depends_on:
+      - booking-api
+
+  grafana:
+    image: grafana/grafana:11.5.1
+    container_name: coworking-grafana
+    restart: unless-stopped
+    environment:
+      # Local-only credentials. Kept in the environment rather than baked in, so
+      # a deployed instance overrides them without editing this file.
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      # Viewer-level anonymous access so the Day 5 demo and the Day 10 recording
+      # do not open on a login screen. Read-only; editing still needs admin.
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Viewer
+      GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH: /var/lib/grafana/dashboards/booking-api.json
+    volumes:
+      # Provisioned as code — never click-configured. A dashboard built in the UI
+      # lives in Grafana's sqlite and dies with this volume; these files are in
+      # git and are rebuilt on every boot.
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana-data:/var/lib/grafana
+    ports:
+      # Grafana listens on 3000 internally, which booking-api already publishes.
+      - "${GRAFANA_PORT:-3030}:3000"
+    networks: [obs]
+    depends_on:
+      - prometheus
+
+  jaeger:
+    # Running from Day 4 so Day 6 has somewhere to export to — nothing sends it
+    # spans yet, so an empty UI today is success, not a fault.
+    image: jaegertracing/all-in-one:1.65.0
+    container_name: coworking-jaeger
+    restart: unless-stopped
+    environment:
+      COLLECTOR_OTLP_ENABLED: "true"
+    ports:
+      - "${JAEGER_UI_PORT:-16686}:16686"   # web UI
+      - "${JAEGER_OTLP_HTTP_PORT:-4318}:4318"   # OTLP/HTTP — what the SDK posts to
+      - "${JAEGER_OTLP_GRPC_PORT:-4317}:4317"   # OTLP/gRPC
+    networks: [obs]
+
+networks:
+  obs:
+    driver: bridge
+
+volumes:
+  prometheus-data:
+  grafana-data:

@@ -11,6 +11,7 @@ import { WinstonModule } from 'nest-winston';
 import { ClsMiddleware, ClsModule, ClsService } from 'nestjs-cls';
 import type { Request } from 'express';
 import { CORRELATION_ID_HEADERS } from './cls/app-cls-store';
+import { DebugController } from './debug/debug.controller';
 import { HttpLoggingMiddleware } from './logging/http-logging.middleware';
 import { buildWinstonOptions } from './logging/winston-options.factory';
 import { HttpMetrics } from './metrics/http.metrics';
@@ -71,7 +72,11 @@ export class ObservabilityModule implements NestModule {
             buildWinstonOptions(config, cls, options.service),
         }),
       ],
-      controllers: [MetricsController],
+      // DebugController rides alongside MetricsController because it is an
+      // observability affordance, not domain surface: it exists to make the
+      // signals in this library move. Registered unconditionally — Leander's
+      // call, Day 4; the bounded delay is what keeps that safe.
+      controllers: [MetricsController, DebugController],
       providers: [
         {
           provide: METRICS_REGISTRY,
