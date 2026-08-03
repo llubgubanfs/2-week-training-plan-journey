@@ -53,7 +53,7 @@ but `curl`.
 ./scripts/traffic.sh wave 600       # undulating 2–26 req/s for 10 minutes
 ./scripts/traffic.sh burst          # quiet → spike → quiet, repeating. Best for a live demo
 ./scripts/traffic.sh probe          # only bot-probe URLs — the cardinality demonstration
-./scripts/traffic.sh concurrent     # parallel requests; nudges the in-flight gauge
+./scripts/traffic.sh concurrent     # max throughput; moves event-loop lag, NOT the in-flight gauge
 ./scripts/traffic.sh steady 300     # flat ~10 req/s baseline
 
 ./scripts/traffic.sh wave 900 &     # background it and keep working
@@ -118,6 +118,19 @@ the offender and either stop it or override the port:
 ss -ltnp | grep -E ':(3000|3030|9090|16686)\b'
 ```
 Note 5432 is commonly occupied by an unrelated Postgres; this stack does not use it yet.
+
+**`http_requests_in_flight` stays at 0 no matter how much load you generate.** Correct, and
+measured: the gauge spans Express middleware entry to `res` `'close'`, which for a handler
+that synchronously returns a string is about **0.19 ms**. Little's Law puts the occupancy of
+that span at `throughput × duration` — under 1 even at ~4,900 req/s. Requests queue in the
+kernel accept queue and libuv, *upstream* of the instrumented region, so socket concurrency
+never becomes middleware concurrency; 401 established TCP connections still read 0.
+
+The gauge climbs when requests are held **inside** the span — an awaited database call, a
+hanging downstream service. That is the Day 8 failure mode and it works; it simply cannot be
+demonstrated against a static string. For upstream saturation the right signal already exists
+in the default metrics: `nodejs_eventloop_lag_p99_seconds`, sub-millisecond at idle and ~10 ms
+under `traffic.sh concurrent`.
 
 **Grafana panels say "No data".** Almost always means no traffic, not a broken stack. Run
 `./scripts/traffic.sh` and wait ~30 seconds — `rate()` needs at least two scrapes inside its

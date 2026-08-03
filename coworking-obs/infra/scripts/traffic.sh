@@ -104,10 +104,23 @@ case "$MODE" in
     ;;
 
   concurrent)
-    # Fires 80 requests at once with no pacing. booking-api answers in ~2ms, so
-    # even this only nudges http_requests_in_flight — Prometheus samples every
-    # 15s and will usually catch a handful at most. Genuinely moving that gauge
-    # needs an endpoint that is slow on purpose; see the note in the run sheet.
+    # Maximum throughput. Fires 80 requests at once with no pacing.
+    #
+    # This will NOT move http_requests_in_flight, and that was measured rather
+    # than assumed. The gauge spans Express middleware entry to res 'close',
+    # which for a handler that synchronously returns a string is ~0.19ms. By
+    # Little's Law the occupancy of that region is throughput x duration — under
+    # 1 even at ~4,900 req/s. Requests queue in the kernel accept queue and
+    # libuv, upstream of the instrumented span, so socket concurrency never
+    # becomes middleware concurrency. 401 established TCP connections still
+    # produced a gauge reading of 0 across 96 samples.
+    #
+    # The gauge only climbs when requests are held INSIDE the span — an awaited
+    # DB call or a hanging downstream. That is Day 8's failure mode and it will
+    # work; it just cannot be demonstrated against a static string.
+    #
+    # What DOES register this load: nodejs_eventloop_lag_p99_seconds, which goes
+    # from sub-millisecond at idle to ~10ms here.
     while ! expired; do hitn 80; sleep 2; done
     ;;
 
