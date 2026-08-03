@@ -56,6 +56,10 @@ but `curl`.
 ./scripts/traffic.sh concurrent     # max throughput; moves event-loop lag, NOT the in-flight gauge
 ./scripts/traffic.sh steady 300     # flat ~10 req/s baseline
 
+./scripts/traffic.sh slow           # holds ~25 requests open — the ONLY mode that moves the in-flight gauge
+./scripts/traffic.sh abandon        # clients that give up mid-request — produces status_code=499
+./scripts/traffic.sh errors 0.6     # 5xx at the given rate — drives the error ratio and HighErrorRatio
+
 ./scripts/traffic.sh wave 900 &     # background it and keep working
 ./scripts/traffic.sh stop           # stop a backgrounded run
 ```
@@ -119,7 +123,26 @@ ss -ltnp | grep -E ':(3000|3030|9090|16686)\b'
 ```
 Note 5432 is commonly occupied by an unrelated Postgres; this stack does not use it yet.
 
-**`http_requests_in_flight` stays at 0 no matter how much load you generate.** Correct, and
+## Making the signals fail on demand
+
+`/debug/slow` and `/debug/fail` exist so the three signals that only ever show a healthy
+service can be exercised. They are **registered unconditionally** — Leander's call, Day 4,
+taken after the trade-off was laid out. The blast radius is bounded instead of gated: the
+delay is clamped to 10s and there is deliberately no endpoint that hangs forever.
+
+```bash
+curl 'localhost:3000/debug/slow?ms=5000'          # held open for 5s
+curl 'localhost:3000/debug/slow?ms=99999'         # clamped → sleptMs 10000
+curl --max-time 1 'localhost:3000/debug/slow?ms=8000'   # abandoned → status_code=499
+curl 'localhost:3000/debug/fail'                  # 500
+curl 'localhost:3000/debug/fail?rate=0.1'         # 500 one time in ten
+```
+
+Measured when these landed: 30 concurrent slow requests took `http_requests_in_flight` from
+**0 → 30**, and `errors 0.6` produced a 36% error ratio that put `HighErrorRatio` into
+`pending` within a minute.
+
+**`http_requests_in_flight` stays at 0 under ordinary load.** Correct, and
 measured: the gauge spans Express middleware entry to `res` `'close'`, which for a handler
 that synchronously returns a string is about **0.19 ms**. Little's Law puts the occupancy of
 that span at `throughput × duration` — under 1 even at ~4,900 req/s. Requests queue in the

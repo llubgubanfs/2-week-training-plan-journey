@@ -124,6 +124,53 @@ case "$MODE" in
     while ! expired; do hitn 80; sleep 2; done
     ;;
 
+  slow)
+    # Holds ~25 requests open at a time in /debug/slow. This is the only mode
+    # that moves http_requests_in_flight, because it is the only one that keeps
+    # requests inside the instrumented span rather than queued upstream of it.
+    # Expect the gauge to sit around 25 and the latency percentiles to jump to
+    # the top histogram bucket.
+    while ! expired; do
+      i=0
+      while [ "$i" -lt 25 ]; do hit "/debug/slow?ms=6000" & i=$((i+1)); done
+      sleep 3
+    done
+    wait
+    ;;
+
+  abandon)
+    # Clients that give up after 1s on an 8s response. Produces status_code=499
+    # — the branch written on Day 3 that nothing could reach until /debug/slow
+    # existed, because every real request completed in ~2ms.
+    while ! expired; do
+      i=0
+      while [ "$i" -lt 8 ]; do
+        curl -s -o /dev/null --max-time 1 "$BASE/debug/slow?ms=8000" 2>/dev/null &
+        i=$((i+1))
+      done
+      sleep 2
+    done
+    wait
+    ;;
+
+  errors)
+    # Drives the error ratio. Second argument is the failure rate, not a
+    # duration: ./traffic.sh errors 0.2 sends 20% 5xx.
+    #
+    # The rate is the interesting dial. rate() over a window is a moving
+    # average, so an instant break crosses the threshold at t = (T/E) x W —
+    # a total outage trips the 5% rule in 15s, a 10% error rate takes 150s.
+    RATE_ARG="${2:-1}"
+    DURATION=0
+    echo "  failure rate: $RATE_ARG  (Ctrl-C to stop)"
+    while true; do
+      i=0
+      while [ "$i" -lt 6 ]; do hit "/debug/fail?rate=$RATE_ARG"; i=$((i+1)); done
+      hitn 4
+      sleep 1
+    done
+    ;;
+
   mixed|*)
     # Default. Wave-shaped load with periodic probes and an occasional spike —
     # the most realistic-looking traffic without any configuration.
