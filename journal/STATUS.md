@@ -113,6 +113,17 @@ other projects.
 takes 2–4 minutes on a cold machine and can fail in new ways. `infra/scripts/verify.sh` exiting 0
 is the signal that the environment is genuinely ready.
 
+**The stack does not come back after a reboot. This is correct, not broken — do not investigate
+it again.** Checked on Day 5 after a reboot left all four containers down: `docker.service` is
+`enabled` and starts ~20s into boot, so Docker is not the problem. The four services are
+`restart: unless-stopped`, and Docker's definition of that policy is *"when the container is
+stopped, **manually or otherwise**, it is not restarted even after the Docker daemon restarts."*
+A clean host shutdown is "otherwise". `restart: always` is the policy that survives a reboot;
+**`unless-stopped` was kept deliberately — Leander's call, Day 5** — because the pre-flight
+already begins with `docker compose up -d` and `verify.sh`, and a deliberate stop staying stopped
+is worth more than automatic resurrection. **Just run `docker compose up -d` first thing on Days
+6, 8 and 10.**
+
 ### ⚠️ Known workflow friction — PRs must be opened in the browser
 
 `gh` is authenticated as **`y4nder`**, which has no write access to `llubgubanfs/…`, so
