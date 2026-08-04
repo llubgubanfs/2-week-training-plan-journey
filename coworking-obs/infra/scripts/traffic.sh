@@ -11,17 +11,46 @@
 #   ./traffic.sh burst           # quiet, spike, quiet — good for a live demo
 #   ./traffic.sh probe           # only bot-probe URLs (the cardinality demo)
 #   ./traffic.sh concurrent      # parallel requests, moves the in-flight gauge
-#   ./traffic.sh stop            # kill a backgrounded run
+#   ./traffic.sh errors 0.6 300  # 60% 5xx for 5 minutes
+#   ./traffic.sh stop            # kill EVERY backgrounded run
+#   ./traffic.sh status          # list what is currently running
 #
 # Run it in the background and keep working:
 #   ./traffic.sh wave 900 &
 #
+# Several generators are meant to run at once — the demo layers `slow` and
+# `errors` on top of a long `wave`. Each run registers its own file under
+# RUNDIR, so `stop` can find all of them. It used to be a single fixed path
+# that every new run overwrote, which meant `stop` silently killed only the
+# most recent generator and orphaned the rest with no record of their PIDs.
 set -uo pipefail
 
 MODE="${1:-mixed}"
 DURATION="${2:-0}"                       # 0 = run until interrupted
 BASE="${BOOKING_API_URL:-http://localhost:3000}"
-PIDFILE="${TMPDIR:-/tmp}/coworking-traffic.pid"
+RUNDIR="${TMPDIR:-/tmp}/coworking-traffic"
+
+# True only if $1 is alive AND is one of ours. PIDs get recycled, and a stale
+# entry pointing at a reused number would otherwise make `stop` kill an
+# unrelated process — and its children, which is the part that would hurt.
+is_ours() {
+  [ -n "${1:-}" ] && kill -0 "$1" 2>/dev/null &&
+    tr '\0' ' ' < "/proc/$1/cmdline" 2>/dev/null | grep -q 'traffic\.sh'
+}
+
+# Depth-first kill of a process and every descendant.
+#
+# `pkill -P` reaches direct children only, which is not enough here: hit() is a
+# shell function, so `hit ... &` forks a subshell and curl is that subshell's
+# child — a grandchild of the script. Killing the script and its subshells left
+# live curls behind, holding /debug/slow connections open and the in-flight
+# gauge off zero for several more seconds. Children before parents, so nothing
+# gets reparented out of reach mid-sweep.
+kill_tree() {
+  local p="$1" c
+  for c in $(pgrep -P "$p" 2>/dev/null); do kill_tree "$c"; done
+  kill "$p" 2>/dev/null
+}
 
 hit()  { curl -s -o /dev/null --max-time 5 "$BASE$1" 2>/dev/null; }
 hitn() { i=0; while [ "$i" -lt "$1" ]; do hit "/" & i=$((i+1)); done; wait; }
@@ -36,15 +65,54 @@ probe() {
   hit "/nope?id=$(date +%s)-$RANDOM"
 }
 
+if [ "$MODE" = "status" ]; then
+  found=0
+  for f in "$RUNDIR"/*; do
+    [ -e "$f" ] || continue
+    pid=$(basename "$f")
+    if is_ours "$pid"; then
+      echo "  running: pid=$pid mode=$(cat "$f" 2>/dev/null)"
+      found=$((found + 1))
+    else
+      rm -f "$f"                        # stale — process is gone
+    fi
+  done
+  [ "$found" -eq 0 ] && echo "no traffic generators running"
+  exit 0
+fi
+
 if [ "$MODE" = "stop" ]; then
-  if [ -f "$PIDFILE" ]; then
-    pkill -P "$(cat "$PIDFILE")" 2>/dev/null
-    kill "$(cat "$PIDFILE")" 2>/dev/null
-    rm -f "$PIDFILE"
-    echo "stopped"
-  else
-    echo "no traffic run recorded in $PIDFILE"
+  stopped=0
+  for f in "$RUNDIR"/*; do
+    [ -e "$f" ] || continue
+    pid=$(basename "$f")
+    mode=$(cat "$f" 2>/dev/null)
+    if is_ours "$pid"; then
+      # Whole tree. `slow` and `abandon` hold dozens of backgrounded curls open
+      # for several seconds; leaving those alive keeps the in-flight gauge
+      # pinned after the script that spawned them is gone — the exact symptom
+      # this fix exists to prevent.
+      kill_tree "$pid"
+      echo "  stopped pid=$pid mode=$mode"
+      stopped=$((stopped + 1))
+    fi
+    rm -f "$f"
+  done
+
+  # Backstop for anything the loop above cannot see: a generator started before
+  # this fix shipped registered no file at all. Must exclude this very process —
+  # `stop` matches the same pattern, and a bare `pkill -f traffic.sh` would kill
+  # the stopper mid-sweep.
+  others=$(pgrep -f 'traffic\.sh' 2>/dev/null | grep -v "^$$\$" || true)
+  if [ -n "$others" ]; then
+    for p in $others; do
+      kill_tree "$p"
+      stopped=$((stopped + 1))
+    done
+    echo "  swept untracked run(s): $(echo "$others" | tr '\n' ' ')"
   fi
+
+  [ "$stopped" -eq 0 ] && echo "no traffic generators running"
   exit 0
 fi
 
@@ -53,15 +121,19 @@ if ! curl -sf -o /dev/null --max-time 3 "$BASE/metrics"; then
   exit 1
 fi
 
-echo $$ > "$PIDFILE"
+mkdir -p "$RUNDIR"
+echo "$MODE" > "$RUNDIR/$$"
 START=$(date +%s)
-trap 'rm -f "$PIDFILE"; echo; echo "traffic stopped after $(( $(date +%s) - START ))s"; exit 0' INT TERM
+# EXIT covers the normal end-of-duration path as well as the signal paths, so a
+# run can never leave its registration behind to be reported as live later.
+trap 'rm -f "$RUNDIR/$$"' EXIT
+trap 'echo; echo "traffic stopped after $(( $(date +%s) - START ))s"; exit 0' INT TERM
 
 expired() {
   [ "$DURATION" -gt 0 ] && [ $(( $(date +%s) - START )) -ge "$DURATION" ]
 }
 
-echo "mode=$MODE target=$BASE duration=${DURATION:-until Ctrl-C}s"
+echo "mode=$MODE target=$BASE duration=${DURATION:-until Ctrl-C}s pid=$$"
 echo "watch it land:  http://localhost:3030  ·  stop with: $0 stop"
 
 case "$MODE" in
@@ -160,10 +232,14 @@ case "$MODE" in
     # The rate is the interesting dial. rate() over a window is a moving
     # average, so an instant break crosses the threshold at t = (T/E) x W —
     # a total outage trips the 5% rule in 15s, a 10% error rate takes 150s.
+    # This mode's SECOND argument is the rate, so the duration moves to the
+    # third: ./traffic.sh errors 0.6 300. It used to hard-set DURATION=0 and
+    # ignore whatever was passed, so `errors 0.6 300` ran forever while looking
+    # like it would stop on its own.
     RATE_ARG="${2:-1}"
-    DURATION=0
-    echo "  failure rate: $RATE_ARG  (Ctrl-C to stop)"
-    while true; do
+    DURATION="${3:-0}"
+    echo "  failure rate: $RATE_ARG  duration=${DURATION}s (0 = until stopped)"
+    while ! expired; do
       i=0
       while [ "$i" -lt 6 ]; do hit "/debug/fail?rate=$RATE_ARG"; i=$((i+1)); done
       hitn 4
@@ -185,5 +261,4 @@ case "$MODE" in
     ;;
 esac
 
-rm -f "$PIDFILE"
-echo "done after $(( $(date +%s) - START ))s"
+echo "done after $(( $(date +%s) - START ))s"   # registration cleared by the EXIT trap
