@@ -63,7 +63,7 @@ export class ObservabilityModule implements NestModule {
         // Note the absence of `middleware: { mount: true }`. Auto-mounting gives no
         // ordering guarantee against middleware registered in configure() below,
         // and HttpLoggingMiddleware ran first — reading an empty store. Mounting
-        // both explicitly, in one apply() call, makes the order part of the code.
+        // it explicitly in configure() makes the order part of the code instead.
         ClsModule.forRoot({ global: true }),
         WinstonModule.forRootAsync({
           imports: [ClsModule],
@@ -91,6 +91,13 @@ export class ObservabilityModule implements NestModule {
   }
 
   configure(consumer: MiddlewareConsumer): void {
+    // ⚠️ The order of these two apply() calls is load-bearing. Nest runs
+    // module-bound middleware in registration order, and that registration order
+    // is the *only* thing keeping ClsMiddleware ahead of HttpLoggingMiddleware
+    // now that they no longer share a call. Running the logger first does not
+    // degrade gracefully — its first act is cls.get() followed by a property read
+    // on the result, so an absent store throws on every single request. That was
+    // Day 2's bug #1, and it is invisible to the compiler. Do not swap these.
     consumer
       .apply(
         // `.use` rather than the class: ClsMiddleware binds `use` as an arrow
@@ -99,20 +106,31 @@ export class ObservabilityModule implements NestModule {
         // `useValue` of the same singleton the Winston factory injects — one
         // AsyncLocalStorage, one context.
         new ClsMiddleware({ setup: openHttpContext }).use,
-        HttpLoggingMiddleware,
       )
       // '{*splat}' rather than '*': Express 5 routes through path-to-regexp v8,
       // where a bare '*' is a syntax error. The braces make the segment optional,
       // so this matches '/' as well as '/anything/nested'.
+      //
+      // Deliberately *not* excluded below. /metrics keeps a context even though
+      // nothing logs the request pair for it, so anything MetricsController does
+      // log still carries a correlation_id — and, from Day 6, a trace_id.
       .forRoutes('{*splat}');
 
-    // Separate apply() because this one needs a different route set. Ordering
-    // against the pair above does not matter: nothing here reads CLS.
+    // Grouped because they share one exclusion policy, not because they are
+    // related otherwise. Prometheus scrapes /metrics every 15s and the container
+    // healthcheck hits the same endpoint every 10s.
+    //
+    // For metrics, counting those would swamp the real traffic — at low volume the
+    // scrape *is* the traffic — and inflate the denominator of the error ratio with
+    // requests no user ever made. For logs it is the same problem in a different
+    // currency: two lines per request, ~28,800 a day against zero users, found by
+    // the Day 4 dashboard within an hour of it existing.
+    //
+    // Nothing is lost by going quiet here. Scrape health is already observable
+    // from Prometheus's own side — `up` and `scrape_duration_seconds` — which is
+    // where you would look for it anyway.
     consumer
-      .apply(HttpMetricsMiddleware)
-      // Prometheus scrapes /metrics every 15s. Counting those would swamp the
-      // real traffic — at low volume the scrape *is* the traffic — and inflate
-      // the denominator of the error ratio with requests no user ever made.
+      .apply(HttpLoggingMiddleware, HttpMetricsMiddleware)
       .exclude({ path: 'metrics', method: RequestMethod.ALL })
       .forRoutes('{*splat}');
   }

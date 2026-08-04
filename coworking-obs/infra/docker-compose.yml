@@ -63,8 +63,12 @@ services:
       #   curl -XPOST localhost:9090/-/reload
       - --web.enable-lifecycle
     volumes:
-      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
-      - ./prometheus/rules:/etc/prometheus/rules:ro
+      # ':z' relabels these host paths to container_file_t so SELinux lets the
+      # container read them. Without it, on an enforcing host (Fedora, RHEL) every
+      # bind-mounted config below is "permission denied" regardless of file mode.
+      # No-op on hosts without SELinux, so it is safe to commit unconditionally.
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro,z
+      - ./prometheus/rules:/etc/prometheus/rules:ro,z
       # THE volume that matters. This is where the metric history physically
       # lives — not in Grafana. Drop this and every dashboard renders empty.
       - prometheus-data:/prometheus
@@ -93,8 +97,11 @@ services:
       # Provisioned as code — never click-configured. A dashboard built in the UI
       # lives in Grafana's sqlite and dies with this volume; these files are in
       # git and are rebuilt on every boot.
-      - ./grafana/provisioning:/etc/grafana/provisioning:ro
-      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+      # ':z' — see the note on the prometheus mounts above. Grafana's failure mode
+      # here is worse than Prometheus's: it starts, reports healthy, and provisions
+      # nothing. No dashboard, no datasource, no error line.
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro,z
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro,z
       - grafana-data:/var/lib/grafana
     ports:
       # Grafana listens on 3000 internally, which booking-api already publishes.
