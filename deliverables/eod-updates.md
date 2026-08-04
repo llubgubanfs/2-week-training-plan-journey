@@ -246,3 +246,75 @@ the demo is tomorrow and no slot exists. The Day 10 format question has been ope
 and is folded in rather than sent as a separate message.
 
 </details>
+
+---
+
+## Day 5 — Tue 4 Aug · Integration Day (recorded walkthrough)
+
+<details>
+<summary>Rocks — Daily Status Report</summary>
+
+```
+# What I did today
+
+- Delivered the Day 5 integration walkthrough as a recorded video: structured
+  JSON logging with correlation ids, a live /metrics endpoint, a Grafana
+  dashboard rendering it, and two failure signals driven live on camera.
+
+- Moved the stack to a new machine. Grafana came up reporting healthy and had
+  silently provisioned nothing -- no dashboard, no datasource, no error logged
+  anywhere. Only my verification script caught it, because it checks that the
+  datasource exists rather than that the container is running. That is the Day 8
+  lesson arriving a week early on my own stack: alert on the absence of an
+  expected success, not the presence of an error.
+
+- Fixed a bug the Day 4 dashboard found in my own Day 2 logging: every
+  Prometheus scrape and healthcheck was writing two log lines, roughly 28,800 a
+  day with no users.
+
+---
+
+# What I will be doing the next working day
+
+- Day 6: Distributed tracing. Instrument the service plus one downstream call
+  and export spans to the Jaeger instance already in the stack.
+- Deliverable: a screenshot of a trace in the Jaeger UI spanning both.
+- Also adding trace_id and span_id to every log line.
+```
+
+</details>
+
+<details>
+<summary>Chat with Harvey</summary>
+
+```
+Hi Sir Harvey,
+
+Day 5 status report is in Rocks.
+
+Recorded walkthrough (18 min) — logs, metrics and the Grafana dashboard, plus
+two failure signals driven live:
+https://drive.google.com/file/d/1_79o8DYFxkwq6olAdUnD3p6J-1B_VZ6-/view?usp=drive_link
+
+Still open from last week: does the Day 10 recorded walkthrough need a
+particular length or format? Today's ran 18 minutes, so knowing whether that is
+roughly the right target would help me plan for it.
+
+Thanks!
+```
+
+</details>
+
+**No PR link this time — Leander's call.** Day 5's deliverable in the plan is *"working sample
+service demoed live"*, not a diff. The branch still exists and still merges, but sending a link
+Harvey did not ask for adds noise to a message whose only real ask is the Day 10 format
+question. Days 2–4 shipped a PR because the plan named one; Day 5 did not.
+
+**Note on the split:** progress prose stayed in Rocks; the chat message carries only the video
+link and the one open question. The Day 10 format question has now been open since Day 1 and is
+re-raised with today's runtime as a concrete data point rather than as an abstract ask.
+
+**Not said to Harvey, deliberately, but recorded in STATUS.md:** the walkthrough was several
+takes and then edited, so the agreed single-take live-pressure rehearsal did not happen. That is
+a training gap for Day 9, not a delivery caveat — the artefact he asked for is complete and
+accurate.

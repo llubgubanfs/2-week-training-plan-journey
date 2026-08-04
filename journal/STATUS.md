@@ -3,8 +3,8 @@
 > Claude: read this before responding to anything. Update it via `/day-end`.
 > Humans: this is "where am I right now."
 
-**Currently:** Day 5 of 10 · next working day Tue 2026-08-04 · **live EM demo**
-**Last updated:** 2026-08-03 (Day 4 closed out)
+**Currently:** Day 5 of 10 ✅ done · next working day Wed 2026-08-05 · **Day 6 distributed tracing**
+**Last updated:** 2026-08-04 (Day 5 closed out)
 
 ---
 
@@ -31,8 +31,8 @@ session should re-derive it.
 | 2 | Thu Jul 30 | Structured logging | ✅ done |
 | 3 | Fri Jul 31 | Metrics & alertable signals | ✅ done |
 | 4 | Mon Aug 3 | Infra: Prometheus + Grafana + Jaeger | ✅ done |
-| 5 | **Tue Aug 4** | Integration + EM demo (live or recorded) | 🔵 next |
-| 6 | Wed Aug 5 | Distributed tracing | ⬜ |
+| 5 | Tue Aug 4 | Integration + EM demo — **recorded** | ✅ done |
+| 6 | **Wed Aug 5** | Distributed tracing | 🔵 next |
 | 7 | Thu Aug 6 | Waitlist design extension | ⬜ |
 | 8 | Fri Aug 7 | Silent failure detection | ⬜ |
 | 9 | Mon Aug 10 | **System Design defense — GRADED** | ⬜ |
@@ -42,8 +42,19 @@ session should re-derive it.
 
 ## Open questions for Harvey
 
-1. **Day 5 demo — live session or recorded submission?** ⚠️ **Tomorrow, Tue Aug 4, no slot booked.** Asked in the Day 4 chat message.
-2. Does the Day 10 "recorded walkthrough" need to be a specific length or format? Folded into the same message.
+1. Does the Day 10 "recorded walkthrough" need to be a specific length or format? Asked in the Day 4 chat message, still unanswered.
+
+**Answered Day 5 — do not re-raise:**
+
+- ~~"Day 5 demo — live session or recorded submission?"~~ — **Harvey's answer: a recorded
+  walkthrough.** No live slot. This removes the calendar dependency and makes the recording
+  itself the on-disk evidence, so the Day 5 deliverable satisfies the definition of done
+  without a separate artifact. ⚠️ **It also removes the live pressure that Days 9 and 10 will
+  apply** — retakes are possible on a recording and are not possible in a live defense. The
+  live-skill gaps (**#9** losing the prompt under load, **#10** not registering corrections,
+  **#16** committing to a confident wrong cause) get *no* rehearsal from a polished take.
+  Mitigation adopted: do one unrehearsed single-take run first, treated as if live and never
+  submitted, then record the real one.
 
 **Answered Day 3 — do not re-raise:**
 
@@ -114,26 +125,43 @@ and would affect Leander's other projects — deliberately not done.
 Also: **Day 2's PR link is orphaned.** It lives at `y4nder/…/pull/1` and that repo has no Day 3+
 work. If Harvey was given that link, he needs the new one.
 
-## Carry-over into Day 5
+## Carry-over into Day 6
 
-**Decide tonight, it has a deadline you don't control:**
+**The one that is time-sensitive, and it is not technical:**
 
-- [ ] ⚠️ **No slot booked with Harvey for the Day 5 demo, which is tomorrow.** Live or recorded is still undecided. Deprioritised on Day 2 on the reasoning that a recording might be acceptable — that reasoning is intact, but "tomorrow" changes the calculus. Goes in the chat message tonight, folded in with the open Day 10 format question.
-- [ ] **Should `/metrics` be excluded from the logging middleware?** Open decision, raised by today's finding. Three options: exclude it; drop it to `debug` level; leave it and rely on Prometheus's own `up` series for scrape visibility.
+- [ ] ⚠️ **The live-pressure rehearsal never happened.** Day 5 was agreed as one unbroken
+      unrehearsed take (never submitted) *then* a polished one. Only the polished path ran —
+      several takes, then edited. **Day 9 is five days out, is live, single-take, and has no
+      agent in the room.** Nothing in the plan so far has rehearsed speaking under pressure
+      without a script. Schedule `/explain-back` and `/design-drill` deliberately; they are the
+      only remaining opportunities. See gap **#18**.
+- [ ] ⚠️ **Both unscripted topics went uncovered in the recording** — *Winston vs pino* and
+      *why a metric when the log has status and duration*. Harvey has now watched a walkthrough
+      where neither came up, which makes them the obvious Day 10 follow-ups. Drill both.
+
+**Closed on Day 5:**
+
+- [x] ✅ **`/metrics` excluded from the logging middleware.** Decision: exclude (not `debug`
+      level, not leave). ~28,800 lines/day → **0**, measured. `ClsMiddleware` still runs on
+      every route, so `/metrics` keeps a correlation context — only the request pair is
+      silenced. Commit `1c5959b`.
+- [x] ✅ **Machine migration complete.** Compose plugin installed, SELinux labelling fixed in
+      `docker-compose.yml`, push identity for `llubgubanfs` wired via a dedicated SSH key and a
+      `github-llubgubanfs` host alias. Global `gh`/git identity left as `y4nder`, untouched.
+- [x] ✅ **Demo format resolved** — recorded, Harvey's call.
 
 **Open from before:**
 
-- [ ] Booking domain endpoints + Postgres + TypeORM. Slipped from Day 2, Day 3, and now **Day 4 — third time, deliberately.** Zero assessment points and it competes directly with the Growth Area. Realistic homes now: a Day 7 side-slot, or accept it does not land at all.
+- [ ] Booking domain endpoints + Postgres + TypeORM. Slipped Days 2, 3, 4 and now **5 — fourth time, deliberately.** Zero assessment points, competes directly with the Growth Area. Realistic homes now: a Day 7 side-slot, or accept it does not land at all. Note the Day 5 recording described the service as "a sample NestJS service" precisely because no domain exists — that framing is now on tape and should stay consistent.
 - [x] ORM chosen: **TypeORM**. Not installed.
 - [x] **Pluralsight** — Prometheus/Grafana sections watched Day 3.
-- [x] ✅ **The `499` branch has now fired.** Closed Day 4 as a side effect of the in-flight investigation: `--max-time 1` against `/debug/slow?ms=8000` produced `status_code=499`, `duration_ms: 1005`. Written Day 3, first executed Day 4.
-- [ ] **PII / secret redaction and log-level discipline** — still not in the logger. Plausible Day 10 question. Known hole, untouched for three days.
+- [ ] **PII / secret redaction and log-level discipline** — still not in the logger. Named aloud as a known hole in the Day 5 recording, so Harvey has heard it. Plausible Day 10 question.
 - [ ] **Graceful shutdown at app level** — `app.enableShutdownHooks()` and draining in-flight work still unwired. Day 8.
-- [ ] **No Alertmanager.** Rules evaluate and reach `firing` but notify nobody. Day 8 decides whether it is worth adding.
-- [ ] **~28,800 log lines/day with zero users** — `/metrics` is excluded from the metrics middleware but not the logging middleware, so every scrape and healthcheck writes two lines. See the open decision above.
+- [ ] **No Alertmanager.** Rules evaluate and reach `firing` but notify nobody. Day 8. Strongest argument for adding it is now gap **#17** — a deadman's switch is the only way this stack can report its own death.
 - [ ] **No `/health` endpoint.** The container healthcheck hits `/metrics`, which renders the entire registry every 10s. Day 8, alongside graceful shutdown.
-- [ ] **`nodejs_eventloop_lag_p99_seconds` is exposed and unused.** It is the signal that registered today's saturation when the in-flight gauge could not (sub-ms idle → 10.5 ms under load). Not on the dashboard. Cheap ninth panel.
+- [ ] **`nodejs_eventloop_lag_p99_seconds` is exposed and unused.** The signal that registered saturation when the in-flight gauge could not (sub-ms idle → 10.5 ms under load). Not on the dashboard. Cheap ninth panel.
 - [ ] **Nothing demonstrates a partial outage below 1 req/s** — the `HighErrorRatio` denominator guard gives that up by design. Day 8's absence-of-success work.
+- [ ] **No test covers the middleware ordering or the `/metrics` exclusion.** Both were verified by running the stack and reading output. Invisible to `tsc` *and* to the 5 unit tests — the same shape as Day 2's bug #1. A Day 10 question about preventing regression has no good answer today.
 
 ---
 
@@ -223,6 +251,54 @@ Added Day 4 (warm-up quiz, 1.5/3):
 | # | Gap | What happened | Reality | Addressed |
 |---|---|---|---|---|
 | 16 | **Declares something broken before measuring it** | `http_requests_in_flight` would not move, and the working assumption was that the metric was faulty | It was correct the whole time. Three explanations were found convincing and all three were wrong — Prometheus's sampling interval, curl spawn cost, undici connection pooling — each killed by a measurement that took under two minutes. The real answer came from a number already being collected: the histogram spans the same region as the gauge and read 0.19 ms, so by Little's Law the gauge could not exceed 1. **The habit is the risk, not the topic** — same shape as #12 (reconstructing answers never given). Day 9 is live, and a confident wrong explanation costs more there than "let me check". | drill: on Days 7 and 9, say *"that's a guess — here's how I'd check it"* out loud before committing to a cause |
+
+**Day 5 warm-up quiz (3 questions, 2.5 / 3 — best round so far).**
+
+- **#15 CLOSED — unprompted.** Asked what survives `docker compose down -v`, he split the two
+  volumes without being prompted to: Prometheus's TSDB is where the history physically lives;
+  Grafana's sqlite holds only UI-created state; the dashboard rebuilds from the provisioned
+  JSON either way — *"comes back, although empty."* On Day 4 he argued the losing side of
+  exactly this. Produced on demand, not by doing. Closed.
+- **#14 CLOSED — unprompted.** Asked what the request-rate panel does when `booking-api`
+  restarts at ~40,000, he said the total **"in heap"** goes to zero and `rate()` treats the
+  decrease as a reset, taking the new value as the delta. "In heap" is the precise word he got
+  wrong on Day 4 ("volumes make it persistent"). Closed. **Open follow-up:** `rate()` prevents
+  the *negative*, it does not *recover* the requests served between the last pre-restart scrape
+  and the restart — that window is gone. **Follow-up answered correctly, same session:**
+  *"it does not recover the requests lost across the restart, only hides the negative spike."*
+- **Q1 half credit — the "why", not the "what breaks".** Correct that `booking-api:3000` uses
+  Docker's embedded DNS on the shared network and `localhost:9090` is Prometheus already inside
+  its own container. **Did not attempt the half that was explicitly asked — what breaks if you
+  swap them** — which is the interesting half because it is asymmetric. Measured live this
+  session: `localhost:3000` from inside the Prometheus container is *connection refused* (its
+  own loopback, nothing listening, and it does **not** reach the host's published port), so
+  that target goes DOWN; whereas `prometheus:9090` resolves fine (172.18.0.4) and would work
+  unchanged. **Re-asked and answered:** got the loopback-namespace half unaided after the
+  question was narrowed; needed the published-port NAT explanation and the whole asymmetry
+  handed to him. Connected back to his own Day 2 fix (bind `0.0.0.0`, not localhost, or a
+  published port is unreachable) — same mechanism seen from the other side.
+
+| # | Gap | Answer given | Reality | Addressed |
+|---|---|---|---|---|
+| 17 | **Thinks the monitoring stack can detect its own failure** | volunteered that the self-scrape job "gives the signal that if the booking-api is DOWN and prometheus is UP then the app is down, not the stack" | `up{job="prometheus"}` is near-tautological — it is Prometheus reporting on Prometheus. If the Prometheus container dies, the series does not go to 0, it **stops existing**; nothing scrapes, nothing evaluates the three rules, and the dashboard flatlines in a way indistinguishable from a quiet night. The watcher cannot watch itself. Detecting it needs something *outside* the stack — a deadman's-switch alert that fires on the **absence** of a heartbeat (Alertmanager, or an external blackbox probe). Same shape as **#3** and **#7**: keying on absence of expected success, not presence of an error. Also the strongest argument yet for the "no Alertmanager" carry-over. | ⚠️ **corrected same session, unaided** — pointed at the *shape* only ("you've met this before"), no mechanism named, and he produced Alertmanager + deadman's switch + routed to an external receiver + *"triggers whenever the heartbeat stops"*. The inversion (a rule that fires **always**, where silence is the signal) was his. The misconception was still stated confidently first, so: **verify on Day 8, do not close yet.** Third instance of gap **#3**'s shape and the first he solved without being walked to it — #3 may be closing. |
+
+**Day 5 recording — the most important finding of the day, and it is not a topic.**
+
+| # | Gap | What happened | Reality | Addressed |
+|---|---|---|---|---|
+| 18 | **Explanations that hold in writing collapse when spoken** | The walkthrough was recorded across **several takes and then edited**. The section he struggled with was *request rate by route* — the cardinality argument. | That topic is **gap #4, marked closed on Day 3** after he produced it cleanly and unprompted in text. It did not survive being said out loud, on camera, once. Written recall and spoken explanation are different skills, and only the second one is graded: **Days 9 and 10 are live, single-take, with no edit pass and no agent present.** A polished edit is the one artefact that cannot tell you whether you could have done it live. Two contributing factors, neither of which changes the conclusion: that section was rewritten twice the same day (four lines vs two, 5 series vs 4), so he was narrating freshly-changed material; and the material was supplied as a script, which he read rather than reconstructed. | ⚠️ **`/explain-back` on cardinality, single take, before Day 9.** Also the standing drill for **#9**, **#10** and **#16**. |
+
+**The mitigation that was agreed and then did not happen.** The plan was one unbroken unrehearsed
+take, never submitted, purely as live-pressure rehearsal — then a second take for Harvey. Only
+the polished path ran. **The live rehearsal is still owed and is now carry-over**, because Day 9
+is five days out and nothing so far has rehearsed speaking under pressure without a script.
+
+**Both ⚠️ items went uncovered in the recording — they are now near-certain Day 10 content.**
+Neither *"why Winston over pino"* nor *"why a metric when the log already has status and
+duration"* was mentioned. They were deliberately left unscripted precisely because he does not
+own them, and the recording confirms he still does not. Harvey has now watched a walkthrough
+where neither was addressed, which makes them the obvious follow-ups. See gaps **#4** (the
+query-time vs write-time half, re-missed twice) and the Winston row below.
 
 **Day 3 build session — gaps #4 and #8 both closed.**
 
@@ -446,3 +522,68 @@ sync with origin · working tree clean apart from journal files, which go to `ma
 
 **Time:** ran long and lopsided — infra was ~2h, the rest went on warm-up material and the
 in-flight investigation.
+
+### Day 5 — Tue Aug 4 ✅
+**Objective:** bring Week 1 together — one service with structured logs, a live `/metrics`
+endpoint and a Grafana dashboard rendering it — and present it to Harvey.
+
+**Format: recorded walkthrough, Harvey's call.** No live session. Delivered as an 18:43 video.
+
+**Deliverable — verified, committed, and shared:**
+
+| Evidence | Path |
+|---|---|
+| Recording (18:43, narrated) | `~/Videos/2_week_training_plan_videos/raw-day-5.mp4` · [Drive](https://drive.google.com/file/d/1_79o8DYFxkwq6olAdUnD3p6J-1B_VZ6-/view?usp=drive_link) |
+| PR | branch `day-05-integration-demo`, 4 commits |
+| Walkthrough script (~9 min plan) | `deliverables/day-05/walkthrough-script.md` |
+| Run sheet, reworked for recording | `deliverables/day-05/demo-run-sheet.md` |
+| Command stepper | `coworking-obs/infra/scripts/walkthrough.sh` |
+| Reasoning | `journal/day-05-integration-demo.md` |
+
+Re-verified before recording by running `infra/scripts/verify.sh` against the live stack on the
+new machine: **all checks pass**, both targets UP, datasource and dashboard provisioned, live
+PromQL through Grafana's proxy.
+
+Done:
+- [x] Machine migration — Compose plugin, SELinux labelling, `llubgubanfs` push identity
+- [x] Three fixes, two of which would have broken the demo (below)
+- [x] Warm-up quiz **2.5/3** — best round so far; gaps **#14** and **#15** closed unprompted
+- [x] Recorded, edited and delivered the walkthrough; Drive link sent
+
+**The day's real content was two silent failures and one loud one.**
+
+The stack would not start: SELinux on the new machine labels every bind-mounted config
+`user_home_t`, which `container_t` cannot read. Prometheus crash-looped **loudly** — an error
+every 400ms, impossible to miss. Grafana started, reported healthy, answered `/api/health` with
+`database ok`, and **provisioned nothing** — `/api/datasources` and `/api/search` both returned
+`[]`, with no error line anywhere. `docker compose ps` could not tell the two apart. `verify.sh`
+caught it because it asserts *"one provisioned datasource exists"* rather than *"the container
+is running"* — absence of expected success, which is Day 8's whole thesis, arriving a week early
+on his own stack. Fixed with `:z` on the four bind mounts (`5160671`).
+
+The third: `traffic.sh stop` only ever stopped the most recently started generator, because
+every run overwrote one shared PID file. The run sheet layers three generators and then says
+"stop both" — so the demo would have closed on a pinned red dashboard while he said he had
+stopped the load. Reproduced, then fixed with per-run registration and a descendant-tree kill
+(`71547f6`).
+
+**Three factual errors in his own prep, all caught by him, all before recording.** The service
+was described as a "coworking booking service" when the plan asks only for a sample service and
+no domain code exists; the rate panel was described as having two lines when it has four; and
+the panel's four lines were conflated with the five stored series. The third is the interesting
+one — the panel sums by `route`, discarding `status_code`, so `/debug/fail` is two series drawn
+as one line. **That instinct — checking the script against what is actually on screen — is the
+exact inverse of gap #16 and the best signal of the day.**
+
+**Checks at close:** `typecheck` clean · `lint` 0/0 · unit 5/5 · `verify.sh` fully green ·
+branch pushed, 4 commits · working tree clean apart from journal files.
+
+**⚠️ The cost of a recorded format, recorded honestly.** Several takes, then edited. The agreed
+mitigation — one unbroken unrehearsed take first, never submitted — did not happen, so the only
+live-pressure rehearsal available before Day 9 was skipped. He also struggled narrating the
+*request rate by route* panel, which is the cardinality argument marked **closed** on Day 3. It
+held in writing and did not hold aloud. That is gap **#18**, and it is the most important thing
+learned today.
+
+**Time:** most of the day went on the machine migration and the three fixes; the recording
+itself was late afternoon.
