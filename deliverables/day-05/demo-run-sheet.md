@@ -2,6 +2,35 @@
 
 **Tue 4 Aug · ~15 minutes · Harvey Martus**
 
+> ## 📹 Format: recorded walkthrough — Harvey's call, confirmed Day 5
+>
+> Not a live session. No length specified. Narrated with a mic. **Due today.**
+>
+> **What gets easier.** The recording *is* the deliverable, so the definition of done is
+> satisfied by the file itself — no separate artifact needed. No calendar dependency. And a
+> mistake costs a retake rather than the demo.
+>
+> **What gets harder, and it is not obvious.** Harvey cannot interrupt. Every question he would
+> have asked mid-flow, he now answers privately, from whatever you did or did not say. So
+> anything left implicit is decided without you in the room. Section 7 — naming your own gaps —
+> stops being a nice touch and becomes the only way those gaps get framed by you rather than by
+> him. The ⚠️ rows in *Questions to expect* are no longer questions to prepare for; they are
+> **statements to make unprompted**.
+>
+> You also have to supply your own open and close. Nobody prompts you to start, and nothing
+> tells you when you are done.
+>
+> ### Two takes. The first one is not for Harvey.
+>
+> A recording lets you retake until it is clean. **Days 9 and 10 do not.** Those are live, with
+> no agent present, and your three live-skill gaps — losing the prompt under load (#9), not
+> registering a correction (#10), committing to a confident wrong cause (#16) — only surface
+> under pressure. A polished fourth take rehearses reading, not thinking.
+>
+> So: **take 1 is a single unbroken run, unrehearsed, never submitted.** If something breaks,
+> debug it out loud on camera. Then watch it back — seeing yourself is better feedback than
+> anyone's notes. **Take 2 is the one you send.**
+
 The plan's ask: *"your sample service should have structured logs, a live `/metrics` endpoint,
 and a Grafana dashboard rendering it. Present it live to your EM."*
 
@@ -69,7 +98,25 @@ curl -sG localhost:9090/api/v1/query --data-urlencode 'query=count(http_requests
 ```
 
 **SAY:** the probe traffic includes a URL with a changing query string on every single
-request. That count stays at 3.
+request. That count does not move.
+
+⚠️ **The number is 5, not 3.** It was 3 when this sheet was written; Day 5's testing exercised
+the debug endpoints and added two more. Know what the five are, because "why five?" is the
+obvious follow-up:
+
+| route | status | what it is |
+|---|---|---|
+| `/` | 200 | the real endpoint |
+| `unmatched` | 404 | every bot probe, collapsed into one series |
+| `/debug/fail` | 200 | the failure endpoint succeeding |
+| `/debug/fail` | 500 | the failure endpoint failing |
+| `/debug/slow` | 499 | abandoned mid-request — the Day 3 branch, now firing |
+
+This is a **better** demo than 3, and it sharpens the point rather than weakening it. Series
+count is bounded by *routes × status codes you can actually emit* — a number you can write down
+by reading the code. It is not bounded by URLs, which is a number the internet chooses for you.
+Five now, five after ten thousand distinct probe URLs. Say that, then run `probe` and show the
+count sitting still while requests pour in.
 
 ### 3 · The logs — 2 min
 
@@ -216,11 +263,18 @@ than a demo where nothing went wrong.
 
 ## Evidence
 
-A live demo leaves no artifact, and the definition of done requires evidence on disk with its
-path recorded in `STATUS.md`. **Record the screen either way.**
+The recording **is** the deliverable — it satisfies the definition of done by itself, provided
+its path lands in `STATUS.md`.
 
-Existing folder: `~/Videos/2_week_training_plan_videos/`
+Folder: `~/Videos/2_week_training_plan_videos/` (recreated on this machine — the Day 1 baseline
+recording lives on the old one and did not transfer).
 
-Afterwards: note what he asked, what you couldn't answer, and anything he pushed back on.
-Unanswered questions go straight to the weak-spot list — those are Day 10 retest content and
-they're worth more than the demo going smoothly.
+Recording with OBS on Wayland/Hyprland: use the **PipeWire** screen capture source, not X11.
+Check the mic is actually armed and levels are moving **before** take 1, not after.
+
+Keep take 1 rather than deleting it. It is the only live-pressure rehearsal before Day 9, and
+what you notice watching it back belongs in the weak-spot list.
+
+Afterwards: note anything you fumbled, skipped, or could not explain in one pass, plus whatever
+Harvey comes back with in chat. Unanswered questions go straight to the weak-spot list — those
+are Day 10 retest content and they are worth more than the recording going smoothly.
