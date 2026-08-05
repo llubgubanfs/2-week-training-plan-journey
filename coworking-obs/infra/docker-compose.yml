@@ -39,6 +39,10 @@ services:
       NODE_ENV: production
       LOG_LEVEL: ${LOG_LEVEL:-info}
       LOG_PRETTY: "false"
+      # What splits the trace into two named halves in the Jaeger UI. Unset, every
+      # span is attributed to "unknown_service:node" and the boundary — the only
+      # thing a distributed trace exists to show — disappears.
+      OTEL_SERVICE_NAME: booking-api
       # Service names, not localhost — inside the network each container's
       # localhost is its own loopback, so these would resolve to nothing.
       NOTIFIER_URL: http://notifier:3001
@@ -74,6 +78,7 @@ services:
     restart: unless-stopped
     environment:
       NOTIFIER_PORT: 3001
+      OTEL_SERVICE_NAME: notifier
       NODE_ENV: production
       LOG_LEVEL: ${LOG_LEVEL:-info}
       LOG_PRETTY: "false"

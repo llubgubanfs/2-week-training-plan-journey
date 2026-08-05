@@ -1,3 +1,9 @@
+// ⚠️ MUST BE THE FIRST IMPORT. Instrumentation patches modules as they load, so
+// anything imported above this line captures an unpatched reference and emits no
+// spans. Moving it below @nestjs/core silently produces an empty Jaeger — no
+// error, no warning, just no traces.
+import './tracing';
+
 import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
