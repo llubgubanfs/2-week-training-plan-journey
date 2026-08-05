@@ -78,14 +78,42 @@ notifier     trace_id c6532bb5d91b2029…  correlation_id 37d11fa0…  request c
 
 **Same `trace_id` on both sides. Two different `correlation_id`s.**
 
-That difference is not a bug and it is the clearest statement of what changed today.
-`traceparent` is a W3C standard header injected by the instrumentation on every outbound
-request and read on every inbound one, so the notifier joined the trace without either
-service agreeing on anything locally. `x-correlation-id` is ours, nothing propagates it for
-free, and it is deliberately not forwarded — so each service minted its own.
+That difference is what `traceparent` buys. It is a W3C standard header, injected by the
+instrumentation on every outbound request and read on every inbound one, so the notifier
+joined the trace without either service agreeing on anything locally. `x-correlation-id` is
+ours — nothing propagates it for free.
 
-Which of those two is the right thing to propagate is recorded as a `TODO(day-06)` in
-`downstream.service.ts` rather than silently decided.
+### The decision that came out of seeing that
+
+**Forward `x-correlation-id`, and keep it alongside `trace_id`.** Measured after the change,
+same request, both services:
+
+```
+booking-api  trace_id 9ece2d5f151525…  correlation_id 1d970d79…  request received
+booking-api  trace_id 9ece2d5f151525…  correlation_id 1d970d79…  calling notifier
+booking-api  trace_id 9ece2d5f151525…  correlation_id 1d970d79…  request completed
+booking-api  trace_id 9ece2d5f151525…  correlation_id 1d970d79…  notifier accepted…
+notifier     trace_id 9ece2d5f151525…  correlation_id 1d970d79…  request received
+notifier     trace_id 9ece2d5f151525…  correlation_id 1d970d79…  notifier: handling…
+notifier     trace_id 9ece2d5f151525…  correlation_id 1d970d79…  request completed
+```
+
+Only the *sending* half was ever missing. `CORRELATION_ID_HEADERS` has honoured an inbound
+id since Day 2, with a comment saying "so an id assigned upstream survives the hop" — the
+notifier had been ready for four days.
+
+Why keep both rather than drop one now that `trace_id` crosses the boundary for free:
+
+- **Sampling.** Under head sampling a log line still carries a `trace_id`, but the trace it
+  names was never exported — paste it into Jaeger and get nothing. Logs are not sampled, so
+  `correlation_id` has no equivalent failure mode.
+- **They cover different ground.** Day 8's cron has a correlation id and a
+  `context_type: job`; unless it is instrumented it has no span, and therefore no trace id.
+
+Note the fourth line above: `notifier accepted fire-and-forget` is logged *after* the
+response has gone out, and still carries the id. The headers are read at call time from
+`ClsService`, which reads AsyncLocalStorage per call — the same mechanism, and the same Day 2
+decision, still paying out.
 
 ## Reproducing
 

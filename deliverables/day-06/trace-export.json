@@ -1,377 +1,21 @@
 {
     "data": [
         {
-            "traceID": "c6532bb5d91b2029270932705e10a940",
+            "traceID": "9ece2d5f1515252f9c4c522fd9339ea0",
             "spans": [
                 {
-                    "traceID": "c6532bb5d91b2029270932705e10a940",
-                    "spanID": "62760099b9553109",
-                    "operationName": "DownstreamController.callImmediate",
+                    "traceID": "9ece2d5f1515252f9c4c522fd9339ea0",
+                    "spanID": "36db5e49557af7a2",
+                    "operationName": "GET /fire-and-forget",
                     "references": [
                         {
                             "refType": "CHILD_OF",
-                            "traceID": "c6532bb5d91b2029270932705e10a940",
-                            "spanID": "712e6a105fa264e1"
+                            "traceID": "9ece2d5f1515252f9c4c522fd9339ea0",
+                            "spanID": "76ca0a7e659f6a31"
                         }
                     ],
-                    "startTime": 1785929654393000,
-                    "duration": 71618,
-                    "tags": [
-                        {
-                            "key": "component",
-                            "type": "string",
-                            "value": "@nestjs/core"
-                        },
-                        {
-                            "key": "http.request.method",
-                            "type": "string",
-                            "value": "GET"
-                        },
-                        {
-                            "key": "http.route",
-                            "type": "string",
-                            "value": "/downstream-immediate"
-                        },
-                        {
-                            "key": "internal.span.format",
-                            "type": "string",
-                            "value": "otlp"
-                        },
-                        {
-                            "key": "nestjs.callback",
-                            "type": "string",
-                            "value": "callImmediate"
-                        },
-                        {
-                            "key": "nestjs.controller",
-                            "type": "string",
-                            "value": "DownstreamController"
-                        },
-                        {
-                            "key": "nestjs.type",
-                            "type": "string",
-                            "value": "request_context"
-                        },
-                        {
-                            "key": "nestjs.version",
-                            "type": "string",
-                            "value": "11.1.28"
-                        },
-                        {
-                            "key": "otel.scope.name",
-                            "type": "string",
-                            "value": "@opentelemetry/instrumentation-nestjs-core"
-                        },
-                        {
-                            "key": "otel.scope.version",
-                            "type": "string",
-                            "value": "0.67.0"
-                        },
-                        {
-                            "key": "span.kind",
-                            "type": "string",
-                            "value": "internal"
-                        },
-                        {
-                            "key": "url.full",
-                            "type": "string",
-                            "value": "/downstream-immediate"
-                        }
-                    ],
-                    "logs": [],
-                    "processID": "p1",
-                    "warnings": null
-                },
-                {
-                    "traceID": "c6532bb5d91b2029270932705e10a940",
-                    "spanID": "6eb72c29f8f75ce9",
-                    "operationName": "tcp.connect",
-                    "references": [
-                        {
-                            "refType": "CHILD_OF",
-                            "traceID": "c6532bb5d91b2029270932705e10a940",
-                            "spanID": "609ea377b6d03ede"
-                        }
-                    ],
-                    "startTime": 1785929654404000,
-                    "duration": 1228,
-                    "tags": [
-                        {
-                            "key": "internal.span.format",
-                            "type": "string",
-                            "value": "otlp"
-                        },
-                        {
-                            "key": "network.local.address",
-                            "type": "string",
-                            "value": "172.18.0.3"
-                        },
-                        {
-                            "key": "network.local.port",
-                            "type": "int64",
-                            "value": 39928
-                        },
-                        {
-                            "key": "network.peer.address",
-                            "type": "string",
-                            "value": "172.18.0.6"
-                        },
-                        {
-                            "key": "network.transport",
-                            "type": "string",
-                            "value": "tcp"
-                        },
-                        {
-                            "key": "otel.scope.name",
-                            "type": "string",
-                            "value": "@opentelemetry/instrumentation-net"
-                        },
-                        {
-                            "key": "otel.scope.version",
-                            "type": "string",
-                            "value": "0.65.0"
-                        },
-                        {
-                            "key": "server.address",
-                            "type": "string",
-                            "value": "notifier"
-                        },
-                        {
-                            "key": "server.port",
-                            "type": "string",
-                            "value": "3001"
-                        },
-                        {
-                            "key": "span.kind",
-                            "type": "string",
-                            "value": "internal"
-                        }
-                    ],
-                    "logs": [],
-                    "processID": "p1",
-                    "warnings": null
-                },
-                {
-                    "traceID": "c6532bb5d91b2029270932705e10a940",
-                    "spanID": "173899540bedaf14",
-                    "operationName": "GET /downstream-immediate",
-                    "references": [],
-                    "startTime": 1785929654390000,
-                    "duration": 74939,
-                    "tags": [
-                        {
-                            "key": "client.address",
-                            "type": "string",
-                            "value": "172.18.0.1"
-                        },
-                        {
-                            "key": "http.request.method",
-                            "type": "string",
-                            "value": "GET"
-                        },
-                        {
-                            "key": "http.response.status_code",
-                            "type": "int64",
-                            "value": 200
-                        },
-                        {
-                            "key": "http.route",
-                            "type": "string",
-                            "value": "/downstream-immediate"
-                        },
-                        {
-                            "key": "internal.span.format",
-                            "type": "string",
-                            "value": "otlp"
-                        },
-                        {
-                            "key": "network.peer.address",
-                            "type": "string",
-                            "value": "172.18.0.1"
-                        },
-                        {
-                            "key": "network.peer.port",
-                            "type": "int64",
-                            "value": 45480
-                        },
-                        {
-                            "key": "network.protocol.version",
-                            "type": "string",
-                            "value": "1.1"
-                        },
-                        {
-                            "key": "otel.scope.name",
-                            "type": "string",
-                            "value": "@opentelemetry/instrumentation-http"
-                        },
-                        {
-                            "key": "otel.scope.version",
-                            "type": "string",
-                            "value": "0.221.0"
-                        },
-                        {
-                            "key": "server.address",
-                            "type": "string",
-                            "value": "localhost"
-                        },
-                        {
-                            "key": "server.port",
-                            "type": "int64",
-                            "value": 3000
-                        },
-                        {
-                            "key": "span.kind",
-                            "type": "string",
-                            "value": "server"
-                        },
-                        {
-                            "key": "url.path",
-                            "type": "string",
-                            "value": "/downstream-immediate"
-                        },
-                        {
-                            "key": "url.scheme",
-                            "type": "string",
-                            "value": "http"
-                        },
-                        {
-                            "key": "user_agent.original",
-                            "type": "string",
-                            "value": "curl/8.15.0"
-                        }
-                    ],
-                    "logs": [],
-                    "processID": "p1",
-                    "warnings": null
-                },
-                {
-                    "traceID": "c6532bb5d91b2029270932705e10a940",
-                    "spanID": "712e6a105fa264e1",
-                    "operationName": "request handler - /downstream-immediate",
-                    "references": [
-                        {
-                            "refType": "CHILD_OF",
-                            "traceID": "c6532bb5d91b2029270932705e10a940",
-                            "spanID": "173899540bedaf14"
-                        }
-                    ],
-                    "startTime": 1785929654393000,
-                    "duration": 73484,
-                    "tags": [
-                        {
-                            "key": "express.name",
-                            "type": "string",
-                            "value": "/downstream-immediate"
-                        },
-                        {
-                            "key": "express.type",
-                            "type": "string",
-                            "value": "request_handler"
-                        },
-                        {
-                            "key": "http.route",
-                            "type": "string",
-                            "value": "/downstream-immediate"
-                        },
-                        {
-                            "key": "internal.span.format",
-                            "type": "string",
-                            "value": "otlp"
-                        },
-                        {
-                            "key": "otel.scope.name",
-                            "type": "string",
-                            "value": "@opentelemetry/instrumentation-express"
-                        },
-                        {
-                            "key": "otel.scope.version",
-                            "type": "string",
-                            "value": "0.69.0"
-                        },
-                        {
-                            "key": "span.kind",
-                            "type": "string",
-                            "value": "internal"
-                        }
-                    ],
-                    "logs": [],
-                    "processID": "p1",
-                    "warnings": [
-                        "clock skew adjustment disabled; not applying calculated delta of -2.27248ms"
-                    ]
-                },
-                {
-                    "traceID": "c6532bb5d91b2029270932705e10a940",
-                    "spanID": "5d05987e46f5211e",
-                    "operationName": "downstreamImmediate",
-                    "references": [
-                        {
-                            "refType": "CHILD_OF",
-                            "traceID": "c6532bb5d91b2029270932705e10a940",
-                            "spanID": "f6aebfa394df5629"
-                        }
-                    ],
-                    "startTime": 1785929654415000,
-                    "duration": 41109,
-                    "tags": [
-                        {
-                            "key": "component",
-                            "type": "string",
-                            "value": "@nestjs/core"
-                        },
-                        {
-                            "key": "internal.span.format",
-                            "type": "string",
-                            "value": "otlp"
-                        },
-                        {
-                            "key": "nestjs.callback",
-                            "type": "string",
-                            "value": "downstreamImmediate"
-                        },
-                        {
-                            "key": "nestjs.type",
-                            "type": "string",
-                            "value": "handler"
-                        },
-                        {
-                            "key": "nestjs.version",
-                            "type": "string",
-                            "value": "11.1.28"
-                        },
-                        {
-                            "key": "otel.scope.name",
-                            "type": "string",
-                            "value": "@opentelemetry/instrumentation-nestjs-core"
-                        },
-                        {
-                            "key": "otel.scope.version",
-                            "type": "string",
-                            "value": "0.67.0"
-                        },
-                        {
-                            "key": "span.kind",
-                            "type": "string",
-                            "value": "internal"
-                        }
-                    ],
-                    "logs": [],
-                    "processID": "p2",
-                    "warnings": null
-                },
-                {
-                    "traceID": "c6532bb5d91b2029270932705e10a940",
-                    "spanID": "1a15a3da7e593cd1",
-                    "operationName": "GET /downstream-immediate",
-                    "references": [
-                        {
-                            "refType": "CHILD_OF",
-                            "traceID": "c6532bb5d91b2029270932705e10a940",
-                            "spanID": "98f8269de2814799"
-                        }
-                    ],
-                    "startTime": 1785929654412000,
-                    "duration": 45241,
+                    "startTime": 1785930617176000,
+                    "duration": 42311,
                     "tags": [
                         {
                             "key": "client.address",
@@ -391,7 +35,7 @@
                         {
                             "key": "http.route",
                             "type": "string",
-                            "value": "/downstream-immediate"
+                            "value": "/fire-and-forget"
                         },
                         {
                             "key": "internal.span.format",
@@ -406,7 +50,7 @@
                         {
                             "key": "network.peer.port",
                             "type": "int64",
-                            "value": 39928
+                            "value": 36606
                         },
                         {
                             "key": "network.protocol.version",
@@ -441,7 +85,7 @@
                         {
                             "key": "url.path",
                             "type": "string",
-                            "value": "/downstream-immediate"
+                            "value": "/fire-and-forget"
                         },
                         {
                             "key": "url.scheme",
@@ -455,86 +99,27 @@
                         }
                     ],
                     "logs": [],
-                    "processID": "p2",
-                    "warnings": null
-                },
-                {
-                    "traceID": "c6532bb5d91b2029270932705e10a940",
-                    "spanID": "609ea377b6d03ede",
-                    "operationName": "callImmediate",
-                    "references": [
-                        {
-                            "refType": "CHILD_OF",
-                            "traceID": "c6532bb5d91b2029270932705e10a940",
-                            "spanID": "62760099b9553109"
-                        }
-                    ],
-                    "startTime": 1785929654393000,
-                    "duration": 70614,
-                    "tags": [
-                        {
-                            "key": "component",
-                            "type": "string",
-                            "value": "@nestjs/core"
-                        },
-                        {
-                            "key": "internal.span.format",
-                            "type": "string",
-                            "value": "otlp"
-                        },
-                        {
-                            "key": "nestjs.callback",
-                            "type": "string",
-                            "value": "callImmediate"
-                        },
-                        {
-                            "key": "nestjs.type",
-                            "type": "string",
-                            "value": "handler"
-                        },
-                        {
-                            "key": "nestjs.version",
-                            "type": "string",
-                            "value": "11.1.28"
-                        },
-                        {
-                            "key": "otel.scope.name",
-                            "type": "string",
-                            "value": "@opentelemetry/instrumentation-nestjs-core"
-                        },
-                        {
-                            "key": "otel.scope.version",
-                            "type": "string",
-                            "value": "0.67.0"
-                        },
-                        {
-                            "key": "span.kind",
-                            "type": "string",
-                            "value": "internal"
-                        }
-                    ],
-                    "logs": [],
                     "processID": "p1",
                     "warnings": null
                 },
                 {
-                    "traceID": "c6532bb5d91b2029270932705e10a940",
-                    "spanID": "51980a6b76e9fab2",
-                    "operationName": "request handler - /downstream-immediate",
+                    "traceID": "9ece2d5f1515252f9c4c522fd9339ea0",
+                    "spanID": "d3f67f60364af161",
+                    "operationName": "request handler - /fire-and-forget",
                     "references": [
                         {
                             "refType": "CHILD_OF",
-                            "traceID": "c6532bb5d91b2029270932705e10a940",
-                            "spanID": "1a15a3da7e593cd1"
+                            "traceID": "9ece2d5f1515252f9c4c522fd9339ea0",
+                            "spanID": "36db5e49557af7a2"
                         }
                     ],
-                    "startTime": 1785929654414000,
-                    "duration": 43651,
+                    "startTime": 1785930617177000,
+                    "duration": 41975,
                     "tags": [
                         {
                             "key": "express.name",
                             "type": "string",
-                            "value": "/downstream-immediate"
+                            "value": "/fire-and-forget"
                         },
                         {
                             "key": "express.type",
@@ -544,7 +129,7 @@
                         {
                             "key": "http.route",
                             "type": "string",
-                            "value": "/downstream-immediate"
+                            "value": "/fire-and-forget"
                         },
                         {
                             "key": "internal.span.format",
@@ -568,103 +153,24 @@
                         }
                     ],
                     "logs": [],
-                    "processID": "p2",
+                    "processID": "p1",
                     "warnings": [
-                        "clock skew adjustment disabled; not applying calculated delta of -1.205036ms"
+                        "clock skew adjustment disabled; not applying calculated delta of -832.08\u00b5s"
                     ]
                 },
                 {
-                    "traceID": "c6532bb5d91b2029270932705e10a940",
-                    "spanID": "f6aebfa394df5629",
-                    "operationName": "NotifierController.downstreamImmediate",
-                    "references": [
-                        {
-                            "refType": "CHILD_OF",
-                            "traceID": "c6532bb5d91b2029270932705e10a940",
-                            "spanID": "51980a6b76e9fab2"
-                        }
-                    ],
-                    "startTime": 1785929654415000,
-                    "duration": 42289,
-                    "tags": [
-                        {
-                            "key": "component",
-                            "type": "string",
-                            "value": "@nestjs/core"
-                        },
-                        {
-                            "key": "http.request.method",
-                            "type": "string",
-                            "value": "GET"
-                        },
-                        {
-                            "key": "http.route",
-                            "type": "string",
-                            "value": "/downstream-immediate"
-                        },
-                        {
-                            "key": "internal.span.format",
-                            "type": "string",
-                            "value": "otlp"
-                        },
-                        {
-                            "key": "nestjs.callback",
-                            "type": "string",
-                            "value": "downstreamImmediate"
-                        },
-                        {
-                            "key": "nestjs.controller",
-                            "type": "string",
-                            "value": "NotifierController"
-                        },
-                        {
-                            "key": "nestjs.type",
-                            "type": "string",
-                            "value": "request_context"
-                        },
-                        {
-                            "key": "nestjs.version",
-                            "type": "string",
-                            "value": "11.1.28"
-                        },
-                        {
-                            "key": "otel.scope.name",
-                            "type": "string",
-                            "value": "@opentelemetry/instrumentation-nestjs-core"
-                        },
-                        {
-                            "key": "otel.scope.version",
-                            "type": "string",
-                            "value": "0.67.0"
-                        },
-                        {
-                            "key": "span.kind",
-                            "type": "string",
-                            "value": "internal"
-                        },
-                        {
-                            "key": "url.full",
-                            "type": "string",
-                            "value": "/downstream-immediate"
-                        }
-                    ],
-                    "logs": [],
-                    "processID": "p2",
-                    "warnings": null
-                },
-                {
-                    "traceID": "c6532bb5d91b2029270932705e10a940",
-                    "spanID": "98f8269de2814799",
+                    "traceID": "9ece2d5f1515252f9c4c522fd9339ea0",
+                    "spanID": "76ca0a7e659f6a31",
                     "operationName": "GET",
                     "references": [
                         {
                             "refType": "CHILD_OF",
-                            "traceID": "c6532bb5d91b2029270932705e10a940",
-                            "spanID": "609ea377b6d03ede"
+                            "traceID": "9ece2d5f1515252f9c4c522fd9339ea0",
+                            "spanID": "4259e4a20b81770f"
                         }
                     ],
-                    "startTime": 1785929654403000,
-                    "duration": 57329,
+                    "startTime": 1785930617174000,
+                    "duration": 44855,
                     "tags": [
                         {
                             "key": "http.request.method",
@@ -724,12 +230,12 @@
                         {
                             "key": "url.full",
                             "type": "string",
-                            "value": "http://notifier:3001/downstream-immediate"
+                            "value": "http://notifier:3001/fire-and-forget"
                         },
                         {
                             "key": "url.path",
                             "type": "string",
-                            "value": "/downstream-immediate"
+                            "value": "/fire-and-forget"
                         },
                         {
                             "key": "url.query",
@@ -748,13 +254,436 @@
                         }
                     ],
                     "logs": [],
+                    "processID": "p2",
+                    "warnings": null
+                },
+                {
+                    "traceID": "9ece2d5f1515252f9c4c522fd9339ea0",
+                    "spanID": "2d0721c81c1c932d",
+                    "operationName": "GET /fire-and-forget",
+                    "references": [],
+                    "startTime": 1785930617172000,
+                    "duration": 3551,
+                    "tags": [
+                        {
+                            "key": "client.address",
+                            "type": "string",
+                            "value": "172.18.0.1"
+                        },
+                        {
+                            "key": "http.request.method",
+                            "type": "string",
+                            "value": "GET"
+                        },
+                        {
+                            "key": "http.response.status_code",
+                            "type": "int64",
+                            "value": 202
+                        },
+                        {
+                            "key": "http.route",
+                            "type": "string",
+                            "value": "/fire-and-forget"
+                        },
+                        {
+                            "key": "internal.span.format",
+                            "type": "string",
+                            "value": "otlp"
+                        },
+                        {
+                            "key": "network.peer.address",
+                            "type": "string",
+                            "value": "172.18.0.1"
+                        },
+                        {
+                            "key": "network.peer.port",
+                            "type": "int64",
+                            "value": 37888
+                        },
+                        {
+                            "key": "network.protocol.version",
+                            "type": "string",
+                            "value": "1.1"
+                        },
+                        {
+                            "key": "otel.scope.name",
+                            "type": "string",
+                            "value": "@opentelemetry/instrumentation-http"
+                        },
+                        {
+                            "key": "otel.scope.version",
+                            "type": "string",
+                            "value": "0.221.0"
+                        },
+                        {
+                            "key": "server.address",
+                            "type": "string",
+                            "value": "localhost"
+                        },
+                        {
+                            "key": "server.port",
+                            "type": "int64",
+                            "value": 3000
+                        },
+                        {
+                            "key": "span.kind",
+                            "type": "string",
+                            "value": "server"
+                        },
+                        {
+                            "key": "url.path",
+                            "type": "string",
+                            "value": "/fire-and-forget"
+                        },
+                        {
+                            "key": "url.scheme",
+                            "type": "string",
+                            "value": "http"
+                        },
+                        {
+                            "key": "user_agent.original",
+                            "type": "string",
+                            "value": "curl/8.15.0"
+                        }
+                    ],
+                    "logs": [],
+                    "processID": "p2",
+                    "warnings": null
+                },
+                {
+                    "traceID": "9ece2d5f1515252f9c4c522fd9339ea0",
+                    "spanID": "4259e4a20b81770f",
+                    "operationName": "fireAndForget",
+                    "references": [
+                        {
+                            "refType": "CHILD_OF",
+                            "traceID": "9ece2d5f1515252f9c4c522fd9339ea0",
+                            "spanID": "dd71bbb2ce6af27a"
+                        }
+                    ],
+                    "startTime": 1785930617172000,
+                    "duration": 1971,
+                    "tags": [
+                        {
+                            "key": "component",
+                            "type": "string",
+                            "value": "@nestjs/core"
+                        },
+                        {
+                            "key": "internal.span.format",
+                            "type": "string",
+                            "value": "otlp"
+                        },
+                        {
+                            "key": "nestjs.callback",
+                            "type": "string",
+                            "value": "fireAndForget"
+                        },
+                        {
+                            "key": "nestjs.type",
+                            "type": "string",
+                            "value": "handler"
+                        },
+                        {
+                            "key": "nestjs.version",
+                            "type": "string",
+                            "value": "11.1.28"
+                        },
+                        {
+                            "key": "otel.scope.name",
+                            "type": "string",
+                            "value": "@opentelemetry/instrumentation-nestjs-core"
+                        },
+                        {
+                            "key": "otel.scope.version",
+                            "type": "string",
+                            "value": "0.67.0"
+                        },
+                        {
+                            "key": "span.kind",
+                            "type": "string",
+                            "value": "internal"
+                        }
+                    ],
+                    "logs": [],
+                    "processID": "p2",
+                    "warnings": null
+                },
+                {
+                    "traceID": "9ece2d5f1515252f9c4c522fd9339ea0",
+                    "spanID": "2a496ede2e1e7bba",
+                    "operationName": "request handler - /fire-and-forget",
+                    "references": [
+                        {
+                            "refType": "CHILD_OF",
+                            "traceID": "9ece2d5f1515252f9c4c522fd9339ea0",
+                            "spanID": "2d0721c81c1c932d"
+                        }
+                    ],
+                    "startTime": 1785930617172000,
+                    "duration": 3218,
+                    "tags": [
+                        {
+                            "key": "express.name",
+                            "type": "string",
+                            "value": "/fire-and-forget"
+                        },
+                        {
+                            "key": "express.type",
+                            "type": "string",
+                            "value": "request_handler"
+                        },
+                        {
+                            "key": "http.route",
+                            "type": "string",
+                            "value": "/fire-and-forget"
+                        },
+                        {
+                            "key": "internal.span.format",
+                            "type": "string",
+                            "value": "otlp"
+                        },
+                        {
+                            "key": "otel.scope.name",
+                            "type": "string",
+                            "value": "@opentelemetry/instrumentation-express"
+                        },
+                        {
+                            "key": "otel.scope.version",
+                            "type": "string",
+                            "value": "0.69.0"
+                        },
+                        {
+                            "key": "span.kind",
+                            "type": "string",
+                            "value": "internal"
+                        }
+                    ],
+                    "logs": [],
+                    "processID": "p2",
+                    "warnings": null
+                },
+                {
+                    "traceID": "9ece2d5f1515252f9c4c522fd9339ea0",
+                    "spanID": "dd71bbb2ce6af27a",
+                    "operationName": "DownstreamController.fireAndForget",
+                    "references": [
+                        {
+                            "refType": "CHILD_OF",
+                            "traceID": "9ece2d5f1515252f9c4c522fd9339ea0",
+                            "spanID": "2a496ede2e1e7bba"
+                        }
+                    ],
+                    "startTime": 1785930617172000,
+                    "duration": 2628,
+                    "tags": [
+                        {
+                            "key": "component",
+                            "type": "string",
+                            "value": "@nestjs/core"
+                        },
+                        {
+                            "key": "http.request.method",
+                            "type": "string",
+                            "value": "GET"
+                        },
+                        {
+                            "key": "http.route",
+                            "type": "string",
+                            "value": "/fire-and-forget"
+                        },
+                        {
+                            "key": "internal.span.format",
+                            "type": "string",
+                            "value": "otlp"
+                        },
+                        {
+                            "key": "nestjs.callback",
+                            "type": "string",
+                            "value": "fireAndForget"
+                        },
+                        {
+                            "key": "nestjs.controller",
+                            "type": "string",
+                            "value": "DownstreamController"
+                        },
+                        {
+                            "key": "nestjs.type",
+                            "type": "string",
+                            "value": "request_context"
+                        },
+                        {
+                            "key": "nestjs.version",
+                            "type": "string",
+                            "value": "11.1.28"
+                        },
+                        {
+                            "key": "otel.scope.name",
+                            "type": "string",
+                            "value": "@opentelemetry/instrumentation-nestjs-core"
+                        },
+                        {
+                            "key": "otel.scope.version",
+                            "type": "string",
+                            "value": "0.67.0"
+                        },
+                        {
+                            "key": "span.kind",
+                            "type": "string",
+                            "value": "internal"
+                        },
+                        {
+                            "key": "url.full",
+                            "type": "string",
+                            "value": "/fire-and-forget"
+                        }
+                    ],
+                    "logs": [],
+                    "processID": "p2",
+                    "warnings": null
+                },
+                {
+                    "traceID": "9ece2d5f1515252f9c4c522fd9339ea0",
+                    "spanID": "3dbfd19dc1d90207",
+                    "operationName": "fireAndForget",
+                    "references": [
+                        {
+                            "refType": "CHILD_OF",
+                            "traceID": "9ece2d5f1515252f9c4c522fd9339ea0",
+                            "spanID": "0cdccbd2ff860d8a"
+                        }
+                    ],
+                    "startTime": 1785930617177000,
+                    "duration": 40759,
+                    "tags": [
+                        {
+                            "key": "component",
+                            "type": "string",
+                            "value": "@nestjs/core"
+                        },
+                        {
+                            "key": "internal.span.format",
+                            "type": "string",
+                            "value": "otlp"
+                        },
+                        {
+                            "key": "nestjs.callback",
+                            "type": "string",
+                            "value": "fireAndForget"
+                        },
+                        {
+                            "key": "nestjs.type",
+                            "type": "string",
+                            "value": "handler"
+                        },
+                        {
+                            "key": "nestjs.version",
+                            "type": "string",
+                            "value": "11.1.28"
+                        },
+                        {
+                            "key": "otel.scope.name",
+                            "type": "string",
+                            "value": "@opentelemetry/instrumentation-nestjs-core"
+                        },
+                        {
+                            "key": "otel.scope.version",
+                            "type": "string",
+                            "value": "0.67.0"
+                        },
+                        {
+                            "key": "span.kind",
+                            "type": "string",
+                            "value": "internal"
+                        }
+                    ],
+                    "logs": [],
+                    "processID": "p1",
+                    "warnings": null
+                },
+                {
+                    "traceID": "9ece2d5f1515252f9c4c522fd9339ea0",
+                    "spanID": "0cdccbd2ff860d8a",
+                    "operationName": "NotifierController.fireAndForget",
+                    "references": [
+                        {
+                            "refType": "CHILD_OF",
+                            "traceID": "9ece2d5f1515252f9c4c522fd9339ea0",
+                            "spanID": "d3f67f60364af161"
+                        }
+                    ],
+                    "startTime": 1785930617177000,
+                    "duration": 41399,
+                    "tags": [
+                        {
+                            "key": "component",
+                            "type": "string",
+                            "value": "@nestjs/core"
+                        },
+                        {
+                            "key": "http.request.method",
+                            "type": "string",
+                            "value": "GET"
+                        },
+                        {
+                            "key": "http.route",
+                            "type": "string",
+                            "value": "/fire-and-forget"
+                        },
+                        {
+                            "key": "internal.span.format",
+                            "type": "string",
+                            "value": "otlp"
+                        },
+                        {
+                            "key": "nestjs.callback",
+                            "type": "string",
+                            "value": "fireAndForget"
+                        },
+                        {
+                            "key": "nestjs.controller",
+                            "type": "string",
+                            "value": "NotifierController"
+                        },
+                        {
+                            "key": "nestjs.type",
+                            "type": "string",
+                            "value": "request_context"
+                        },
+                        {
+                            "key": "nestjs.version",
+                            "type": "string",
+                            "value": "11.1.28"
+                        },
+                        {
+                            "key": "otel.scope.name",
+                            "type": "string",
+                            "value": "@opentelemetry/instrumentation-nestjs-core"
+                        },
+                        {
+                            "key": "otel.scope.version",
+                            "type": "string",
+                            "value": "0.67.0"
+                        },
+                        {
+                            "key": "span.kind",
+                            "type": "string",
+                            "value": "internal"
+                        },
+                        {
+                            "key": "url.full",
+                            "type": "string",
+                            "value": "/fire-and-forget"
+                        }
+                    ],
+                    "logs": [],
                     "processID": "p1",
                     "warnings": null
                 }
             ],
             "processes": {
                 "p1": {
-                    "serviceName": "booking-api",
+                    "serviceName": "notifier",
                     "tags": [
                         {
                             "key": "host.arch",
@@ -764,7 +693,7 @@
                         {
                             "key": "host.name",
                             "type": "string",
-                            "value": "81ced0f1af1a"
+                            "value": "f5cf644f91d7"
                         },
                         {
                             "key": "process.command",
@@ -814,7 +743,7 @@
                     ]
                 },
                 "p2": {
-                    "serviceName": "notifier",
+                    "serviceName": "booking-api",
                     "tags": [
                         {
                             "key": "host.arch",
@@ -824,7 +753,7 @@
                         {
                             "key": "host.name",
                             "type": "string",
-                            "value": "f5cf644f91d7"
+                            "value": "0a2a7de0b095"
                         },
                         {
                             "key": "process.command",

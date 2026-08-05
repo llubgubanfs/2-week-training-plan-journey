@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
+import { ClsService } from 'nestjs-cls';
 import { Logger } from 'winston';
 
 /**
@@ -22,10 +23,17 @@ import { Logger } from 'winston';
  * a W3C standard header, so the notifier joins the trace without either side
  * agreeing on anything locally.
  *
- * TODO(day-06): x-correlation-id is deliberately NOT forwarded yet. It is our own
- * header and nothing propagates it for free, so the notifier currently mints its
- * own id per request. Whether that is a bug or the correct division of labour is
- * an open question — answer it by looking at a real trace, not on paper.
+ * x-correlation-id IS forwarded, decided Day 6 after seeing the two ids diverge in
+ * a real trace. The receiving half has existed since Day 2 — CORRELATION_ID_HEADERS
+ * already honours an inbound id "so an id assigned upstream survives the hop" — so
+ * only the sending half was ever missing.
+ *
+ * Kept alongside trace_id rather than replaced by it, and the reason is sampling.
+ * Under head sampling every log line still carries a trace_id, but the trace it
+ * names was never exported: pasting it into Jaeger returns nothing. Logs are not
+ * sampled, so correlation_id has no such failure mode. They also cover different
+ * ground — Day 8's cron has a correlation id and, unless it is instrumented, no
+ * span at all.
  */
 @Injectable()
 export class DownstreamService {
@@ -35,7 +43,26 @@ export class DownstreamService {
   constructor(
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
     private readonly config: ConfigService,
+    private readonly cls: ClsService,
   ) {}
+
+  /**
+   * Outbound headers.
+   *
+   * `traceparent` is absent here on purpose — the instrumentation injects it, and
+   * writing it by hand would fight the SDK for ownership of the span context.
+   * This method exists only for the header OTel does not know about.
+   *
+   * Read at call time, not captured in the constructor: ClsService is a singleton
+   * that reads AsyncLocalStorage on each get(), so this returns the id of the
+   * request in flight right now. The fire-and-forget path depends on that — it
+   * builds these headers while the request context is still open, even though the
+   * fetch resolves long after the response has gone out.
+   */
+  private headers(): Record<string, string> {
+    const correlationId = this.cls.get('correlationId');
+    return correlationId ? { 'x-correlation-id': correlationId } : {};
+  }
 
   /**
    * Awaited. The child span opens and closes strictly inside the parent's window,
@@ -51,6 +78,7 @@ export class DownstreamService {
 
     try {
       const res = await fetch(url, {
+        headers: this.headers(),
         signal: AbortSignal.timeout(DownstreamService.TIMEOUT_MS),
       });
       if (!res.ok) {
@@ -95,6 +123,7 @@ export class DownstreamService {
     });
 
     void fetch(url, {
+      headers: this.headers(),
       signal: AbortSignal.timeout(DownstreamService.TIMEOUT_MS),
     })
       .then((res) => {
