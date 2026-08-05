@@ -3,8 +3,13 @@
 > Claude: read this before responding to anything. Update it via `/day-end`.
 > Humans: this is "where am I right now."
 
-**Currently:** Day 5 of 10 ✅ done · next working day Wed 2026-08-05 · **Day 6 distributed tracing**
-**Last updated:** 2026-08-04 (Day 5 closed out)
+**Currently:** Day 6 of 10 ✅ done · next working day Thu 2026-08-06 · **Day 7 waitlist design extension**
+**Last updated:** 2026-08-05 (Day 6 closed out)
+
+> ⚠️ **Day 7 is a System Design day and Day 9 is three working days away.** Three drills are
+> owed and none has been scheduled: `/explain-back` on ALS (gap #5, missed three times),
+> `/explain-back` on cardinality (gap #18), and `/design-drill`. Day 7 is the natural home for
+> at least two of them.
 
 ---
 
@@ -32,8 +37,8 @@ session should re-derive it.
 | 3 | Fri Jul 31 | Metrics & alertable signals | ✅ done |
 | 4 | Mon Aug 3 | Infra: Prometheus + Grafana + Jaeger | ✅ done |
 | 5 | Tue Aug 4 | Integration + EM demo — **recorded** | ✅ done |
-| 6 | **Wed Aug 5** | Distributed tracing | 🔵 next |
-| 7 | Thu Aug 6 | Waitlist design extension | ⬜ |
+| 6 | Wed Aug 5 | Distributed tracing | ✅ done |
+| 7 | **Thu Aug 6** | Waitlist design extension | 🔵 next |
 | 8 | Fri Aug 7 | Silent failure detection | ⬜ |
 | 9 | Mon Aug 10 | **System Design defense — GRADED** | ⬜ |
 | 10 | Tue Aug 11 | Walkthrough + **Observability retest — GRADED** | ⬜ |
@@ -104,10 +109,12 @@ Nothing else — the app compiles inside the image. See `coworking-obs/infra/REA
 | Day 1 baseline recording, `~/Videos/2_week_training_plan_videos/` (155 MB) | outside the repo; referenced in the Day 1 log |
 | Agent memory files | outside the repo. **Deliberately not committed — this repo is public and they hold internal context.** |
 
-**Opportunity, not friction:** `gh` on the new machine has no account attached yet. Authenticating
-as `llubgubanfs` from the start removes the browser-only PR workaround below entirely. The warning
-in `CLAUDE.md` about not switching accounts applies to the *old* machine, where it would disturb
-other projects.
+**~~Opportunity, not friction: `gh` on the new machine has no account attached yet.~~ FALSE —
+corrected Day 6.** Verified directly: `gh auth status` reports *"Logged in to github.com account
+**y4nder** (keyring), Active account: true"*. The browser-only PR workaround below therefore still
+applies on this machine, exactly as it did on the old one. Day 5's note was written from an
+assumption and was never checked. Pushing is unaffected — the remote is SSH via the
+`github-llubgubanfs` host alias, which is a separate identity from `gh`'s.
 
 **Before the Day 5 demo:** do the setup early, not at T-30. A first `docker compose up -d --build`
 takes 2–4 minutes on a cold machine and can fail in new ways. `infra/scripts/verify.sh` exiting 0
@@ -136,7 +143,45 @@ and would affect Leander's other projects — deliberately not done.
 Also: **Day 2's PR link is orphaned.** It lives at `y4nder/…/pull/1` and that repo has no Day 3+
 work. If Harvey was given that link, he needs the new one.
 
-## Carry-over into Day 6
+## Carry-over into Day 7
+
+**Time-sensitive, and it has now slipped twice:**
+
+- [ ] ⚠️ **Three drills owed, none scheduled. Day 9 is Mon Aug 10 — three working days.**
+      `/explain-back` on **ALS** (gap #5, missed three times, `/quiz` has stopped producing new
+      information), `/explain-back` on **cardinality** (gap #18 — held in writing, collapsed on
+      camera), and `/design-drill` for live pressure. Day 7 is a System Design day and is the
+      natural home for at least two. Day 8 alone cannot absorb all three.
+- [ ] ⚠️ **The live-pressure rehearsal from Day 5 still has not happened.** Carried unchanged.
+- [ ] ⚠️ **Winston vs pino** and **why a metric when the log has status and duration** — both
+      uncovered in the recording Harvey watched, both still undrilled. Near-certain Day 10 content.
+
+**New from Day 6:**
+
+- [ ] **`x-correlation-id` is forwarded but nothing tests the receiving half.** The sending side
+      now has four unit tests; that the notifier actually *honours* the inbound header is verified
+      only by having read two log lines. Cheap e2e if Day 8 has room.
+- [ ] **The notifier is still not scraped by Prometheus.** It now runs the metrics middleware and
+      is a real container, so `prometheus.yml`'s comment ("deliberately NOT scraped: it runs no
+      metrics middleware yet") is now false. Either scrape it or update the comment — a stale
+      justification in a config file is worse than none.
+- [ ] **Tracing has no sampling configured.** `parentbased_always_on` records 100% of requests,
+      which is right at this volume and wrong at any real one. The README leans on head sampling
+      to justify keeping `correlation_id`, so the argument is understood but unexercised.
+- [ ] **No span is emitted for the fire-and-forget failure path in a way anything can alert on.**
+      Confirmed today: the failure logs 729 ms after a 202 and nothing counts it. Day 8's subject,
+      now with a working reproduction on this stack.
+
+**Closed on Day 6:**
+
+- [x] ✅ **The downstream call exists.** `NOTIFIER_URL` had pointed at a service with no container
+      since Day 2, read by no code. Both halves now real.
+- [x] ✅ **`trace_id` and `span_id` in every log line** — the item `CLAUDE.md` names as the
+      highest-signal Day 10 content. Verified: the id in the log matches the Jaeger trace id.
+- [x] ✅ **Gap #1 (what a trace is) addressed by building it.** Re-ask before Day 10; probed at
+      the start of today and answered at half credit.
+
+## Carry-over that was open into Day 6
 
 **The one that is time-sensitive, and it is not technical:**
 
@@ -172,7 +217,7 @@ work. If Harvey was given that link, he needs the new one.
 - [ ] **No `/health` endpoint.** The container healthcheck hits `/metrics`, which renders the entire registry every 10s. Day 8, alongside graceful shutdown.
 - [ ] **`nodejs_eventloop_lag_p99_seconds` is exposed and unused.** The signal that registered saturation when the in-flight gauge could not (sub-ms idle → 10.5 ms under load). Not on the dashboard. Cheap ninth panel.
 - [ ] **Nothing demonstrates a partial outage below 1 req/s** — the `HighErrorRatio` denominator guard gives that up by design. Day 8's absence-of-success work.
-- [ ] **No test covers the middleware ordering or the `/metrics` exclusion.** Both were verified by running the stack and reading output. Invisible to `tsc` *and* to the 5 unit tests — the same shape as Day 2's bug #1. A Day 10 question about preventing regression has no good answer today.
+- [ ] **No test covers the middleware ordering or the `/metrics` exclusion.** Both were verified by running the stack and reading output. Invisible to `tsc` *and* to the unit tests — the same shape as Day 2's bug #1. **Partially answered Day 6:** `DownstreamService` now has four tests covering correlation-id forwarding, the no-context case, and the fire-and-forget `.catch()`. Suite went 5 → 11. Middleware ordering and the `/metrics` exclusion are still uncovered, so the Day 10 answer is better than it was but not yet complete.
 
 ---
 
@@ -193,7 +238,7 @@ Added Day 2 (ALS vs nestjs-cls review):
 
 | # | Gap | Answer given | Reality | Addressed |
 |---|---|---|---|---|
-| 5 | **Why context survives an `await`** | "it has its own managed storage during request time" | Restates the API, not the mechanism. The store attaches to the **async resource** created at the await point, via `async_hooks`' `init` hook — each in-flight request holds its own reference, so there is no shared slot to overwrite. He can explain why a module-level `let` *fails*, not why ALS *works*. Also said Node is "single-threaded by default" — there is no non-default; `worker_threads` are separate isolates. | ⚠️ re-missed Day 3 (2nd) — `/explain-back` required |
+| 5 | **Why context survives an `await`** | "it has its own managed storage during request time" | Restates the API, not the mechanism. The store attaches to the **async resource** created at the await point, via `async_hooks`' `init` hook — each in-flight request holds its own reference, so there is no shared slot to overwrite. He can explain why a module-level `let` *fails*, not why ALS *works*. Also said Node is "single-threaded by default" — there is no non-default; `worker_threads` are separate isolates. | ⚠️ re-missed Day 3 (2nd) and **Day 6 (3rd, under a vocabulary ban)** — `/explain-back` now owed, `/quiz` has stopped producing new information on this one |
 | 6 | **"Where is the correlation id created?"** | "at module level" (`ClsModule.forRoot`) | That is where it is **configured**. It is **created** per-request by the `idGenerator` inside the mount middleware. Config site ≠ creation site — a one-question-deep answer, and Day 10 is a follow-up format. | ✅ **closed Day 3** — answered "in the middleware" unprompted |
 | 7 | **Background work needs its own identity** | inheriting the originating `request_id` is enough | Necessary but not sufficient. A fire-and-forget that fails at t+30s logs the id of a request that returned 201 at t+0 — the correlation is intact and the alert is still useless. Needs a countable signal you can alert on the **absence** of. Same shape as gap #3 and as the Day 8 cron. | Day 8 |
 | 8 | **`res.on('finish')` semantics** | assumed the completion line always fires, so a client abort still yields 3 log lines | `'finish'` fires only when `end()` has been called *and* all data is flushed. A client that disconnects mid-response never satisfies it — Node emits `'close'` instead, which nothing listens for. So an aborted request logs **2** lines, not 3, and the completion line silently vanishes. Got there after being pointed at the event name, not unaided. | ✅ **closed Day 3** — produced the 2-lines answer unaided, then fixed the code |
@@ -310,6 +355,69 @@ duration"* was mentioned. They were deliberately left unscripted precisely becau
 own them, and the recording confirms he still does not. Harvey has now watched a walkthrough
 where neither was addressed, which makes them the obvious follow-ups. See gaps **#4** (the
 query-time vs write-time half, re-missed twice) and the Winston row below.
+
+**Day 6 warm-up quiz (3 questions, ~0.5 / 3 — weakest round so far, and the reasons are useful).**
+
+- **Q1 — "I do not know", and that is the correct output.** Asked why one root cause (SELinux
+  labelling) made Prometheus crash-loop loudly and Grafana fail silently, he declined rather than
+  constructing a plausible story. **This is the direct inverse of gap #16** and the second
+  consecutive session showing that instinct (Day 5: catching three factual errors in his own
+  script). Answer given: Prometheus's config is a *hard dependency* — no config, no process, so it
+  exits and the restart policy makes it loud; Grafana's provisioning is a *startup scan of a
+  directory allowed to be empty*, and to a scan that does not check permissions **unreadable is
+  indistinguishable from empty**. Rule extracted: loud when the failed thing is a hard dependency,
+  silent when it is an optional step whose empty result equals its skipped result. Same family as
+  **#3**, **#7**, **#17** — reinforce on Day 8.
+- **#5 RE-MISSED (3rd time). Escalating from `/quiz` to `/explain-back`.** Asked with "context",
+  "store" and "isolated" banned, he opened with *"creates dedicated execution context"* — the
+  banned word in the first six words. Two active errors: **"bounded by its request id"** (the id is
+  a value *inside*, it keys nothing) and **"a global registry is being tracked"** (no registry can
+  exist — a registry implies a lookup, and a lookup requires the caller to already know the id,
+  which is precisely what a deep callee does not have). The rest described **the event loop** —
+  i.e. the hazard, not the guard. He can now explain why a module-level `let` fails; he still
+  cannot explain why ALS does not. One genuine gain: **"stored in the heap"** — the exact word he
+  got wrong on Day 4 about metrics, now transferred. Mechanism handed over for the third time (the
+  store reference is *copied onto the async resource at creation* and made active when its callback
+  runs — the value rides the pending work, there is no shared slot). **Not creditable until
+  produced unprompted. `/explain-back` on ALS is now owed alongside the one on cardinality.**
+  Note the lever: the vocabulary ban is what broke #4 open, and it worked here too — it exposed
+  the restatement in one sentence instead of three exchanges.
+- **#1 probed before the build — half.** Asked what a `trace_id` answers that a `correlation_id`
+  cannot, he offered log ordering and "processes across multiple services". Neither
+  discriminates: `correlation_id` already crosses services via `x-correlation-id`, and timestamps
+  already give order. Missing concept: **membership vs structure** — a flat id yields a *set*,
+  while `span_id` + `parent_span_id` + duration yields a *tree*, and parentage cannot be inferred
+  from timestamps (overlapping spans may be concurrent siblings; non-overlapping ones may be
+  unrelated). Secondary: W3C `traceparent` is a *standard*, so uninstrumented libraries and
+  third-party services join the trace without agreeing a header name. **This is today's build —
+  re-ask at day-end and only credit if produced unprompted.**
+
+| # | Gap | Evidence | Reality | Addressed |
+|---|---|---|---|---|
+| 19 | **Answers an adjacent question with correct content** | Three instances in one morning, Day 6. (1) Asked what physically holds a value across an `await` → described the event loop. (2) Asked what in the code decides an outcome → reached for the absence-of-signal theme. (3) Asked what **decides** a full vs empty trace → gave an accurate, unprompted account of how the HTTP instrumentation works. | **Not a knowledge gap — (3) was correct material.** The failure is upstream of the content: the answer is never checked against the question before he commits to it. The cheap diagnostic he was given: *a constant cannot explain a variable* — if the question is "what decides", the answer must be something that **differs** between the cases, and the instrumentation is byte-identical in all five scenarios. **This is gap #11 from the baseline session seen from a new angle** ("how does this scale?" answered with a data model) — and #11 is graded on Day 9. The Day 1 instance was read as not knowing the answer; three instances on topics he *did* know show the real mechanism is question-tracking, not knowledge. Closely related to **#9** (loses the prompt under load). | **drill: read the question back aloud before answering, on Days 7, 9 and 10.** "You're asking what *decides* — so I need to name something that varies." |
+
+**Day 6 build session — Q1 drill on span export (interactive artifact).**
+
+- **Instrumentation mechanism acquired, unprompted by the end.** Produced "the SDK patches
+  `http.request`, creates the client span, then attaches listeners for error/close/response"
+  without being led there. He did not have this at the start of the day.
+- **The corrected rule he now owns:** a span reaches Jaeger when it is ended **and** its batch is
+  flushed — two gates that fail independently. The rule first handed to him ("exported when
+  `end()` is called") was incomplete, and his wrong answer to Q1(a) followed validly from it.
+  Worth repeating as technique: **the miss was caused by a bad premise, and saying so mattered
+  more than marking it wrong.**
+- **Cut 1 vs cut 2 separated.** Never-ended (one span lost, only reachable by hand-rolling
+  instrumentation with `end()` on the happy path) vs died-before-flush (the whole buffer lost,
+  including healthy requests). He asked whether the artifact's "no handler" control meant a
+  hand-rolled span — it did not, and **the control's copy was genuinely ambiguous**. He found a
+  real inconsistency by reading carefully rather than assuming he had misunderstood. **Second
+  instance today of the inverse of gap #16**, after the honest "I do not know" on Q1.
+- **Ownership rule established:** whoever calls `startSpan()` calls `end()`, and for hand-rolled
+  spans it goes in `finally`, never `catch` — `end()` in the catch loses the *success* path.
+  Auto-instrumented spans need no code from him at all.
+- **Day 8 connection made early:** an abrupt exit loses the batch buffer, so `sdk.shutdown()` /
+  `app.enableShutdownHooks()` is now justified twice over — the same lesson as Day 2's `tini`
+  fix seen from the exporter's side. Reinforces the existing graceful-shutdown carry-over.
 
 **Day 3 build session — gaps #4 and #8 both closed.**
 
@@ -598,3 +706,80 @@ learned today.
 
 **Time:** most of the day went on the machine migration and the three fixes; the recording
 itself was late afternoon.
+
+### Day 6 — Wed Aug 5 ✅
+**Objective:** instrument the sample service plus one downstream call with OpenTelemetry and
+export the trace to the Jaeger running since Day 4.
+
+**Deliverable — verified on disk and committed:**
+
+| Evidence | Path |
+|---|---|
+| PR | [#3](https://github.com/llubgubanfs/2-week-training-plan-journey/pull/3) → branch `day-06-distributed-tracing`, 7 commits, 24 files |
+| Jaeger trace, awaited hop | `deliverables/day-06/jaeger-trace-immediate.jpg` |
+| Jaeger trace, fire-and-forget | `deliverables/day-06/jaeger-trace-fire-and-forget.jpg` |
+| Both traces as data | `deliverables/day-06/trace-immediate.json`, `trace-fire-and-forget.json` |
+| Log lines with `trace_id` across both services | `deliverables/day-06/correlated-log-with-trace.jsonl` |
+| Reasoning | `deliverables/day-06/README.md`, `journal/day-06-distributed-tracing.md` |
+
+Re-verified at day-end by running `infra/scripts/verify.sh` against the live stack: **all checks
+pass**, including its own Day 6 assertion — *"booking-api is exporting spans — Day 6 has landed"*
+— which was written on Day 4 and had never been true before today.
+
+Done:
+- [x] Notifier containerised and put on the `obs` network. **`NOTIFIER_URL` had pointed at a
+      service with no container since Day 2, and no code read it** — both halves of the hop were
+      missing, and the plan's prereq chip for Day 6 does not mention it.
+- [x] Two endpoints on each side differing in exactly one variable — whether the call is awaited
+- [x] OTel SDK, auto-instrumentation, OTLP/HTTP export to Jaeger
+- [x] `trace_id` + `span_id` in the Winston formatter
+- [x] `x-correlation-id` forwarded — Leander's call, taken from evidence
+- [x] Span volume tuned 38 → 9 after root-causing
+- [x] Unit suite repaired and extended, 5 → 11 tests
+
+**The day's real content was the fire-and-forget drill, and it ran before any code was written.**
+An interactive artifact modelling the span lifecycle — three switches, five outcomes — was used
+to work out what Jaeger shows when a not-awaited call fails. The rule he was first given ("a span
+is exported when `end()` is called") was **incomplete, and his wrong answer followed validly from
+it**. The corrected rule: a span reaches Jaeger when it is ended **and** its batch is flushed —
+two gates that fail independently. Auto-instrumentation closes the first; only catching the
+rejection closes the second, because an unhandled rejection kills the process and
+`BatchSpanProcessor` loses the whole buffer, including the parent span of a request that returned
+a healthy 202. Saying "the premise was bad" mattered more than marking the answer wrong.
+
+**Two findings that each could have cost the afternoon, both caught by checking rather than
+assuming:**
+
+1. **The build is webpack.** `"webpack": true` produces a single 35 KB `dist/main.js`, and
+   bundled modules are invisible to OTel's require hooks. Read the emitted output first:
+   `module.exports = require("@nestjs/core")` — Nest marks `node_modules` as externals, so every
+   dependency is still a real runtime require. Fine, but only because it was checked.
+2. **The span noise was not Express.** 26 of 38 spans were middleware; configuring
+   `instrumentation-express` removed only half. The survivors carried
+   `otel.scope.name: @opentelemetry/instrumentation-router`. **Express 5 moved its router into a
+   standalone package with its own instrumentation**, so every middleware and route handler was
+   being recorded twice by two instrumentations unaware of each other. Diagnosed from span tags,
+   not from a second guess.
+
+**A test broken by his own change, caught by the suite.** Adding a logger to `NotifierService`
+made the winston token unresolvable in its spec; every test in that file failed at `compile()`.
+Invisible to `tsc` and to eslint. This is the mirror image of the standing carry-over — the suite
+caught a real DI regression that static analysis could not — and it prompted four new tests on
+the part of the hop that *can* break silently.
+
+**The decision of the day: forward `x-correlation-id`, keep it alongside `trace_id`.** Taken
+after seeing the two ids diverge in a real trace rather than reasoning about it on paper. Only
+the sending half was ever missing — `CORRELATION_ID_HEADERS` has honoured an inbound id since
+Day 2, commented "so an id assigned upstream survives the hop". The strongest justification, and
+the one to have ready for Day 10, is **sampling**: under head sampling a log line still carries a
+`trace_id` whose trace was never exported, so pasting it into Jaeger returns nothing; logs are
+not sampled.
+
+**Checks at close:** `typecheck` clean · `lint` 0/0 · unit **11/11** (4 suites) · e2e 5+1 both
+apps · `build` passes both apps · `verify.sh` fully green · working tree clean apart from journal
+files.
+
+**Time:** ran long on the warm-up drill — the Q1 artifact and the discussion around it took the
+best part of the morning. Judged worth it: gap #1 is Day 10 retest content and the export
+mechanism is now owned. The cost was that Q2 and Q3 had to be answered against a running stack in
+the afternoon rather than in the quiz slot, which turned out better anyway.

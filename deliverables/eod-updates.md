@@ -165,6 +165,80 @@ merits and should be presented that way on Day 10, not as an oversight.
 ```
 # What I did today
 
+- Distributed tracing is now live across both services. One request produces one
+  trace spanning booking-api and the notifier, exported to the Jaeger that has
+  been in the stack since Day 4. Every log line now carries trace_id and span_id
+  too, so the id in a log matches the trace in Jaeger.
+
+- The downstream call this day depends on did not exist. NOTIFIER_URL had been in
+  the environment since Day 2 pointing at a service that was never containerised,
+  and no code read it. Built both halves first.
+
+- Built the call two ways, awaited and fire-and-forget, so the failure behaviour
+  can be compared. With the notifier stopped, the awaited one returns 503; the
+  fire-and-forget one returns 202 and only logs the failure 729ms later, after the
+  client was already told it succeeded. Nothing can alert on that today, which is
+  the Day 8 problem.
+
+- Reduced spans from 38 per request to 9. Two instrumentations were recording the
+  same middleware twice without knowing about each other.
+
+- Broke one of my own tests by adding a logger, and only the test run caught it.
+  Used that as a prompt to cover the new code that can fail silently. Unit tests
+  went from 5 to 11.
+
+---
+
+# What I will be doing the next working day
+
+- Day 7: extend my Day 1 design with a real-time waitlist, so a desk freed up
+  early reallocates to the next member without double-booking during the handoff.
+- Deliverable: updated Excalidraw diagram and written notes.
+- Also rehearsing explaining a design out loud under time pressure, ahead of Day 9.
+```
+
+</details>
+
+<details>
+<summary>Chat with Harvey, as sent</summary>
+
+```
+Hi Sir Harvey,
+
+Noted on Rocks — Day 3's status report is in there.
+
+Day 3 PR (Metrics & Alertable Signals):
+https://github.com/llubgubanfs/2-week-training-plan-journey/pull/1
+
+Note the repo moved from my personal account to the company account, so this
+link is on a different org than the Day 2 one.
+
+Docs in the repo, if useful:
+- deliverables/day-03/alerting-note.md — the alert I'd wire off this data and
+  why the obvious threshold is wrong in both directions
+- deliverables/day-03/metrics-scrape.txt — actual scrape output
+
+Thanks!
+```
+
+**Cut before sending:** a paragraph asking for a decision on `correlation_id` vs the plan's
+`request_id`. It had been raised at Day 2 EOD and gone unanswered; removing it from the Day 3
+message means it was never asked a second time. Treated from here as a **decision taken**, not a
+pending question — see the Decisions table in `STATUS.md`. The rationale is defensible on its own
+merits and should be presented that way on Day 10, not as an oversight.
+
+</details>
+
+---
+
+## Day 4 — Mon 3 Aug 2026 · Infrastructure: Prometheus + Grafana + Jaeger
+
+<details>
+<summary>Rocks — Daily Status Report</summary>
+
+```
+# What I did today
+
 - Built the Day 4 stack: Prometheus, Grafana, Jaeger and the booking service in Docker
   Compose. Prometheus scrapes the /metrics endpoint from Day 3, Grafana renders it, and
   Jaeger runs a day early so Day 6's tracing has an export target. Reused for the rest of
@@ -318,3 +392,97 @@ re-raised with today's runtime as a concrete data point rather than as an abstra
 takes and then edited, so the agreed single-take live-pressure rehearsal did not happen. That is
 a training gap for Day 9, not a delivery caveat — the artefact he asked for is complete and
 accurate.
+
+---
+
+## Day 6 — Wed Aug 5 · Distributed Tracing
+
+<details>
+<summary>Rocks — Daily Status Report</summary>
+
+```
+# What I did today
+
+- Distributed tracing is live across both services. One request now produces one
+  trace spanning booking-api and the notifier, joined by the W3C traceparent
+  header and exported to the Jaeger that has been in the stack since Day 4. Every
+  log line now also carries trace_id and span_id, so the id in a log line is the
+  same id as the trace: finding a slow trace and pulling every log line from every
+  service that took part is one query.
+
+- The downstream call this day depends on did not exist. NOTIFIER_URL has been in
+  the environment since Day 2 pointing at a service that had never been
+  containerised, and no code read it. Built both halves before starting on the
+  tracing itself.
+
+- Built the two calling conventions side by side so their failure behaviour is
+  directly comparable. With the notifier stopped, the awaited call returns 503 and
+  tells the caller; the fire-and-forget call returns 202 in 2.6ms and its failure
+  logs 729ms later, after the client has already been told it succeeded. The
+  correlation is perfectly intact and still nothing can alert on it, because a log
+  line is a record and not a signal. That is the Day 8 problem with a working
+  reproduction on the stack.
+
+- Cut spans from 38 per request to 9. Turning off the Express middleware spans
+  removed only half of them; the rest carried a different instrumentation's name
+  in their tags. Express 5 moved its router into a standalone package with its own
+  instrumentation, so every middleware and route handler was being recorded twice
+  by two instrumentations unaware of each other. Found by reading the span tags
+  rather than guessing a second time.
+
+- Fixed a test I broke, and took it as a prompt. Adding a logger to the notifier's
+  service made its spec fail to compile, which the type checker and the linter both
+  missed and only the test run caught. Used that to cover the part of the new code
+  that can break silently: if the correlation header stops being forwarded nothing
+  fails, both services keep working, and the ids simply stop matching. Unit tests
+  went from 5 to 11.
+
+---
+
+# What I will be doing the next working day
+
+- Day 7: extend my Day 1 system design with a real-time waitlist, so a desk that
+  frees up early reallocates to the next waitlisted member without ever
+  double-booking during the handoff.
+- Deliverable: updated Excalidraw diagram plus written notes on the extension.
+- Also using the day to rehearse explaining a design out loud under time pressure,
+  ahead of the Day 9 live session.
+```
+
+</details>
+
+<details>
+<summary>Chat with Harvey</summary>
+
+```
+Hi Sir Harvey,
+
+Day 6 status report is in Rocks.
+
+PR — distributed tracing across both services:
+https://github.com/llubgubanfs/2-week-training-plan-journey/pull/3
+
+Jaeger screenshots, trace exports and the reasoning behind the decisions:
+deliverables/day-06/README.md
+
+Thanks!
+```
+
+</details>
+
+**Nothing needed a decision from him today**, so the chat message is only the PR link and a
+pointer to the committed doc. The Day 10 format question from Day 4 is still unanswered but was
+re-raised yesterday — asking again 24 hours later would read as chasing rather than as needing it.
+
+**Every number in the Rocks entry is measured, not estimated:** 38 → 9 spans, 2.6 ms, 729 ms,
+5 → 11 tests. The two items reported voluntarily are the missing downstream call — a prereq gap
+the plan itself does not flag — and the test broken by his own change. Both read better
+volunteered than found.
+
+**Cut from the draft to keep the entry to the house length:** the `x-correlation-id` forwarding
+decision and its sampling rationale. It is the best reasoning of the day but it is design detail,
+and it lives in the PR and in `deliverables/day-06/README.md` where Harvey can reach it. Rocks
+carries the narrative, not the whole argument.
+
+**Not said to Harvey, deliberately, and recorded in STATUS.md:** three drills are now owed before
+Day 9 and none has been scheduled. That is training-plan hygiene, not delivery status.
