@@ -10,110 +10,131 @@ sample service and the downstream call.
 
 ## Evidence
 
-| File | What it proves |
+| File | What it shows |
 |---|---|
-| `jaeger-trace.png` | The asked-for artifact: one trace, two services, in the UI |
-| `trace-export.json` | The same trace as data — greppable and diffable, following the Day 3 precedent of committing the scrape text rather than only a picture |
-| `correlated-log-with-trace.jsonl` | Log lines from **both** services carrying the same `trace_id` as that trace |
+| `jaeger-trace-immediate.png` | The asked-for artifact — `GET /downstream-immediate`, 2 services, 10 spans |
+| `jaeger-trace-fire-and-forget.png` | The same hop not awaited, and the child span outliving its parent |
+| `trace-immediate.json` | Trace `d505e96a…` as data — greppable and diffable, following Day 3's precedent of committing the scrape text rather than only a picture |
+| `trace-fire-and-forget.json` | Trace `fce6c47e…` as data |
+| `correlated-log-with-trace.jsonl` | Log lines from **both** services carrying one shared `trace_id` and one shared `correlation_id` |
 
-## The trace
+The two JSON exports are the same traces as the two screenshots. The log capture is a third,
+later request — the log buffer had already rotated past the screenshot traces, and reusing a
+different trace's ids would have been a nicer-looking file that did not correspond to anything.
 
-`c6532bb5d91b2029270932705e10a940` — `GET /downstream-immediate`, 10 spans across two services:
+## 1 — Awaited: `GET /downstream-immediate`
+
+Trace `d505e96ac94d472965c016f32dd9a702` · **49.93 ms** · 2 services · depth 9 · 10 spans
 
 ```
-+  0.0ms  booking-api  GET /downstream-immediate                 74.9ms
-+  3.0ms  booking-api  request handler - /downstream-immediate   73.5ms
-+  3.0ms  booking-api  DownstreamController.callImmediate        71.6ms
-+  3.0ms  booking-api  callImmediate                             70.6ms
-+ 13.0ms  booking-api  GET                                       57.3ms   ← the hop
-+ 14.0ms  booking-api  tcp.connect                                1.2ms
-+ 22.0ms  notifier     GET /downstream-immediate                 45.2ms   ← other process
-+ 24.0ms  notifier     request handler - /downstream-immediate   43.7ms
-+ 25.0ms  notifier     NotifierController.downstreamImmediate    42.3ms
-+ 25.0ms  notifier     downstreamImmediate                       41.1ms
+booking-api  GET /downstream-immediate                       49.93ms
+  booking-api  request handler - /downstream-immediate
+    booking-api  DownstreamController.callImmediate
+      booking-api  callImmediate
+        booking-api  GET                                     45.55ms   ← the hop
+          notifier  GET /downstream-immediate                42.99ms   ← other process
+            notifier  request handler - /downstream-immediate  42.42ms
+              notifier  NotifierController.downstreamImmediate 41.74ms
+                notifier  downstreamImmediate                 40.83ms
+  booking-api  tcp.connect                                     1.02ms
 ```
 
-The 12 ms between the client span opening (`+13`) and the server span opening (`+22`) is DNS,
-connect and transit — time that exists in no single service's own logs. Recovering it is
-the thing a trace does that a correlation id cannot.
+The textbook shape: every child opens and closes strictly inside its parent's window.
 
-## Two calling conventions, deliberately
+The interesting number is the gap. The client span runs 45.55 ms, the server span it caused
+runs 42.99 ms — so **~2.5 ms is neither service's own work.** It is DNS, connect and transit,
+and it appears in no single service's logs. Recovering time that belongs to the *space between*
+services is the thing a trace does that a shared id cannot.
 
-`booking-api` calls the notifier two ways, differing in exactly one variable — whether the
-outbound call is awaited.
+## 2 — Not awaited: `GET /fire-and-forget`
+
+Trace `fce6c47e8e2e88f265b7e22e35d9e1bc` · **50.12 ms** · 2 services · depth 9 · 9 spans
+
+```
+booking-api  GET /fire-and-forget                             4.14ms   ← what the client saw
+  booking-api  request handler - /fire-and-forget             3.67ms
+    booking-api  DownstreamController.fireAndForget           2.66ms
+      booking-api  fireAndForget                              1.59ms
+        booking-api  GET                                     47.96ms   ← runs on past all of it
+          notifier  GET /fire-and-forget                     43.79ms
+            notifier  request handler - /fire-and-forget     42.94ms
+              notifier  NotifierController.fireAndForget     42.12ms
+                notifier  fireAndForget                      41.09ms
+```
+
+**The client's request took 4.14 ms. The trace is 50.12 ms.**
+
+Twelve times longer than anything the caller could observe, and in the UI the root span is a
+stub at the far left while its own child runs the full width of the timeline. A child bar
+extending past the right edge of its parent looks like a rendering fault the first time you
+see it. It is not — it is what fire-and-forget means, drawn accurately.
+
+### Why both endpoints exist
+
+They differ in exactly one variable, so the failure behaviour can be compared:
 
 | | awaited | fire-and-forget |
 |---|---|---|
-| Endpoint | `GET /downstream-immediate` | `GET /fire-and-forget` |
-| Status | 200 | **202** |
+| Status, healthy | 200 | **202** |
 | Notifier stopped | **503** after 3 s | **202** in 2.6 ms |
-| Waterfall | child nested inside parent | **child outlives parent** |
-
-The fire-and-forget trace, measured:
-
-```
-booking-api  GET /fire-and-forget     4.1ms      ← parent ends here
-booking-api  GET  (outbound)         48.0ms      ← child runs on to +50ms
-```
-
-A child span extending past the right edge of its parent looks like a rendering fault the
-first time you see it. It is not — it is what fire-and-forget means, drawn accurately.
+| Who learns about a failure | the caller | nobody |
 
 With the notifier stopped, the failure logged **729 ms after the client had already been told
-202**. The correlation is perfectly intact and the alert value is still zero: nothing counts,
-so nothing can be alerted on. That is Day 8's subject, arriving with a working example.
+202**. The correlation is perfectly intact and the alerting value is still zero: a log line is
+a record, not a signal — nothing counts, so nothing can threshold, and finding it requires
+already suspecting it. Detection has to key on the **absence of an expected success**. That is
+Day 8's subject, and it now has a working example on this stack.
 
-## `trace_id` in every log line
+## 3 — `trace_id` in every log line
 
-The highest-signal item here. Six lines for the trace above, across two processes:
-
-```
-booking-api  trace_id c6532bb5d91b2029…  correlation_id 90e8f9de…  request received
-booking-api  trace_id c6532bb5d91b2029…  correlation_id 90e8f9de…  calling notifier
-booking-api  trace_id c6532bb5d91b2029…  correlation_id 90e8f9de…  request completed
-notifier     trace_id c6532bb5d91b2029…  correlation_id 37d11fa0…  request received
-notifier     trace_id c6532bb5d91b2029…  correlation_id 37d11fa0…  notifier: handling…
-notifier     trace_id c6532bb5d91b2029…  correlation_id 37d11fa0…  request completed
-```
-
-**Same `trace_id` on both sides. Two different `correlation_id`s.**
-
-That difference is what `traceparent` buys. It is a W3C standard header, injected by the
-instrumentation on every outbound request and read on every inbound one, so the notifier
-joined the trace without either service agreeing on anything locally. `x-correlation-id` is
-ours — nothing propagates it for free.
-
-### The decision that came out of seeing that
-
-**Forward `x-correlation-id`, and keep it alongside `trace_id`.** Measured after the change,
-same request, both services:
+The highest-signal item here. One request, six lines, two processes:
 
 ```
-booking-api  trace_id 9ece2d5f151525…  correlation_id 1d970d79…  request received
-booking-api  trace_id 9ece2d5f151525…  correlation_id 1d970d79…  calling notifier
-booking-api  trace_id 9ece2d5f151525…  correlation_id 1d970d79…  request completed
-booking-api  trace_id 9ece2d5f151525…  correlation_id 1d970d79…  notifier accepted…
-notifier     trace_id 9ece2d5f151525…  correlation_id 1d970d79…  request received
-notifier     trace_id 9ece2d5f151525…  correlation_id 1d970d79…  notifier: handling…
-notifier     trace_id 9ece2d5f151525…  correlation_id 1d970d79…  request completed
+booking-api  trace_id 0c05f9cf9c…  correlation_id 81d9c1f9…  request received
+booking-api  trace_id 0c05f9cf9c…  correlation_id 81d9c1f9…  calling notifier
+booking-api  trace_id 0c05f9cf9c…  correlation_id 81d9c1f9…  request completed
+notifier     trace_id 0c05f9cf9c…  correlation_id 81d9c1f9…  request received
+notifier     trace_id 0c05f9cf9c…  correlation_id 81d9c1f9…  notifier: handling immediate call
+notifier     trace_id 0c05f9cf9c…  correlation_id 81d9c1f9…  request completed
 ```
 
-Only the *sending* half was ever missing. `CORRELATION_ID_HEADERS` has honoured an inbound
-id since Day 2, with a comment saying "so an id assigned upstream survives the hop" — the
-notifier had been ready for four days.
+Find a slow trace in Jaeger, copy its id, and every log line from every service that took part
+is one query away.
 
-Why keep both rather than drop one now that `trace_id` crosses the boundary for free:
+**Both ids are shared, and they get there by different routes.** `traceparent` is a W3C
+standard header injected by the instrumentation — the notifier joined the trace without either
+service agreeing on anything locally. `x-correlation-id` is ours and nothing propagates it for
+free, so booking-api forwards it explicitly.
+
+Before that forwarding existed, the same request produced one `trace_id` and **two different**
+`correlation_id`s. Seeing that divergence in a real trace is what prompted the decision.
+
+### Why keep both, now that `trace_id` crosses for free
 
 - **Sampling.** Under head sampling a log line still carries a `trace_id`, but the trace it
   names was never exported — paste it into Jaeger and get nothing. Logs are not sampled, so
   `correlation_id` has no equivalent failure mode.
-- **They cover different ground.** Day 8's cron has a correlation id and a
-  `context_type: job`; unless it is instrumented it has no span, and therefore no trace id.
+- **They cover different ground.** Day 8's cron has a correlation id and `context_type: job`;
+  unless it is instrumented it has no span, and therefore no trace id at all.
 
-Note the fourth line above: `notifier accepted fire-and-forget` is logged *after* the
-response has gone out, and still carries the id. The headers are read at call time from
-`ClsService`, which reads AsyncLocalStorage per call — the same mechanism, and the same Day 2
-decision, still paying out.
+Only the *sending* half was ever missing. `CORRELATION_ID_HEADERS` has honoured an inbound id
+since Day 2, with a comment reading "so an id assigned upstream survives the hop" — the
+notifier had been ready for four days.
+
+## Notes on what was tuned, and why
+
+- **38 spans → 9.** One request initially produced 38 spans, 26 of them Express middleware.
+  Turning off the express middleware layers removed only half; the survivors carried
+  `otel.scope.name: @opentelemetry/instrumentation-router`. Express 5 moved its router into a
+  standalone package with its own instrumentation, so every middleware and route handler was
+  being recorded **twice** by two instrumentations unaware of each other. Diagnosed by reading
+  span tags, not by guessing a second time.
+- **`/metrics` excluded from tracing.** Prometheus scrapes every 15 s and the healthcheck hits
+  it every 10 s — ~14,000 traces a day against zero users, burying the real ones. Same
+  exclusion as Day 3 made for metrics and Day 5 for logs, in a third currency.
+- **SDK started from a side-effecting first import.** Instrumentation patches modules as they
+  load and imports are hoisted, so `startTracing()` as the first *statement* is already too
+  late — it produces an empty Jaeger with no error at all.
 
 ## Reproducing
 
