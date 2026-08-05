@@ -1,4 +1,10 @@
 # unrs-resolver is a native binding used by eslint-import-resolver-typescript.
 # Approved explicitly so `pnpm install` exits 0 in CI and Docker builds.
+#
+# protobufjs arrives transitively with the OTel packages (Day 6). Denied rather
+# than approved: we export over OTLP/HTTP+JSON, so nothing here ever touches the
+# protobuf codec, and an unapproved build script leaves `pnpm install` exiting 1
+# — which breaks the Docker build, not just the local one.
 allowBuilds:
+  protobufjs: false
   unrs-resolver: true

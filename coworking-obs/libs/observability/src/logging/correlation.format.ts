@@ -1,3 +1,4 @@
+import { isSpanContextValid, trace } from '@opentelemetry/api';
 import { ClsService } from 'nestjs-cls';
 import { format, Logform } from 'winston';
 
@@ -28,6 +29,31 @@ export const correlationFormat = (cls: ClsService): Logform.Format =>
       info.correlation_id = correlationId;
     }
     info.context_type = cls.get('contextType') ?? 'system';
+
+    // Day 6. The line that turns three separate tools into one investigation:
+    // find a slow trace in Jaeger, copy its id, and every log line from every
+    // service that took part is one query away.
+    //
+    // Read from the active span rather than from CLS. Both ride AsyncLocalStorage
+    // — OTel keeps its own store — but the span context is the one that survives
+    // the process boundary, because instrumentation injects W3C `traceparent` on
+    // outbound calls and reads it on inbound ones. correlation_id does not travel
+    // unless we forward it ourselves.
+    //
+    // Note what this does NOT need: no argument threading, no span passed down
+    // the call stack. Deep inside AppService, getActiveSpan() finds the span the
+    // instrumentation opened at the edge — the same async-resource mechanism that
+    // carries correlation_id, which is why the Day 2 decision to use ALS paid for
+    // itself twice.
+    const spanContext = trace.getActiveSpan()?.spanContext();
+    if (spanContext && isSpanContextValid(spanContext)) {
+      // Omitted, not sentinelled, when there is no span — matching the
+      // correlation_id handling above. W3C defines an all-zeroes trace id as
+      // invalid, and isSpanContextValid() is what rejects it, so a log line never
+      // carries an id that cannot be looked up.
+      info.trace_id = spanContext.traceId;
+      info.span_id = spanContext.spanId;
+    }
 
     return info;
   })();

@@ -7,9 +7,15 @@
 #   docker compose ps
 #
 #   booking-api   http://localhost:3000        /metrics is the scrape target
+#   notifier      http://localhost:3001        Day 6 — the downstream hop
 #   Prometheus    http://localhost:9090        /targets should show 2 UP
 #   Grafana       http://localhost:3030        dashboard is provisioned, not clicked
-#   Jaeger        http://localhost:16686       empty until Day 6 — that is expected
+#   Jaeger        http://localhost:16686       Day 6 onward: one trace, two services
+#
+# booking-api deliberately has no depends_on for the notifier. The call happens at
+# request time, not boot, and the Day 6 drill needs
+#   docker stop coworking-notifier
+# to work without Compose fighting to bring it back.
 #
 # Every port is overridable from the environment. Nothing here is hardcoded to a
 # host, so the same file runs on a laptop or a box if Day 8 decides to deploy.
@@ -33,6 +39,10 @@ services:
       NODE_ENV: production
       LOG_LEVEL: ${LOG_LEVEL:-info}
       LOG_PRETTY: "false"
+      # What splits the trace into two named halves in the Jaeger UI. Unset, every
+      # span is attributed to "unknown_service:node" and the boundary — the only
+      # thing a distributed trace exists to show — disappears.
+      OTEL_SERVICE_NAME: booking-api
       # Service names, not localhost — inside the network each container's
       # localhost is its own loopback, so these would resolve to nothing.
       NOTIFIER_URL: http://notifier:3001
@@ -45,6 +55,42 @@ services:
       # No curl in the alpine image and no wget with --spider on busybox that we
       # can rely on, so use node itself — it is guaranteed present.
       test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/metrics').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 15s
+
+  # Day 6. The app has existed in the monorepo since Day 2 and already imports
+  # ObservabilityModule — logger, CLS, metrics middleware, the lot. What it never
+  # had was a container, so NOTIFIER_URL below has pointed at nothing for four days.
+  #
+  # It exists for one reason: a trace needs a second process to span. An in-process
+  # call would produce a child span inside one service and prove nothing about
+  # propagation across a network boundary.
+  notifier:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+      args:
+        APP: notifier
+    image: coworking-obs/notifier:dev
+    container_name: coworking-notifier
+    restart: unless-stopped
+    environment:
+      NOTIFIER_PORT: 3001
+      OTEL_SERVICE_NAME: notifier
+      NODE_ENV: production
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      LOG_PRETTY: "false"
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4318
+      OTEL_TRACES_SAMPLER: ${OTEL_TRACES_SAMPLER:-parentbased_always_on}
+    ports:
+      # Published so a trace can be driven against the notifier directly when
+      # isolating which side of the hop is at fault.
+      - "${NOTIFIER_PORT:-3001}:3001"
+    networks: [obs]
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3001/metrics').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
       interval: 10s
       timeout: 3s
       retries: 5
