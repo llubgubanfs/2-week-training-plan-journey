@@ -12,8 +12,8 @@ sample service and the downstream call.
 
 | File | What it shows |
 |---|---|
-| `jaeger-trace-immediate.png` | The asked-for artifact — `GET /downstream-immediate`, 2 services, 10 spans |
-| `jaeger-trace-fire-and-forget.png` | The same hop not awaited, and the child span outliving its parent |
+| `jaeger-trace-immediate.jpg` | The asked-for artifact — `GET /downstream-immediate`, 2 services, 10 spans |
+| `jaeger-trace-fire-and-forget.jpg` | The same hop not awaited, and the child span outliving its parent |
 | `trace-immediate.json` | Trace `d505e96a…` as data — greppable and diffable, following Day 3's precedent of committing the scrape text rather than only a picture |
 | `trace-fire-and-forget.json` | Trace `fce6c47e…` as data |
 | `correlated-log-with-trace.jsonl` | Log lines from **both** services carrying one shared `trace_id` and one shared `correlation_id` |
