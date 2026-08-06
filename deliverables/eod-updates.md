@@ -486,3 +486,104 @@ carries the narrative, not the whole argument.
 
 **Not said to Harvey, deliberately, and recorded in STATUS.md:** three drills are now owed before
 Day 9 and none has been scheduled. That is training-plan hygiene, not delivery status.
+
+---
+
+## Day 7 — Thu Aug 6 · Waitlist Design Extension
+
+**Sent.** Both channels, per Harvey's Day 3 instruction: progress to Rocks, links and decisions to
+chat.
+
+<details>
+<summary>Rocks — Daily Status Report</summary>
+
+```
+# What I did today
+
+- Watched "Managing Complex Scenarios" — sagas, compensating transactions,
+  and querying for invariant violations.
+
+- Redrew the Day 1 co-working design as a proper system diagram: scale
+  assumptions, stated invariants, and double-booking enforced as a conditional
+  update. Merged the desk and meeting-room services into one Booking Service —
+  same invariant, so the split had nothing on either side of it.
+
+- Added the real-time waitlist. Early release or the expiry sweep publishes
+  desk.freed, the waitlist service promotes the oldest queued member, the
+  booking service claims the desk. A promotion uses the same conditional claim
+  a walk-in does, so there is no separate handoff path to get wrong.
+
+- Added detection for the two new silent failures — a promotion that never
+  becomes a booking, and a desk left free while its waitlist is not empty.
+  Both found by querying for broken state, not by waiting for an error.
+
+---
+
+# What I will be doing the next working day
+
+- Day 8: add a cron job that fails silently ~1 in 5 runs, instrumented so the
+  failure shows up as a log entry, a metric, and an alert rule.
+
+- Write the answer to "how would I know this failed before a user reported it",
+  backed by that instrumentation.
+
+- Close two open waitlist questions before Day 9: multi-tenancy isolation, and
+  auto-assign vs offer-with-timeout on promotion.
+```
+
+</details>
+
+<details>
+<summary>Chat with Harvey</summary>
+
+```
+Hi Sir Harvey,
+
+Day 7 PR — the waitlist extension to my Day 1 system design:
+https://github.com/llubgubanfs/2-week-training-plan-journey/pull/4
+
+It contains the updated Excalidraw (source + PNG export) and written notes,
+under deliverables/day-07/. I redrew the base design first, then added the
+waitlist on top, so the diagram is the full design rather than just the
+extension.
+
+Two questions:
+
+1. Day 9 is this coming Monday (Aug 10). The plan has it as a live 30-minute
+   session in two parts — you pushing back as a skeptical stakeholder, then the
+   design defense. Before I prepare, could you let me know which format works
+   best on your end? I'm happy either way. If a live slot is hard to find, I can
+   record the design walkthrough the way I did for Day 5, and we could handle
+   the stakeholder pushback in a shorter call or over chat, whichever costs you
+   less time.
+
+2. Still hoping to check on the Day 10 recorded walkthrough — is there a length
+   or format you'd prefer? Asked on Day 4, so no rush, but it would help me
+   prepare.
+
+Thanks!
+```
+
+</details>
+
+**The chat message carries a real decision this time**, which is why it is longer than usual. Day 9
+is one working day away, is the graded System Design assessment, and no calendar slot exists. The
+question was framed to give Harvey three easy exits — live, recorded, or a recorded walkthrough
+plus a short call for the stakeholder half — because he is reportedly running ~50 of these plans
+and peers' live sessions have been converted to recordings.
+
+**⚠️ Recorded would cost Leander more than it saved on Day 5, and that is recorded in STATUS.md
+rather than said to Harvey.** Gap #18 exists precisely because a recorded format removes live
+pressure; part one of Day 9 is interactive by definition and cannot be recorded at all; and no
+live rep has happened in nine days. Whatever comes back, the mitigation is his and needs no
+calendar: one unbroken unrehearsed take before the real one. Agreed on Day 5 and skipped.
+
+**Cut from the Rocks entry deliberately:** the ride-dispatch drill. It is practice rather than
+delivery, and the entry reads stronger ending on the failure-detection work. Also cut: the
+multi-tenancy decision and the whole silent-failure derivation. Both are the best reasoning of the
+day, and both live in `deliverables/day-07/waitlist-notes.md` and the journal where Harvey can
+reach them. Rocks carries the narrative, not the argument.
+
+**Not said to Harvey, deliberately:** that the base design scored 8/12 and the combined design
+7/12 against the Day 9 rubric — those are internal training numbers, not delivery status — and
+that two lines on the observability strip were handed over rather than derived.

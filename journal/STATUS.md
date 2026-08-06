@@ -3,13 +3,18 @@
 > Claude: read this before responding to anything. Update it via `/day-end`.
 > Humans: this is "where am I right now."
 
-**Currently:** Day 6 of 10 ✅ done · next working day Thu 2026-08-06 · **Day 7 waitlist design extension**
-**Last updated:** 2026-08-05 (Day 6 closed out)
+**Currently:** Day 7 of 10 ✅ done · next working day Fri 2026-08-07 · **Day 8 silent failure detection**
+**Last updated:** 2026-08-06 (Day 7 closed out)
 
-> ⚠️ **Day 7 is a System Design day and Day 9 is three working days away.** Three drills are
-> owed and none has been scheduled: `/explain-back` on ALS (gap #5, missed three times),
-> `/explain-back` on cardinality (gap #18), and `/design-drill`. Day 7 is the natural home for
-> at least two of them.
+> ⚠️ **Day 9 is Monday — ONE working day away, and it is graded.** `/design-drill` ran today
+> (drill 01, 3/12) and the base design was rebuilt to 8/12, so the design track moved. Still owed
+> and now urgent: `/explain-back` on **cardinality** (gap #18 — held in writing three times,
+> collapsed on camera once) and on **ALS** (gap #5, missed three times). **Neither has ever had a
+> spoken rep.** Day 8 is the last slot.
+>
+> Two design questions are open and both are near-certain Monday probes — **multi-tenancy
+> isolation** (gap #21) and **auto-assign vs offer-with-timeout** on promotion. Recorded in
+> `deliverables/day-07/waitlist-notes.md`.
 
 ---
 
@@ -38,8 +43,8 @@ session should re-derive it.
 | 4 | Mon Aug 3 | Infra: Prometheus + Grafana + Jaeger | ✅ done |
 | 5 | Tue Aug 4 | Integration + EM demo — **recorded** | ✅ done |
 | 6 | Wed Aug 5 | Distributed tracing | ✅ done |
-| 7 | **Thu Aug 6** | Waitlist design extension | 🔵 next |
-| 8 | Fri Aug 7 | Silent failure detection | ⬜ |
+| 7 | Thu Aug 6 | Waitlist design extension | ✅ done |
+| 8 | **Fri Aug 7** | Silent failure detection | 🔵 next |
 | 9 | Mon Aug 10 | **System Design defense — GRADED** | ⬜ |
 | 10 | Tue Aug 11 | Walkthrough + **Observability retest — GRADED** | ⬜ |
 
@@ -47,7 +52,17 @@ session should re-derive it.
 
 ## Open questions for Harvey
 
-1. Does the Day 10 "recorded walkthrough" need to be a specific length or format? Asked in the Day 4 chat message, still unanswered.
+1. **What format is Day 9 — live or recorded?** Asked Day 7. The plan has it as a live 30-min
+   session in two parts (skeptical-stakeholder pushback, then the design defense). Harvey is
+   reportedly running ~50 of these plans and peers' live sessions have been converted to
+   recordings, so the ask was framed to give him an easy out: live, recorded, or recorded
+   walkthrough plus a shorter call for the pushback half. **⚠️ Note the cost if it goes recorded:**
+   gap **#18** exists precisely because a recorded format removes live pressure, part one cannot be
+   recorded (it is interactive by definition), and no live rep has happened in nine days. The
+   mitigation is Leander's regardless of the answer — one unbroken unrehearsed take, never
+   submitted, before the real one. Agreed on Day 5 and skipped.
+2. Does the Day 10 "recorded walkthrough" need to be a specific length or format? Asked in the
+   Day 4 chat message and re-raised Day 6 and Day 7, still unanswered.
 
 **Answered Day 5 — do not re-raise:**
 
@@ -143,20 +158,35 @@ and would affect Leander's other projects — deliberately not done.
 Also: **Day 2's PR link is orphaned.** It lives at `y4nder/…/pull/1` and that repo has no Day 3+
 work. If Harvey was given that link, he needs the new one.
 
-## Carry-over into Day 7
+## Carry-over into Day 8
 
-**Time-sensitive, and it has now slipped twice:**
+**Day 9 is Monday. Everything in this block is one working day from being too late.**
 
-- [ ] ⚠️ **Three drills owed, none scheduled. Day 9 is Mon Aug 10 — three working days.**
-      `/explain-back` on **ALS** (gap #5, missed three times, `/quiz` has stopped producing new
-      information), `/explain-back` on **cardinality** (gap #18 — held in writing, collapsed on
-      camera), and `/design-drill` for live pressure. Day 7 is a System Design day and is the
-      natural home for at least two. Day 8 alone cannot absorb all three.
-- [ ] ⚠️ **The live-pressure rehearsal from Day 5 still has not happened.** Carried unchanged.
+- [ ] ⚠️ **Two `/explain-back` drills owed, and neither has ever had a spoken rep.**
+      **Cardinality** (gap #18) is the priority — it is the one that demonstrably collapsed on
+      camera, and it was produced correctly in writing *again* today, which is the fourth written
+      pass and still zero spoken ones. Then **ALS** (gap #5, missed three times). Day 8 is the last
+      slot before the graded day.
+- [ ] ⚠️ **The live-pressure rehearsal from Day 5 still has not happened.** Carried unchanged into
+      a fourth day. If Day 9 comes back as *recorded*, this becomes the only live rep available and
+      has to be self-imposed — one unbroken take, never submitted.
+- [ ] ⚠️ **Two open design questions on the waitlist, both near-certain Monday probes.** Recorded
+      as a source comment in `deliverables/day-07/waitlist-notes.md`: **multi-tenancy isolation**
+      (gap #21 — the tenant is the operator, the mechanism is undecided, and a request-path
+      resolver cannot cover background jobs) and **auto-assign vs offer-with-timeout** on
+      promotion. Also unanswered: **can a stale read from the 120s availability cache double-book?**
 - [ ] ⚠️ **Winston vs pino** and **why a metric when the log has status and duration** — both
       uncovered in the recording Harvey watched, both still undrilled. Near-certain Day 10 content.
+- [ ] **Two lines on the Day 7 board were not his** — the `lost promotion` and `stalled queue`
+      signals were handed over under time pressure, with his agreement and on the record. He must
+      be able to **re-derive** the promoted-not-deleted argument before Monday: *a deleted row
+      cannot be queried, so the failure leaves no evidence.* Gap **#12** risk.
+- [ ] **Release leaves the booking row undefined.** `POST /booking/desks/:id/release` is on the
+      board and frees the desk, but nothing says what the *booking* becomes, or that the expiry
+      sweep must not later trip over an already-released booking. Cheap to close, and the kind of
+      thing a follow-up finds.
 
-**New from Day 6:**
+**From Day 6, still open:**
 
 - [ ] **`x-correlation-id` is forwarded but nothing tests the receiving half.** The sending side
       now has four unit tests; that the notifier actually *honours* the inbound header is verified
@@ -418,6 +448,108 @@ query-time vs write-time half, re-missed twice) and the Winston row below.
 - **Day 8 connection made early:** an abrupt exit loses the batch buffer, so `sdk.shutdown()` /
   `app.enableShutdownHooks()` is now justified twice over — the same lesson as Day 2's `tini`
   fix seen from the exporter's side. Reinforces the existing graceful-shutdown carry-over.
+
+**Day 7 warm-up quiz (3 questions, ~1.75 / 3).**
+
+- **Q1 — near-full credit.** Asked what Jaeger shows when a caught rejection is followed by
+  SIGKILL 200 ms later: *"nothing, because the pod was killed and [it] stayed in the buffer."*
+  Right answer, right mechanism, produced unprompted — yesterday's corrected two-gate rule has
+  stuck. Two small things: he said "exception" where he meant **spans** (the rejection was
+  caught; what is lost is the ended-but-unflushed batch, both server and client span), and he
+  **did not name which gate failed** despite the question asking for it. Both spans passed the
+  `end()` gate; only the **flush** gate failed. Reinforces the graceful-shutdown carry-over.
+- **#1 CLOSED — produced unprompted, second ask.** Asked what a trace answers that
+  `correlation_id` cannot, given the id already crosses the hop and every line is timestamped,
+  he gave **structure**: *"a tree… how long a process is relative to its parent… what triggered
+  it."* That is exactly the membership-vs-structure discriminator he could not reach on Day 6,
+  and parentage is the part timestamps cannot supply. Not yet produced: the secondary answer
+  (**W3C `traceparent` is a standard**, so uninstrumented libraries and third parties join the
+  trace without agreeing a header name). **Re-ask once, aloud, before Day 10** — see #18; this
+  has only ever been produced in writing.
+- **#19 RE-MISSED — 4th instance, and the cleanest example yet.** Q2 asked for two causes of a
+  log line carrying a `trace_id` that Jaeger cannot find. He answered with causes of the
+  *downstream call failing* (timeout vs `ECONNREFUSED`, under "rejection unhandled"), then
+  reached for the absence-of-success theme — **the identical adjacent-answer pair recorded on
+  Day 6**, where instance (2) was also the absence-of-signal reach. The question was about the
+  **exporter path**, not the request path. The decisive point: **he owns the right answer
+  already.** Sampling under `parentbased_always_on`-vs-real-sampling is the *strongest*
+  justification for keeping `correlation_id`, written in his own `deliverables/day-06/README.md`
+  — a log line is never sampled, so it can carry a `trace_id` whose trace was never exported.
+  Second cause: yesterday's Q1 case — the batch died before flush. Discriminators: does the
+  span exist for *other* requests in the same window (sampling drops individual traces, a lost
+  buffer drops a contiguous block ending at a restart), and does the service's uptime show a
+  restart at that timestamp. Also retention expiry and querying the wrong service name.
+  **This is not a knowledge gap and drilling the topic will not fix it.** The diagnostic stays
+  the one from Day 6: read the question back before answering. **Say it out loud on Days 9 and
+  10.** Now the highest-frequency gap on this list and it is graded Monday.
+
+**Day 7 `/design-drill` 01 — ride dispatch, 15 min timed, 3 / 12.** Full record and diagram in
+`design/drills/01-ride-dispatch.md`. **First drill of the plan; three were owed and this is one.**
+
+- **#11 CONFIRMED, third instance, and it is graded Monday.** "500k riders per day" and a peak
+  window were copied into the corner and **never converted into anything**. No req/s derived, and
+  **`60 cities` — the partitioning lever, the single biggest scale item in the prompt — was never
+  captured at all.** Same shape as Day 1 (acknowledged 200 locations, returned with entity
+  relationships) and the Day 4 pool-alert transfer miss. The arithmetic was cheap and would have
+  paid: ~6 bookings/sec average, ~23/sec at peak, against thousands of location writes/sec —
+  **two orders of magnitude**, which is the exact justification for the `location service` split he
+  had already drawn. Instinct right, number never reached for.
+- **NEW #20 — the invariant is not transferred to a new domain.** See table below. Highest-cost
+  item on the sheet.
+- **The procedure partially landed, unprompted.** He wrote the constraints in the corner before
+  drawing — the habit did not exist this morning. But he captured **five of seven** and did not ask
+  *"anything I've missed?"*, so the peak constraint was **misread** (two spikes read as a ten-hour
+  range) and 60 cities was dropped silently. Related to **#9** but distinct: this is not losing the
+  prompt mid-session, it is capturing it incompletely at minute one and never rechecking.
+- **Observability scored 0.** No failure path, no what-breaks, no obs strip — on a diagram by the
+  person whose Growth Area is observability. This is the cheapest 2 points available to him
+  specifically and is the same omission the Day 5 recording made.
+- **Genuine strengths, both worth keeping.** Splitting `location service` from `hailing service`
+  is a real insight most first attempts lack; drawing rider and driver as two separate clients
+  preserves the two-sided nature of the system that most people collapse into one box.
+
+| # | Gap | Evidence | Reality | Addressed |
+|---|---|---|---|---|
+| 20 | **Enforces exclusivity in a familiar domain, not in a new one** | Drill 01. The prompt's one hard rule — a driver is never assigned two rides — has **no mechanism anywhere on the diagram**. No unique constraint, no conditional update, no driver state. | He owns this cold. On Day 1, on desks, he produced app-level validation *and* a composite unique *and* explicit reasoning about two concurrent requests racing, unaided — it is why he is rated **Strong** on relational. Fifteen minutes after being told the rule aloud in a new domain, none of it appeared. Worse, the design is actively unsafe: driver locations sit in a cache with **no invalidation and no reader drawn**, so matching against it double-assigns. **The gap is transfer under a new frame, not knowledge** — same class as #11 and the Day 4 pool-alert miss. | **drill: before adding any further box, point at the diagram and say "the rule is X, here is the one place it is enforced." If the finger has nowhere to land, that is the next box.** Run on the Day 7 waitlist design today and again on Day 9. |
+
+**Day 7 baseline rebuild — 8 / 12, the target, on the base design.** Diagram:
+`~/Documents/excalidraws/system-design-initial-rebuilt.png` ⚠️ **outside the repo — must land in
+`deliverables/day-07/` to count.** Redrawn from scratch, 20 min timed then refined.
+
+| Dimension | Day 1 | Drill 01 (am) | Rebuild (pm) |
+|---|---|---|---|
+| Requirements & scope | — | 1 | **1.5** |
+| Scale math | 0 (`skipped`, own words) | 0.5 | **1.5** |
+| Data model & invariant | strong verbally, undrawn | 0 | **2** |
+| Data flow | — | 1 | **1.5** |
+| Caching | — | 0.5 | **1.5** |
+| Failure & observability | — | 0 | **0** |
+| **Total** | — | **3** | **8** |
+
+- **#20 CLOSED, same day it was opened.** The conditional update is on the diagram, on **both**
+  resources: `UPDATE desks WHERE id = ? AND location_id = ? AND status == 'available'` with
+  `check if affected rows > 0`. Written as an **arrow label, not a box** — the correct altitude,
+  and the exact thing the drill-01 critique asked for. Transferred within three hours.
+- **#11 — first real movement in nine days.** Day 1's own baseline doc says `skipped` under scale
+  assumptions. The rebuild shows the arithmetic: 30 desks + (5 rooms × 8) = 70/location, × 200 =
+  **14,000**. **Still not closed:** that is *capacity*, not *throughput* — no bookings/day, no peak
+  — and **no architectural conclusion is drawn from it.** One shared DB and one shared cache, which
+  14k concurrent almost certainly justifies, but he never says so. **Converts to 2/2 the moment he
+  states the conclusion out loud.** Re-check on Day 9.
+- **Ask 4 answered unprompted.** Scheduler (5 min) → worker → expired bookings. On Day 1 background
+  jobs went untouched for 17 minutes until Harvey re-prompted. Gone.
+- **Caching is now a real answer,** not a box: TTL 120s, backfill on miss, and an **invalidation
+  path with a dependency graph** (location → rooms, desks). Answers the rubric question the drill
+  scored 0.5 on.
+- **⚠️ Observability still 0 — third consecutive design artefact with none.** Sharpest finding of
+  the session: **he drew the expiry worker, which is his own interview scenario.** If that worker
+  silently stops, bookings never expire, desks stay locked forever, and nothing errors. Gaps #3,
+  #7, #17 and Day 8's entire subject, sitting undetected on his own diagram. Free points, twice
+  over, and it is the one dimension that is still exactly where it was on Day 1.
+
+| # | Gap | Evidence | Reality | Addressed |
+|---|---|---|---|---|
+| 21 | **Multi-tenancy skipped — twice** | Absent from the rebuild entirely: no tenant on any box, arrow or constraint. Day 1 was the same — "tenant" occurs twice in the whole 22-min recording, **both times Harvey reading the prompt**. | It is the **first word of the prompt** — *"multi-tenant co-working space platform"* — and `design/skeleton.md` already flags it as a near-certain probe: shared tables with a tenant column, schema per tenant, or database per tenant, defended on **operational cost**, not correctness. Two passes at this prompt, ~80 minutes of design time, and the word has never once been his. | **decide and draw it before Day 9.** His call which model — do not hand him one. |
 
 **Day 3 build session — gaps #4 and #8 both closed.**
 
@@ -783,3 +915,93 @@ files.
 best part of the morning. Judged worth it: gap #1 is Day 10 retest content and the export
 mechanism is now owned. The cost was that Q2 and Q3 had to be answered against a running stack in
 the afternoon rather than in the quiz slot, which turned out better anyway.
+
+### Day 7 — Thu Aug 6 ✅
+**Objective:** extend the Day 1 co-working design with a real-time waitlist that reallocates a
+desk freed early to the next waitlisted member, without double-booking during the handoff.
+
+**Deliverable — verified on disk and committed to `master`:**
+
+| Evidence | Path |
+|---|---|
+| PR (merged) | [#4](https://github.com/llubgubanfs/2-week-training-plan-journey/pull/4) → merge commit `a2cbe07` |
+| Diagram, source + export | `deliverables/day-07/waitlist-design.excalidraw` · `.png` |
+| Written notes on the extension | `deliverables/day-07/waitlist-notes.md` |
+| Drill 01 record and critique | `design/drills/01-ride-dispatch.md` |
+| Reasoning | `journal/day-07-waitlist-design.md` |
+
+Re-verified at close from `master` after the merge, not from the branch: all three files present
+in the tree, and the diagram's text checked programmatically against the notes rather than by
+eye — see the consistency catch below.
+
+Done:
+- [x] Pluralsight *"Managing Complex Scenarios"* (Perry) — invariants, sagas, compensating
+      transactions, contention reduction, and *query for invariant violations*
+- [x] `/design-drill` 01 — ride dispatch, 15 min timed, **3 / 12**
+- [x] **Base design rebuilt from scratch — 8 / 12**, the target, on the base alone
+- [x] Waitlist extension added on top — **7 / 12** for the combined design
+- [x] Booking domain merged: two services → one, by his own reasoning
+- [x] PR opened, merged; Rocks entry and chat message sent
+
+**The day's real content was the transfer, and it happened twice in one day.**
+
+Gap **#20** opened at 10am (drill 01: the invariant enforced nowhere) and **closed by 4pm** — the
+conditional `UPDATE … WHERE status = 'available'` plus the affected-rows check appears on the
+rebuilt board, on **both** resources, written as an **arrow label rather than a box**. He then
+applied the same instinct unprompted to a constraint nobody mentioned: `unique (user_id, desk_id)`
+on the waitlist. The morning's critique was absorbed and generalised inside six hours.
+
+Gap **#11** moved for the first time in nine days. Day 1's own baseline doc says `skipped` under
+scale assumptions; today the arithmetic is on the board — 30 + (5 × 8) = 70 per location, × 200 =
+14,000. **Not closed:** that is capacity, not throughput, and **no architectural conclusion is
+drawn from it.** One shared DB and one shared cache is almost certainly correct at 14k, but he
+never says so, which reads as not having considered it.
+
+**The strongest single answer of the day, and he did not notice he had given it.** Asked how
+double-booking is prevented during the handoff, the design's answer is that **there is no separate
+handoff path** — a promotion is claimed with the identical statement a walk-in uses, so there is
+nothing bespoke to get wrong. The consequence he should state deliberately: a walk-in *can* beat a
+promotion, and that is correct rather than a bug.
+
+**Two decisions taken by his own reasoning, both defensible on Monday:**
+- **The tenant is the operator** — *"an operator could operate at least one or more locations"* —
+  which makes `location_id` a child of the tenant key, not the tenant key.
+- **One Booking Service** — desks and meeting rooms carry the same invariant; capacity is a
+  property of the room, not a limit on bookings. Two services running identical claim logic
+  against one schema were not two services. **Subtraction with a reason**, the same move as
+  deleting the read replica in the drill.
+
+**A full silent-failure story derived out loud, a day early.** From "the worker's real risk is a
+failing cron" he reached: the transient/permanent split, the invariant query (with the status
+predicate and the grace period, after one wrong first pass), `GROUP BY operator_id`, a per-tenant
+sweep to bound blast radius, and — unprompted — the **cardinality** constraint on the tenant
+label. That is Day 8's written deliverable, arrived at on Day 7 in conversation.
+
+**Consistency catch at ship time, and the method matters.** The observability strip said *"entries
+in `promoted`"* while the waitlist service box still said *"deletes the entry"* — a diagram
+arguing with itself, and the strip's signal is impossible if the row is gone. Found by grepping
+the `.excalidraw` JSON for the relevant text elements rather than looking at the picture. Fixed
+before the commit; all three places now agree.
+
+**⚠️ Two lines on the board were not his.** The `lost promotion` and `stalled queue` signals were
+handed over under time pressure, with his agreement, and are recorded as such in the carry-over.
+The re-derivation he owes: *a deleted row cannot be queried, so the failure leaves no evidence* —
+which is why the entry is a state change rather than a delete.
+
+**⚠️ The one requirement still not fully met.** The plan says *"when a desk frees up **early**"*.
+The first version's only trigger was the expiry sweep, which is a booking ending on time. The
+release endpoint was added after this was pointed out, so the requirement is now satisfied — but
+it is the third instance this week of a constraint being captured on the page and then not
+answered (peaks misread, 60 cities dropped, "early" read as "expired").
+
+**Not a technical note, and worth keeping.** He raised, unprompted, that he is junior and that the
+material has felt above his level. The honest split, which he accepted: system design at this
+scale genuinely is above where he is and he has had one drill — but the observability track is
+not, and `STATUS.md` is a weak-spot list by design, so reading it as a self-portrait understates
+him systematically. Same pattern as Day 1, where he under-reported his own baseline diagram
+against the recovered canvas.
+
+**Time:** ran very long — roughly six hours against a four-hour budget, most of it on method
+(what earns a box, what live work actually looks like) rather than on the deliverable. Judged
+worth it: the design track was the weaker of the two graded tracks and moved from 3 to 8 in a day.
+The cost is that Day 8 now carries both its own build and the two spoken drills.
