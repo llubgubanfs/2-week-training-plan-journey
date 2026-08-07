@@ -587,3 +587,113 @@ reach them. Rocks carries the narrative, not the argument.
 **Not said to Harvey, deliberately:** that the base design scored 8/12 and the combined design
 7/12 against the Day 9 rubric — those are internal training numbers, not delivery status — and
 that two lines on the observability strip were handed over rather than derived.
+
+---
+
+## Day 8 — Fri 2026-08-07 · Silent failure detection
+
+### Rocks — Daily Status Report
+
+<details><summary>message</summary>
+
+```
+# What I did today
+
+- Built a scheduled job (expiry sweep) in the booking service that releases
+  expired bookings, deliberately flawed so it fails about 1 in 5 runs, and
+  instrumented it so a failure shows up as a log entry, a metric, and an alert
+  rule. This is the scenario I raised in my interview.
+
+- Built it to fail in two different ways, because they are caught by different
+  signals. One throws an exception: it produces an error log and a failure
+  metric. The other is the silent one — the sweep runs, its query matches
+  nothing, and it returns successfully having done no work. No exception, no
+  error log, and the success counter still increments.
+
+- The signal that catches the silent case is a gauge counting expired bookings
+  that still hold a desk, evaluated at scrape time rather than written by the
+  job. That was deliberate: if the job wrote its own state metric, a dead job
+  would freeze it at its last healthy value and the graph would stay flat and
+  green while the backlog grew.
+
+- Verified it against the running stack rather than a test: during a forced
+  silent run, the job reported 12 consecutive successes with zero error log
+  lines while 33 expired bookings sat holding desks. The invariant alert fired;
+  the "has the job run" alert stayed green. That is the whole point of the day
+  in one measurement.
+
+- Found and fixed a bug in my own instrumentation while demonstrating it. My
+  metric exposed a label called "job", which is a label Prometheus reserves for
+  itself — so it was silently renamed and my alert rule matched nothing, which
+  made the rule fire permanently while the job was healthy. It looked identical
+  to the demo working. Renamed the label and removed a second, older instance of
+  the same collision that had been there since Day 3.
+
+- Added 6 unit tests (suite 11 to 17), including a regression guard on the
+  mistake that would have broken all of this: recording the success metric in a
+  finally block, which counts failed runs as successful ones.
+
+---
+
+# What I will be doing the next working day
+
+- Day 9: System Design live defense and post-training assessment.
+- Preparing the design defense: deciding and drawing the multi-tenancy model,
+  and stating the scaling conclusions that follow from my capacity numbers.
+```
+
+</details>
+
+### Chat with Harvey
+
+<details><summary>message</summary>
+
+```
+Hi Harvey, Day 8 PR is up:
+https://github.com/llubgubanfs/2-week-training-plan-journey/pull/5
+
+The written answer to "how would you know this failed before a user reported
+it" is in deliverables/day-08/silent-failure-answer.md, with the captured logs,
+metrics and the firing alert alongside it, so the answer is backed by the
+instrumentation rather than just described.
+
+Also just a nudge on Day 9 on Monday — do you know yet if it'll be live or
+recorded? Either works on my end, I just want to prepare the right way. Same for
+the Day 10 walkthrough later in the week, if you have a length or format in mind
+I'll follow it.
+
+Thanks!
+```
+
+</details>
+
+**The Rocks entry leads with judgement, not compliance.** Three of the six bullets are decisions
+rather than deliverables — why the state gauge is not written by the job, why two failure shapes,
+and the `finally` regression guard. The plan asked for one instrumented cron job; what earns the
+Growth Area rating is the reasoning about *which signal catches which failure*.
+
+**The label-collision bug is reported voluntarily, and that is the deliberate call.** It was a bug
+in his own instrumentation, found by him, in the demo he built to find bugs. Nobody would have
+known. Reporting it reads better than it costs — and it is the strongest available evidence
+against gap #16 (declaring something works before measuring it), which is exactly the instinct
+Days 9 and 10 test.
+
+**Cut from Rocks deliberately:** the quiz result, the ALS gap, and the two spoken drills deferred
+to the weekend. Those are training internals, not delivery status. Also cut: the in-memory-store
+scope call — it is in the README where Harvey can reach it if he reviews the code, and leading a
+status report with what was *not* built inverts the emphasis.
+
+**Both questions were folded into one soft nudge rather than a numbered list, and the Rocks entry
+carries them as blockers instead.** The guide Leander was given for Daily Status Reports asks
+explicitly for roadblocks including "waiting on a decision", so the formal ask now lives there; the
+chat message only keeps them alive.
+
+**"Preparing for live by default" was cut — Leander's call, and it was right.** It signals
+readiness for live and so makes live the low-friction answer, which quietly removes Harvey's
+freedom to pick the cheaper option. Preparing for live is a decision to take on his own side, not
+one to announce.
+
+**⚠️ Both open questions are now on their third and fourth asking.** Day 9's format was asked on
+Day 7 and is unanswered with the session two days out; the Day 10 walkthrough format was asked on
+Day 4 and re-raised on Days 6 and 7. If Monday arrives with no answer, the default is to prepare
+for **live** — it is the harder case and the plan's own wording.

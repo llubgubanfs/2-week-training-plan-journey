@@ -3,18 +3,27 @@
 > Claude: read this before responding to anything. Update it via `/day-end`.
 > Humans: this is "where am I right now."
 
-**Currently:** Day 7 of 10 ✅ done · next working day Fri 2026-08-07 · **Day 8 silent failure detection**
-**Last updated:** 2026-08-06 (Day 7 closed out)
+**Currently:** Day 8 of 10 ✅ done · next working day Mon 2026-08-10 · **Day 9 System Design defence — GRADED**
+**Last updated:** 2026-08-07 (Day 8 closed out)
 
-> ⚠️ **Day 9 is Monday — ONE working day away, and it is graded.** `/design-drill` ran today
-> (drill 01, 3/12) and the base design was rebuilt to 8/12, so the design track moved. Still owed
-> and now urgent: `/explain-back` on **cardinality** (gap #18 — held in writing three times,
-> collapsed on camera once) and on **ALS** (gap #5, missed three times). **Neither has ever had a
-> spoken rep.** Day 8 is the last slot.
+> ⚠️ **Day 9 is the next working day, it is live, and it is graded.** Two parts: a skeptical
+> stakeholder pushing back on the cost of the waitlist, then the Day 1 design re-presented from
+> scratch with the waitlist, defended under follow-up.
 >
-> Two design questions are open and both are near-certain Monday probes — **multi-tenancy
-> isolation** (gap #21) and **auto-assign vs offer-with-timeout** on promotion. Recorded in
-> `deliverables/day-07/waitlist-notes.md`.
+> **What actually moves the Monday rubric, ranked:**
+> 1. **Multi-tenancy (#21)** — undecided after two design sessions and ~80 minutes. It is the first
+>    word of the prompt. Currently worth 0 points he could have.
+> 2. **Scale math conclusion (#11)** — `14,000` capacity is on the diagram; what it *implies*
+>    (one shared DB, one shared cache) is never stated. One sentence converts 1.5 → 2.
+> 3. **Reading the question back before answering (#19)** — 4 instances, highest-frequency gap on
+>    this list, and part one of Monday is pure interactive pushback.
+> 4. **Re-derive the promoted-not-deleted argument** — two lines on the Day 7 board were not his.
+> 5. **The crash-after-`fulfilled` hole** — found by him today, not yet on the diagram.
+>
+> **The spoken rep (#18) has now been carried five days and Monday is single-take with no agent in
+> the room.** The two owed `/explain-back` drills (cardinality, ALS) are **Day 10** content, so
+> deferring them to the weekend is defensible — Leander's call, Day 8. What is not deferrable is
+> doing *something* out loud unscripted before Monday, and it can be a Day 9 topic.
 
 ---
 
@@ -44,8 +53,8 @@ session should re-derive it.
 | 5 | Tue Aug 4 | Integration + EM demo — **recorded** | ✅ done |
 | 6 | Wed Aug 5 | Distributed tracing | ✅ done |
 | 7 | Thu Aug 6 | Waitlist design extension | ✅ done |
-| 8 | **Fri Aug 7** | Silent failure detection | 🔵 next |
-| 9 | Mon Aug 10 | **System Design defense — GRADED** | ⬜ |
+| 8 | Fri Aug 7 | Silent failure detection | ✅ done |
+| 9 | **Mon Aug 10** | **System Design defense — GRADED** | 🔵 next |
 | 10 | Tue Aug 11 | Walkthrough + **Observability retest — GRADED** | ⬜ |
 
 ---
@@ -158,33 +167,50 @@ and would affect Leander's other projects — deliberately not done.
 Also: **Day 2's PR link is orphaned.** It lives at `y4nder/…/pull/1` and that repo has no Day 3+
 work. If Harvey was given that link, he needs the new one.
 
-## Carry-over into Day 8
+## Carry-over into Day 9 — **GRADED, live, Monday**
 
-**Day 9 is Monday. Everything in this block is one working day from being too late.**
+**Design track first. Everything in this block is zero working days from being too late.**
 
-- [ ] ⚠️ **Two `/explain-back` drills owed, and neither has ever had a spoken rep.**
-      **Cardinality** (gap #18) is the priority — it is the one that demonstrably collapsed on
-      camera, and it was produced correctly in writing *again* today, which is the fourth written
-      pass and still zero spoken ones. Then **ALS** (gap #5, missed three times). Day 8 is the last
-      slot before the graded day.
-- [ ] ⚠️ **The live-pressure rehearsal from Day 5 still has not happened.** Carried unchanged into
-      a fourth day. If Day 9 comes back as *recorded*, this becomes the only live rep available and
-      has to be self-imposed — one unbroken take, never submitted.
-- [ ] ⚠️ **Two open design questions on the waitlist, both near-certain Monday probes.** Recorded
-      as a source comment in `deliverables/day-07/waitlist-notes.md`: **multi-tenancy isolation**
-      (gap #21 — the tenant is the operator, the mechanism is undecided, and a request-path
-      resolver cannot cover background jobs) and **auto-assign vs offer-with-timeout** on
-      promotion. Also unanswered: **can a stale read from the 120s availability cache double-book?**
+- [ ] ⚠️ **Multi-tenancy (#21) — decide the model and draw it.** Shared tables with a tenant
+      column, schema per tenant, or database per tenant, defended on **operational cost**, not
+      correctness. It is the first word of the prompt and has never been his in two sessions.
+      **His call which model — do not hand him one.** The strip's `operator(tenant)` label is a
+      start, not an answer.
+- [ ] ⚠️ **Scale math has no conclusion (#11).** `30 + (5 × 8) = 70 × 200 = 14,000` is on the
+      diagram; what it *implies* is not. One shared DB and one shared cache is almost certainly
+      right at that number — **saying so out loud is what converts 1.5 → 2.** Also still missing:
+      throughput, not just capacity. No bookings/day, no peak.
+- [ ] ⚠️ **Read the question back before answering (#19).** Four instances, highest-frequency gap
+      on this list. Part one of Monday is *pure* interactive pushback, which is the exact condition
+      that produces it. One clean rep on Day 8 (Q1, twice) — the habit is not established.
+- [ ] ⚠️ **The spoken rep (#18) — five days carried.** Deferred to the weekend on Day 8, Leander's
+      call. Monday is live, unscripted and single-take. Any topic said aloud once beats none.
+- [ ] **NEW — the crash-after-`fulfilled` hole, found by him on Day 8.** Booking service claims the
+      desk and marks the entry `fulfilled`, then dies before publishing `booking.created`. Desk is
+      `reserved` so **stalled queue** is silent; entry is `fulfilled` so **lost promotion** is
+      silent. **The member holds a desk and is never told.** Not on the diagram. Volunteering it
+      Monday is worth more than being asked.
+- [ ] **Re-derive the promoted-not-deleted argument.** The `lost promotion` and `stalled queue`
+      lines were handed over on Day 7 under time pressure, with his agreement and on the record:
+      *a deleted row cannot be queried, so the failure leaves no evidence.* Gap **#12** risk.
+- [ ] **Release leaves the booking row undefined.** `POST /booking/desks/:id/release` frees the
+      desk, but nothing says what the *booking* becomes, or that the expiry sweep must not later
+      trip over an already-released booking. Cheap, and the kind of thing a follow-up finds.
+- [ ] **Auto-assign vs offer-with-timeout** on promotion, and **can a stale read from the 120s
+      availability cache double-book?** Both still open in `deliverables/day-07/waitlist-notes.md`.
+
+**Day 10 (Tue) — observability retest:**
+
+- [ ] ⚠️ **`/explain-back` × 2, spoken: cardinality then ALS.** Deferred from Day 8 to the weekend,
+      deliberately, on the correct reasoning that both are Day 10 content. Cardinality is now at
+      **six written passes and zero spoken** (the Day 7 strip added a fifth, this note the sixth).
+      ALS is **gap #5, four misses**, and `/quiz` has produced nothing new on it in three sessions.
 - [ ] ⚠️ **Winston vs pino** and **why a metric when the log has status and duration** — both
-      uncovered in the recording Harvey watched, both still undrilled. Near-certain Day 10 content.
-- [ ] **Two lines on the Day 7 board were not his** — the `lost promotion` and `stalled queue`
-      signals were handed over under time pressure, with his agreement and on the record. He must
-      be able to **re-derive** the promoted-not-deleted argument before Monday: *a deleted row
-      cannot be queried, so the failure leaves no evidence.* Gap **#12** risk.
-- [ ] **Release leaves the booking row undefined.** `POST /booking/desks/:id/release` is on the
-      board and frees the desk, but nothing says what the *booking* becomes, or that the expiry
-      sweep must not later trip over an already-released booking. Cheap to close, and the kind of
-      thing a follow-up finds.
+      uncovered in the recording Harvey watched, both still undrilled.
+- [ ] **Day 8's own content, all fresh and all likely probed:** state vs step signals · why the
+      state gauge is a `collect()` callback and not a `.set()` in the job · why the success counter
+      cannot go in `finally` · `time() - timestamp` vs `rate(successes) == 0` · the `absent()` arm ·
+      **the `job` / `exported_job` label collision.**
 
 **From Day 6, still open:**
 
@@ -541,7 +567,23 @@ query-time vs write-time half, re-missed twice) and the Winston row below.
 - **Caching is now a real answer,** not a box: TTL 120s, backfill on miss, and an **invalidation
   path with a dependency graph** (location → rooms, desks). Answers the rubric question the drill
   scored 0.5 on.
-- **⚠️ Observability still 0 — third consecutive design artefact with none.** Sharpest finding of
+- **⚠️ ~~Observability still 0 — third consecutive design artefact with none.~~ CORRECTED Day 8.**
+  This was written against the 18:46 rebuild and is **wrong about the committed artefact.** The
+  waitlist design (21:36, `deliverables/day-07/waitlist-design.png`) carries a six-line
+  **observability strip** — and he produced it as evidence when challenged on Day 8's Q3, which is
+  how the error was found. What is on it:
+  `is it serving?` · `did the async work run? — no sweep completed for an operator(tenant) in > N
+  minutes` · `is an invariant broken? — stuck_bookings{operator(tenant)} > 0 (label safe: operators
+  bounded)` · `can I follow one hop? — trace_id carried in the event envelope` · plus the lost
+  promotion and stalled queue rows.
+  Three things worth naming, because they should be said aloud on Monday before Harvey finds them:
+  **(1)** `no sweep completed in > N minutes` is **absence-of-expected-success in his own
+  handwriting on his own design** — gaps #3, #7 and #17, appearing unprompted in a design artefact
+  for the first time in the plan. **(2)** `operator(tenant)` is the *only* occurrence of the word
+  tenant across ~80 minutes of design; it is a metric label, not an isolation model, so **#21 stays
+  open** but is no longer zero. **(3)** `(label safe: operators bounded)` is the cardinality
+  argument *applied to a new label*, not recited — sixth written pass, still zero spoken.
+- **⚠️ The rebuild itself (18:46) scored observability 0.** Sharpest finding of
   the session: **he drew the expiry worker, which is his own interview scenario.** If that worker
   silently stops, bookings never expire, desks stay locked forever, and nothing errors. Gaps #3,
   #7, #17 and Day 8's entire subject, sitting undetected on his own diagram. Free points, twice
@@ -550,6 +592,60 @@ query-time vs write-time half, re-missed twice) and the Winston row below.
 | # | Gap | Evidence | Reality | Addressed |
 |---|---|---|---|---|
 | 21 | **Multi-tenancy skipped — twice** | Absent from the rebuild entirely: no tenant on any box, arrow or constraint. Day 1 was the same — "tenant" occurs twice in the whole 22-min recording, **both times Harvey reading the prompt**. | It is the **first word of the prompt** — *"multi-tenant co-working space platform"* — and `design/skeleton.md` already flags it as a near-certain probe: shared tables with a tenant column, schema per tenant, or database per tenant, defended on **operational cost**, not correctness. Two passes at this prompt, ~80 minutes of design time, and the word has never once been his. | **decide and draw it before Day 9.** His call which model — do not hand him one. |
+
+**Day 8 warm-up quiz (3 questions, ~2.25 / 3 — best round since Day 5).**
+
+- **Q1 — waitlist signals, ~0.75.** Needed a third bug invented for him before (a) got traction,
+  but then produced the discriminator unprompted: **"stalled queue looks at the state, lost
+  promotion looks at the step."** Part (b) was clean and unaided — a state signal costs you
+  specificity, so at 3am it tells you the world is wrong and not which of five hops broke. He was
+  then given the resolution to have ready Monday: **page on the state signal, diagnose with the
+  step signals**; they are not competing.
+  **Better than the question asked:** given a third bug — the booking service crashes after marking
+  the entry `fulfilled` but before publishing `booking.created` — he worked out that **both**
+  signals are silent, and was right. Now carry-over.
+- **Q2 — job correlation, 0.5. #5 RE-MISSED (4th time).** Id lifecycle correct and unprompted
+  (created per run, at the start of the run, by the job, `context_type: 'job'`). The third part of
+  the question — *what has to be true about where it is held* — was not attempted at first, and on
+  a direct re-ask produced **"stored in its own isolated context"**: a property of the result, not
+  a mechanism, using two of the three words banned on Day 6. **Drilling stopped there rather than
+  running a fourth `/quiz` pass on it.** The hint left with him, deliberately short of the answer:
+  *if two concurrent runs each have their own id, something physical must differ between them at
+  the moment the deep callee reads it — name that thing.* **`/explain-back` is the only remaining
+  tool on this one.**
+- **Q3 — the expiry worker's silent death, 1.0.** Right on member impact, and he added the
+  second-order consequence unprompted: no expiry → no `desk.freed` → the waitlist stalls too. On
+  (b) he claimed the design already detects it, **was challenged to point at where it was drawn,
+  and produced the evidence** — the observability strip. That challenge is what found the stale
+  scoring line above. **Worth noting as the fourth consecutive instance of the inverse of gap #16:**
+  he did not fold when pushed, he went and got the artefact.
+- **#19 — two clean reps, no miss.** Both parts of Q1 answered the question that was asked. First
+  session since Day 5 with no adjacent-answer instance. **Not closing it** — four misses stand and
+  Monday is the graded test of exactly this.
+
+**Day 8 build session.**
+
+- **The `finally` transfer, caught before it shipped.** Asked where the three signals go, he
+  answered "success in try after the await, failure in catch, span end in finally" — all three
+  correct — then added *"I think we should use a finally block"* for the success counter. That is
+  **Day 6's span rule transferred to a case with the opposite requirement**: a span must close on
+  every path or the trace is lost; a success counter must be reachable on exactly one path or it
+  stops meaning anything. In `finally` it would have counted every failure as a success and
+  silently disabled the entire day's alerting. He identified the contradiction as soon as the
+  failing path was walked. **Same class as #11 and #20 — transfer under a new frame — but this
+  time the transfer was of a rule he owned, into a case that inverts it.**
+- **Silent-failure shape, half.** Correctly said `completed` must mean *succeeded*. Then said the
+  fix was "increment something inside the catch block" — but the premise was that it never throws,
+  so there is no `catch` to enter. Given the contradiction he went to his own strip and picked
+  **`stuck_bookings`**, with the reason: *"it checks state not whether the job ran."*
+- **Written answer, revised once and it is his.** First draft was a correct general principle that
+  would have been identical had he built nothing — which the deliverable's own wording ("backed by
+  your own instrumentation **this time**") makes a real miss. Second draft carries the measurement
+  and the two things missing from the first: *"rather than trusting the job to report its own
+  health"* and *"I page on the violated state and use the job's execution metrics only for
+  diagnosis."* **Two residual nits left with him, not corrected:** "remained non-zero" undercuts
+  his own `> 5` threshold reasoning, and the second draft **dropped "stale or disappears"** from the
+  first, losing the `absent()` case.
 
 **Day 3 build session — gaps #4 and #8 both closed.**
 
@@ -1005,3 +1101,90 @@ against the recovered canvas.
 (what earns a box, what live work actually looks like) rather than on the deliverable. Judged
 worth it: the design track was the weaker of the two graded tracks and moved from 3 to 8 in a day.
 The cost is that Day 8 now carries both its own build and the two spoken drills.
+
+### Day 8 — Fri Aug 7 ✅
+**Objective:** a cron that fails silently ~1-in-5 runs, instrumented so a failure shows as a log
+entry, a metric and an alert rule — plus the written answer to *"how would you know this failed
+before a user reported it?"*, backed by that instrumentation. **This is his interview scenario**,
+and gaps **#3**, **#7**, **#17** are all the same shape.
+
+**Deliverable — verified on disk and committed:**
+
+| Evidence | Path |
+|---|---|
+| PR | branch `day-08-silent-failure`, commit `5c78d5f` |
+| **The written answer** | `deliverables/day-08/silent-failure-answer.md` |
+| Build rationale + evidence index | `deliverables/day-08/README.md` |
+| Job logs, mixed mode — both failure shapes, 26 success / 4 loud failure | `deliverables/day-08/sweep-logs-mixed.jsonl` |
+| Job logs, silent-only — **every run reports success, zero error lines** | `deliverables/day-08/sweep-logs-silent.jsonl` |
+| `/metrics` in both modes | `deliverables/day-08/metrics-{mixed,silent}.txt` |
+| Prometheus alerts firing | `deliverables/day-08/alerts-firing.json` |
+| The six rules as Prometheus loaded them | `deliverables/day-08/prometheus-rules.json` |
+
+**Verified against the running stack, not inferred from a green test.** During the silent-only run,
+all at one instant: `job_runs_total{outcome="success"}` = **12**, error-level sweep log lines =
+**0**, `bookings_expired_pending` = **33**, `ExpiredBookingsNotSwept` **firing**,
+`ExpirySweepNotRunning` **silent**. All six rules `health: ok`.
+
+A second check worth keeping: over a long mixed-mode run, 601 success / 79 failure = **11.6%** loud
+failures against a configured 20% rate — exactly right, because half the injected failures are
+silent and are *counted as successes*. The arithmetic confirms the demo does what it claims.
+
+Done:
+- [x] `JobRunner` in `libs/observability/src/jobs/` — one wrapper, three signals, own CLS context
+      with `context_type: "job"`. **The Day 2 ALS decision paying off as predicted:** no request to
+      scope to, nothing downstream changed.
+- [x] `job_runs_total{job_name,outcome}` · `job_duration_seconds` ·
+      `job_last_success_timestamp_seconds`
+- [x] `bookings_expired_pending` as a prom-client `collect()` callback — **the load-bearing
+      decision**: a state signal written by the component it watches freezes at its last healthy
+      value when that component dies
+- [x] The flawed sweep, two failure shapes (`throw` / `silent`), mode and rate via env
+- [x] Three alert rules — one state (page), two step (diagnose)
+- [x] 6 tests, suite **11 → 17**
+- [x] Written answer — his, revised once
+- [x] Label collision found and fixed (below)
+
+**Checks at close:** `typecheck` clean · `lint` 0/0 · unit **17/17** · `build` both apps pass.
+
+**Design decisions made today (all defensible on Day 10):**
+- Success in `try` after the await, failure in `catch`, **only `span.end()` in `finally`.** A span
+  must close on every path or the trace is lost; a success counter must be reachable on exactly one
+  path or it stops meaning anything. In `finally` it counts failures as successes and silently
+  disables the day's alerting.
+- The failure is **not rethrown** — it is called from a scheduler callback, and an unhandled
+  rejection there takes the process down under Node's default policy, turning a 1-in-5 job failure
+  into a full outage.
+- `time() - job_last_success_timestamp_seconds` rather than
+  `rate(job_runs_total{outcome="success"}[10m]) == 0`. `rate()` needs two samples in its window, so
+  a job that stops right after a deploy yields an *empty result* and `== 0` never matches one.
+- An **`absent()` arm** on that rule: a rule referencing a non-existent series evaluates to nothing,
+  which is silence exactly when a crash-looping container needs to be loud.
+- Threshold `> 5`, not `> 0`, on the state gauge: there is always a legal window between a booking
+  falling due and the next sweep reaching it, so `> 0` flaps every cycle in a healthy system.
+- **In-memory store, no Postgres.** Fence call — the domain has slipped five days deliberately and
+  earns zero assessment points. The instrumentation is identical either way; with a real table
+  `countExpiredPending()` becomes an indexed `COUNT` and `collect()` then has a real latency cost
+  inside the scrape.
+
+**The bug the demo found in itself, and it looked exactly like success.**
+`job` is Prometheus's own label — the server stamps `job="<scrape config job_name>"` on every series
+it scrapes. When a target exposes a label the server already owns, `honor_labels` decides, and it
+**defaults to false**, so the *exposed* label loses and is silently renamed `exported_job`. Nothing
+errors; `/metrics` looks right. So `{job="expiry-sweep"}` matched nothing in the TSDB, `absent()`
+returned 1, and `ExpirySweepNotRunning` fired permanently **while the sweep ran perfectly**.
+
+The first silent-mode run therefore showed two alerts firing, gauge climbing, story intact — and one
+of them was a false positive that would have gone into the Day 10 walkthrough. What caught it was
+running the selector directly in Prometheus and getting `[]` back. **A firing alert is not evidence
+that the alert works.**
+
+Fixed by renaming the metric label to `job_name`. The same collision had existed on `service` since
+Day 3 (`exported_service`), unnoticed and harmless only because both values were identical — the
+duplicate is now dropped from the scrape config. **`job` as a log field is fine:** a log stream has
+no server writing labels underneath it.
+
+**Time:** roughly on budget. The two spoken `/explain-back` drills were **deferred to the weekend —
+Leander's call**, on the reasoning that both are Day 10 content while Monday is System Design. That
+reasoning is sound; the exposure it leaves is #18, since the spoken rep itself is Day 9-critical and
+is now five days carried.
