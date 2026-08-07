@@ -1,0 +1,171 @@
+{
+    "status": "success",
+    "data": {
+        "groups": [
+            {
+                "name": "booking-api",
+                "file": "/etc/prometheus/rules/booking-api.yml",
+                "rules": [
+                    {
+                        "state": "inactive",
+                        "name": "HighErrorRatio",
+                        "query": "sum(rate(http_requests_total{status_code=~\"5..\"}[5m])) / sum(rate(http_requests_total[5m])) > 0.05 and sum(rate(http_requests_total[5m])) > 1",
+                        "duration": 300,
+                        "keepFiringFor": 0,
+                        "labels": {
+                            "service": "booking-api",
+                            "severity": "critical"
+                        },
+                        "annotations": {
+                            "description": "{{ $value | humanizePercentage }} of requests are returning 5xx. The denominator guard means this is silent below 1 req/s \u2014 an outage at low traffic needs the absence-of-success alerting from Day 8.",
+                            "summary": "booking-api 5xx ratio above 5% for 5m"
+                        },
+                        "alerts": [],
+                        "health": "ok",
+                        "evaluationTime": 0.000345684,
+                        "lastEvaluation": "2026-08-07T09:06:29.313643712Z",
+                        "type": "alerting"
+                    },
+                    {
+                        "state": "inactive",
+                        "name": "RequestsStuckInFlight",
+                        "query": "http_requests_in_flight > 50",
+                        "duration": 300,
+                        "keepFiringFor": 0,
+                        "labels": {
+                            "service": "booking-api",
+                            "severity": "critical"
+                        },
+                        "annotations": {
+                            "description": "Requests are arriving and not completing. The error-ratio rule is blind to this: with nothing completing, its numerator and denominator are both near zero.",
+                            "summary": "booking-api has >50 requests in flight for 5m"
+                        },
+                        "alerts": [],
+                        "health": "ok",
+                        "evaluationTime": 3.424e-05,
+                        "lastEvaluation": "2026-08-07T09:06:29.313995323Z",
+                        "type": "alerting"
+                    },
+                    {
+                        "state": "inactive",
+                        "name": "ExpirySweepNotRunning",
+                        "query": "(time() - job_last_success_timestamp_seconds{job_name=\"expiry-sweep\"} > 180) or (absent(job_last_success_timestamp_seconds{job_name=\"expiry-sweep\"}) == 1)",
+                        "duration": 300,
+                        "keepFiringFor": 0,
+                        "labels": {
+                            "service": "booking-api",
+                            "severity": "critical"
+                        },
+                        "annotations": {
+                            "description": "The sweep runs every 15s, so this is ~12 consecutive missed runs. Blind to a sweep that runs and silently does nothing \u2014 that is what ExpiredBookingsNotSwept is for.",
+                            "summary": "expiry-sweep has not completed successfully in >3m"
+                        },
+                        "alerts": [],
+                        "health": "ok",
+                        "evaluationTime": 5.3243e-05,
+                        "lastEvaluation": "2026-08-07T09:06:29.314030719Z",
+                        "type": "alerting"
+                    },
+                    {
+                        "state": "firing",
+                        "name": "ExpiredBookingsNotSwept",
+                        "query": "bookings_expired_pending > 5",
+                        "duration": 180,
+                        "keepFiringFor": 0,
+                        "labels": {
+                            "service": "booking-api",
+                            "severity": "critical"
+                        },
+                        "annotations": {
+                            "description": "Desks are not returning to circulation. On the Day 7 waitlist design this also stalls every queue behind those desks, because no expiry means no desk.freed event and therefore no promotion. Check job_runs_total{job_name=\"expiry-sweep\"} \u2014 if it is still counting successes, the sweep is running and its query is wrong.",
+                            "summary": "{{ $value }} expired bookings still holding desks for 3m"
+                        },
+                        "alerts": [
+                            {
+                                "labels": {
+                                    "alertname": "ExpiredBookingsNotSwept",
+                                    "exported_service": "booking-api",
+                                    "instance": "booking-api:3000",
+                                    "job": "booking-api",
+                                    "service": "booking-api",
+                                    "severity": "critical"
+                                },
+                                "annotations": {
+                                    "description": "Desks are not returning to circulation. On the Day 7 waitlist design this also stalls every queue behind those desks, because no expiry means no desk.freed event and therefore no promotion. Check job_runs_total{job_name=\"expiry-sweep\"} \u2014 if it is still counting successes, the sweep is running and its query is wrong.",
+                                    "summary": "69 expired bookings still holding desks for 3m"
+                                },
+                                "state": "firing",
+                                "activeAt": "2026-08-07T09:03:14.312362699Z",
+                                "value": "6.9e+01"
+                            },
+                            {
+                                "labels": {
+                                    "alertname": "ExpiredBookingsNotSwept",
+                                    "instance": "booking-api:3000",
+                                    "job": "booking-api",
+                                    "service": "booking-api",
+                                    "severity": "critical"
+                                },
+                                "annotations": {
+                                    "description": "Desks are not returning to circulation. On the Day 7 waitlist design this also stalls every queue behind those desks, because no expiry means no desk.freed event and therefore no promotion. Check job_runs_total{job_name=\"expiry-sweep\"} \u2014 if it is still counting successes, the sweep is running and its query is wrong.",
+                                    "summary": "36 expired bookings still holding desks for 3m"
+                                },
+                                "state": "pending",
+                                "activeAt": "2026-08-07T09:03:59.312362699Z",
+                                "value": "3.6e+01"
+                            }
+                        ],
+                        "health": "ok",
+                        "evaluationTime": 0.000178578,
+                        "lastEvaluation": "2026-08-07T09:06:29.314084828Z",
+                        "type": "alerting"
+                    },
+                    {
+                        "state": "inactive",
+                        "name": "ExpirySweepFailingOften",
+                        "query": "sum(rate(job_runs_total{job_name=\"expiry-sweep\",outcome=\"failure\"}[10m])) / sum(rate(job_runs_total{job_name=\"expiry-sweep\"}[10m])) > 0.3",
+                        "duration": 600,
+                        "keepFiringFor": 0,
+                        "labels": {
+                            "service": "booking-api",
+                            "severity": "warning"
+                        },
+                        "annotations": {
+                            "description": "Loud failures only. A run that swallows its error or matches zero rows is counted as a success and never appears here.",
+                            "summary": "expiry-sweep is throwing on >30% of runs"
+                        },
+                        "alerts": [],
+                        "health": "ok",
+                        "evaluationTime": 5.7031e-05,
+                        "lastEvaluation": "2026-08-07T09:06:29.314264835Z",
+                        "type": "alerting"
+                    },
+                    {
+                        "state": "inactive",
+                        "name": "TargetDown",
+                        "query": "up{job=\"booking-api\"} == 0",
+                        "duration": 60,
+                        "keepFiringFor": 0,
+                        "labels": {
+                            "service": "booking-api",
+                            "severity": "critical"
+                        },
+                        "annotations": {
+                            "description": "No successful scrape for 1m. Every other rule for this service is now evaluating against stale or absent data.",
+                            "summary": "Prometheus cannot scrape booking-api"
+                        },
+                        "alerts": [],
+                        "health": "ok",
+                        "evaluationTime": 2.342e-05,
+                        "lastEvaluation": "2026-08-07T09:06:29.314322822Z",
+                        "type": "alerting"
+                    }
+                ],
+                "interval": 15,
+                "limit": 0,
+                "evaluationTime": 0.000721395,
+                "lastEvaluation": "2026-08-07T09:06:29.313625898Z"
+            }
+        ]
+    }
+}

@@ -28,9 +28,13 @@ scrape_configs:
     static_configs:
       # Service name and the container-internal port — not localhost, and not the
       # published port. Prometheus resolves this over the compose network.
+      # No `service` label here any more. The app already stamps one on every
+      # series via registry.setDefaultLabels(), so this was the same collision as
+      # `job` (see JobLabels): the exposed label lost and became
+      # `exported_service`, leaving two labels with the same value and one
+      # confusing name. Removing the duplicate here keeps the app's own label —
+      # which is the one that survives being scraped by anything else too.
       - targets: ["booking-api:3000"]
-        labels:
-          service: booking-api
 
   # Prometheus scraping itself. Cheap, and it is the control: if this target is
   # UP while booking-api is DOWN, the problem is the app, not the stack.

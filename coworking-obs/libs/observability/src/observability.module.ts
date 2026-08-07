@@ -12,6 +12,8 @@ import { ClsMiddleware, ClsModule, ClsService } from 'nestjs-cls';
 import type { Request } from 'express';
 import { CORRELATION_ID_HEADERS } from './cls/app-cls-store';
 import { DebugController } from './debug/debug.controller';
+import { JobMetrics } from './jobs/job.metrics';
+import { JobRunner } from './jobs/job-runner';
 import { HttpLoggingMiddleware } from './logging/http-logging.middleware';
 import { buildWinstonOptions } from './logging/winston-options.factory';
 import { HttpMetrics } from './metrics/http.metrics';
@@ -85,8 +87,21 @@ export class ObservabilityModule implements NestModule {
         HttpMetrics,
         HttpLoggingMiddleware,
         HttpMetricsMiddleware,
+        // Day 8. Job instrumentation lives here rather than in booking-api because
+        // it is the same three signals the HTTP path already gets, applied to a
+        // different kind of unit of work — and the notifier will want it too the
+        // moment it grows a retry queue.
+        JobMetrics,
+        JobRunner,
       ],
-      exports: [ClsModule, WinstonModule, HttpMetrics, METRICS_REGISTRY],
+      exports: [
+        ClsModule,
+        WinstonModule,
+        HttpMetrics,
+        JobMetrics,
+        JobRunner,
+        METRICS_REGISTRY,
+      ],
     };
   }
 

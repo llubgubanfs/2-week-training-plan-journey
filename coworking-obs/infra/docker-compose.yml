@@ -48,6 +48,13 @@ services:
       NOTIFIER_URL: http://notifier:3001
       OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4318
       OTEL_TRACES_SAMPLER: ${OTEL_TRACES_SAMPLER:-parentbased_always_on}
+      # Day 8. Overridable so the demo can be driven from the host without a
+      # rebuild — SWEEP_FAILURE_MODE=none is what shows the alerts clearing.
+      SWEEP_INTERVAL_MS: ${SWEEP_INTERVAL_MS:-15000}
+      SWEEP_FAILURE_MODE: ${SWEEP_FAILURE_MODE:-mixed}
+      SWEEP_FAILURE_RATE_PCT: ${SWEEP_FAILURE_RATE_PCT:-20}
+      SWEEP_SEED_PER_TICK: ${SWEEP_SEED_PER_TICK:-3}
+      BOOKING_TTL_MS: ${BOOKING_TTL_MS:-20000}
     ports:
       - "${BOOKING_API_PORT:-3000}:3000"
     networks: [obs]

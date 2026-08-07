@@ -1,0 +1,40 @@
+{
+    "status": "success",
+    "data": {
+        "alerts": [
+            {
+                "labels": {
+                    "alertname": "ExpiredBookingsNotSwept",
+                    "exported_service": "booking-api",
+                    "instance": "booking-api:3000",
+                    "job": "booking-api",
+                    "service": "booking-api",
+                    "severity": "critical"
+                },
+                "annotations": {
+                    "description": "Desks are not returning to circulation. On the Day 7 waitlist design this also stalls every queue behind those desks, because no expiry means no desk.freed event and therefore no promotion. Check job_runs_total{job_name=\"expiry-sweep\"} \u2014 if it is still counting successes, the sweep is running and its query is wrong.",
+                    "summary": "69 expired bookings still holding desks for 3m"
+                },
+                "state": "firing",
+                "activeAt": "2026-08-07T09:03:14.312362699Z",
+                "value": "6.9e+01"
+            },
+            {
+                "labels": {
+                    "alertname": "ExpiredBookingsNotSwept",
+                    "instance": "booking-api:3000",
+                    "job": "booking-api",
+                    "service": "booking-api",
+                    "severity": "critical"
+                },
+                "annotations": {
+                    "description": "Desks are not returning to circulation. On the Day 7 waitlist design this also stalls every queue behind those desks, because no expiry means no desk.freed event and therefore no promotion. Check job_runs_total{job_name=\"expiry-sweep\"} \u2014 if it is still counting successes, the sweep is running and its query is wrong.",
+                    "summary": "36 expired bookings still holding desks for 3m"
+                },
+                "state": "pending",
+                "activeAt": "2026-08-07T09:03:59.312362699Z",
+                "value": "3.6e+01"
+            }
+        ]
+    }
+}
