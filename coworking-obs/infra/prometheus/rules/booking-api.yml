@@ -53,6 +53,99 @@ groups:
             blind to this: with nothing completing, its numerator and denominator
             are both near zero.
 
+      # ── Day 8: the expiry sweep ──────────────────────────────────────────────
+      #
+      # Three rules, and the split between them is the point. The first two ask
+      # different questions about the same job and are blind to different failures;
+      # the third is diagnostic only and would never page anyone.
+      #
+      #   ExpirySweepNotRunning   — a STEP signal. "Did the job report success?"
+      #   ExpiredBookingsNotSwept — a STATE signal. "Is the world wrong right now?"
+      #
+      # A step signal presupposes the chain reached that step, so everything that
+      # goes wrong before it is invisible by construction. A state signal asks
+      # whether the invariant holds regardless of cause, so it catches failures
+      # nobody has thought of — and tells you nothing about which one. Page on the
+      # state signal; diagnose with the step signals.
+
+      # Absence of expected success — the shape gap #3, #7 and #17 all share, and
+      # the one this whole plan has been circling since Day 1. There is no error
+      # here to alert on: a job that dies, is never scheduled, or is wedged mid-run
+      # emits nothing at all. Silence is the symptom, so the rule has to be written
+      # against the clock rather than against an event.
+      #
+      # `time() - <timestamp gauge>` rather than
+      # `rate(job_runs_total{outcome="success"}[10m]) == 0`, which looks equivalent
+      # and fails in the case that matters: rate() needs two samples inside its
+      # window to return anything, so a job that stops right after a deploy produces
+      # no series rather than a zero — and `== 0` never matches an empty result.
+      #
+      # The `absent()` arm covers the mirror image: on a fresh start the gauge does
+      # not exist until the first success, and a rule referencing a series that does
+      # not exist evaluates to nothing. Without this arm a container that
+      # crash-loops before its first successful sweep is perfectly silent. `for: 5m`
+      # is what keeps an ordinary boot from paging.
+      - alert: ExpirySweepNotRunning
+        expr: |
+          (time() - job_last_success_timestamp_seconds{job_name="expiry-sweep"} > 180)
+          or
+          (absent(job_last_success_timestamp_seconds{job_name="expiry-sweep"}) == 1)
+        for: 5m
+        labels:
+          severity: critical
+          service: booking-api
+        annotations:
+          summary: "expiry-sweep has not completed successfully in >3m"
+          description: >-
+            The sweep runs every 15s, so this is ~12 consecutive missed runs.
+            Blind to a sweep that runs and silently does nothing — that is what
+            ExpiredBookingsNotSwept is for.
+
+      # The state signal, and the only rule here that survives a sweep which lies
+      # about itself. `bookings_expired_pending` is computed by prom-client's
+      # collect() callback during the scrape, not written by the job, so it keeps
+      # reporting the truth while the job is dead, wedged, or returning success
+      # having matched zero rows.
+      #
+      # Threshold is > 5, not > 0, and that is not laziness. There is always a legal
+      # window between a booking falling due and the next sweep reaching it, so > 0
+      # would flap every cycle in a perfectly healthy system. The number that means
+      # something is "more than one sweep's worth of backlog, and it is not
+      # draining" — which is the threshold plus `for`, together.
+      - alert: ExpiredBookingsNotSwept
+        expr: bookings_expired_pending > 5
+        for: 3m
+        labels:
+          severity: critical
+          service: booking-api
+        annotations:
+          summary: "{{ $value }} expired bookings still holding desks for 3m"
+          description: >-
+            Desks are not returning to circulation. On the Day 7 waitlist design
+            this also stalls every queue behind those desks, because no expiry
+            means no desk.freed event and therefore no promotion. Check
+            job_runs_total{job_name="expiry-sweep"} — if it is still counting
+            successes, the sweep is running and its query is wrong.
+
+      # Diagnostic, not a page. It answers "which step broke" once one of the two
+      # rules above has already woken someone up. On its own it is exactly the alert
+      # that stays quiet through the silent failure, because a silently-failing run
+      # increments outcome="success".
+      - alert: ExpirySweepFailingOften
+        expr: |
+          sum(rate(job_runs_total{job_name="expiry-sweep", outcome="failure"}[10m]))
+            / sum(rate(job_runs_total{job_name="expiry-sweep"}[10m]))
+            > 0.3
+        for: 10m
+        labels:
+          severity: warning
+          service: booking-api
+        annotations:
+          summary: "expiry-sweep is throwing on >30% of runs"
+          description: >-
+            Loud failures only. A run that swallows its error or matches zero rows
+            is counted as a success and never appears here.
+
       # Not from the Day 3 note. The stack needs to notice its own scrape target
       # disappearing, otherwise every rule above goes quiet for the best possible
       # reason and the worst possible cause.

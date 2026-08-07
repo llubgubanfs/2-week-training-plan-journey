@@ -1,0 +1,14 @@
+job_runs_total{job_name="expiry-sweep",outcome="success",service="booking-api"} 603
+job_runs_total{job_name="expiry-sweep",outcome="failure",service="booking-api"} 79
+job_duration_seconds_bucket{le="0.01",service="booking-api",job_name="expiry-sweep"} 682
+job_duration_seconds_bucket{le="0.05",service="booking-api",job_name="expiry-sweep"} 682
+job_duration_seconds_bucket{le="0.25",service="booking-api",job_name="expiry-sweep"} 682
+job_duration_seconds_bucket{le="1",service="booking-api",job_name="expiry-sweep"} 682
+job_duration_seconds_bucket{le="5",service="booking-api",job_name="expiry-sweep"} 682
+job_duration_seconds_bucket{le="15",service="booking-api",job_name="expiry-sweep"} 682
+job_duration_seconds_bucket{le="60",service="booking-api",job_name="expiry-sweep"} 682
+job_duration_seconds_bucket{le="+Inf",service="booking-api",job_name="expiry-sweep"} 682
+job_duration_seconds_sum{service="booking-api",job_name="expiry-sweep"} 0.08505339199999991
+job_duration_seconds_count{service="booking-api",job_name="expiry-sweep"} 682
+job_last_success_timestamp_seconds{job_name="expiry-sweep",service="booking-api"} 1786103854.669
+bookings_expired_pending{service="booking-api"} 0
