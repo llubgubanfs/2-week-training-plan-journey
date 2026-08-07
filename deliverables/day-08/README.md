@@ -107,14 +107,12 @@ Two details in the rules worth being able to explain:
 
 ---
 
-## How would I know this failed before a user reported it?
+## The written answer
 
-I detect silent cron job failures by monitoring the invariant the job is responsible for
-maintaining rather than trusting the job to report its own health. In my implementation, the
-system recorded twelve consecutive successful sweep executions while an independently collected
-state metric remained non-zero, causing the invariant alert to fire even though the heartbeat
-alert stayed green, demonstrating that I page on the violated state and use the job's execution
-metrics only for diagnosis.
+*"How would I know this failed before a user reported it?"* → **[`silent-failure-answer.md`](silent-failure-answer.md)**
+
+Kept as its own file rather than a section here: the plan names it as a deliverable in its own
+right, and this document is the build rationale around it.
 
 ---
 
