@@ -13,9 +13,8 @@
 #
 # It prints the command and waits for Enter. It deliberately prints NOTHING
 # else — this is on camera, and a terminal full of narration is a terminal
-# visibly being read from. The words live in the run sheet
-# (deliverables/day-10/run-sheet.md); keep that on a second screen or on
-# paper, not on the one being recorded.
+# visibly being read from. Keep whatever you are narrating from on a second
+# screen or on paper, not on the one being recorded.
 set -uo pipefail
 
 cd "$(dirname "$0")/.." || exit 1
