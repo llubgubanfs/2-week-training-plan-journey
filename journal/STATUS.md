@@ -3,16 +3,36 @@
 > Claude: read this before responding to anything. Update it via `/day-end`.
 > Humans: this is "where am I right now."
 
-**Currently:** Day 8 of 10 ✅ done · next working day Mon 2026-08-10 · **Day 9 System Design defence — GRADED**
-**Last updated:** 2026-08-07 (Day 8 closed out)
+**Currently:** Day 10 of 10 ✅ — **the plan is complete.** Both graded assessments delivered.
+**Last updated:** 2026-08-11 (Day 10 closed out)
+
+> ## ✅ Plan complete. Two things are outstanding, and neither is Leander's to do.
+>
+> | Track | Target | Delivered | Score |
+> |---|---|---|---|
+> | Observability & Structured Logging | 7 / 10 | Day 10 — recording + written retest | ⏳ Harvey |
+> | System Design | 8 / 12 | Day 9 — live defense | ⏳ Harvey |
+>
+> **⚠️ Day 9 is under-recorded.** It happened Mon Aug 10, live, and Leander reports it "went a bit
+> well" with Harvey pushing on architecture questions. **No score, no detail, no artefact on disk** —
+> `journal/day-09-system-design-defense.md` still has four empty sections. This is the one real
+> documentation hole in an otherwise fully-evidenced ten days, and it is the *graded* day. Fill it
+> from memory before the detail goes.
+>
+> **⚠️ Neither Day 1 baseline number ever came back.** Both post-training scores will therefore land
+> with no measured delta. Parked twice by Leander's own call (Days 2 and 3) on the reasoning that it
+> wasn't blocking — that reasoning held right up until the end, and now it costs the comparison.
+> Asked in the Day 10 chat message.
 
 > ⚠️ **Day 9 is the next working day, it is live, and it is graded.** Two parts: a skeptical
 > stakeholder pushing back on the cost of the waitlist, then the Day 1 design re-presented from
 > scratch with the waitlist, defended under follow-up.
 >
 > **What actually moves the Monday rubric, ranked:**
-> 1. **Multi-tenancy (#21)** — undecided after two design sessions and ~80 minutes. It is the first
->    word of the prompt. Currently worth 0 points he could have.
+> 1. ~~**Multi-tenancy (#21)** — undecided after two design sessions and ~80 minutes.~~ **DECIDED
+>    AND DEFENDED, Sun Aug 9 prep session — shared tables with `operator_id`, RLS unprompted, three
+>    models each dismissed on operational cost.** What remains is **drawing it**: one line, one box,
+>    one constraint. Decided-but-undrawn still scores 0.
 > 2. **Scale math conclusion (#11)** — `14,000` capacity is on the diagram; what it *implies*
 >    (one shared DB, one shared cache) is never stated. One sentence converts 1.5 → 2.
 > 3. **Reading the question back before answering (#19)** — 4 instances, highest-frequency gap on
@@ -29,10 +49,13 @@
 
 ## Scores
 
-| Track | Baseline (Day 1) | Target | Retest |
-|---|---|---|---|
-| Observability & Structured Logging | not yet scored by EM | **7 / 10** | Day 10 |
-| System Design | not yet scored by EM | **8 / 12** | Day 9 |
+| Track | Baseline (Day 1) | Target | Retest | Post-training |
+|---|---|---|---|---|
+| Observability & Structured Logging | not yet scored by EM | **7 / 10** | Day 10 ✅ delivered | ⏳ awaiting Harvey |
+| System Design | not yet scored by EM | **8 / 12** | Day 9 ✅ delivered | ⏳ awaiting Harvey |
+
+Day 10 answers: `deliverables/day-10/observability-post-training-answers.md`, with a
+question-by-question delta table against the baseline.
 
 Baseline answers: `1-baseline/observability-structured-logging-answers.md`. Neither track's baseline number has come back from Harvey yet. Chasing them is **parked** (Leander's call, Day 2) — revisit before Day 9 only if a measured delta is wanted.
 
@@ -54,8 +77,8 @@ session should re-derive it.
 | 6 | Wed Aug 5 | Distributed tracing | ✅ done |
 | 7 | Thu Aug 6 | Waitlist design extension | ✅ done |
 | 8 | Fri Aug 7 | Silent failure detection | ✅ done |
-| 9 | **Mon Aug 10** | **System Design defense — GRADED** | 🔵 next |
-| 10 | Tue Aug 11 | Walkthrough + **Observability retest — GRADED** | ⬜ |
+| 9 | Mon Aug 10 | **System Design defense — GRADED** | ✅ done · ⚠️ under-recorded |
+| 10 | Tue Aug 11 | Walkthrough + **Observability retest — GRADED** | ✅ done |
 
 ---
 
@@ -167,15 +190,24 @@ and would affect Leander's other projects — deliberately not done.
 Also: **Day 2's PR link is orphaned.** It lives at `y4nder/…/pull/1` and that repo has no Day 3+
 work. If Harvey was given that link, he needs the new one.
 
-## Carry-over into Day 9 — **GRADED, live, Monday**
+## Carry-over into Day 9 — ⚠️ **HISTORICAL, closed 2026-08-11**
+
+> **Both graded days have now happened.** This block and the Day 10 block below are kept as the
+> record of what was prioritised going in — **not as an open task list.** Day 10's items were all
+> covered (see the Day 10 log). **Day 9's cannot be verified either way**, because the session went
+> unrecorded — which is exactly why the under-recording matters and is the plan's one real
+> evidence hole.
 
 **Design track first. Everything in this block is zero working days from being too late.**
 
-- [ ] ⚠️ **Multi-tenancy (#21) — decide the model and draw it.** Shared tables with a tenant
-      column, schema per tenant, or database per tenant, defended on **operational cost**, not
-      correctness. It is the first word of the prompt and has never been his in two sessions.
-      **His call which model — do not hand him one.** The strip's `operator(tenant)` label is a
-      start, not an answer.
+- [x] ✅ **Multi-tenancy (#21) — model decided and defended, Sun Aug 9.** **Shared tables with
+      `operator_id`**, his call, arrived at by rejecting the other two on operational cost:
+      schema-per-tenant fans out N ways on every cross-tenant query (his own sweep and lost-promotion
+      query are both cross-tenant), db-per-tenant scales operations linearly. **RLS produced
+      unprompted** as the enforcement mechanism, with both residual risks named by him.
+- [ ] ⚠️ **…but it is still not drawn.** `operator_id` on the tenanted tables plus one line saying
+      the predicate is enforced by policy, not by every query remembering it. **Decided-but-undrawn
+      scores the same as undecided.** Today's first slot.
 - [ ] ⚠️ **Scale math has no conclusion (#11).** `30 + (5 × 8) = 70 × 200 = 14,000` is on the
       diagram; what it *implies* is not. One shared DB and one shared cache is almost certainly
       right at that number — **saying so out loud is what converts 1.5 → 2.** Also still missing:
@@ -647,6 +679,68 @@ query-time vs write-time half, re-missed twice) and the Winston row below.
   his own `> 5` threshold reasoning, and the second draft **dropped "stale or disappears"** from the
   first, losing the `absent()` case.
 
+**Day 9 prep quiz — Sun 2026-08-09 (weekend session, Day 8 material).**
+
+- **Q1(a) — full credit, unprompted.** Asked what `bookings_expired_pending` reads after the sweep
+  dies under `collect()` vs `.set()`, he named the discriminator directly: **who writes the number**.
+  `collect()` is evaluated by the scrape so the reporter is alive by definition; `.set()` makes the
+  watched component the reporter of its own health. Then split the two deaths correctly when pushed —
+  container death is caught (`TargetDown` since Day 4, plus his own `absent()` arm), scheduler-stops-
+  but-process-lives is the dangerous one and is caught by nothing except the `collect()` choice.
+  One correction handed over, and it is Day 10 content: **a failed scrape appends a staleness marker**,
+  so the series returns *no data* within one interval rather than a frozen value — which is precisely
+  why the `absent()` arm is load-bearing rather than defensive.
+- **Q1(b) — right window on the second pass.** First answer was "the worker is currently running",
+  killed with arithmetic (5-min period, 200 ms run → 0.07% of wall clock, so it would almost never
+  flap; it flaps every cycle). Second pass got it: the window is **due-but-not-yet-swept**. Brought in
+  `for: 3m` unprompted, which is the correct partner to the threshold.
+
+| # | Gap | Evidence | Reality | Addressed |
+|---|---|---|---|---|
+- **Q2 — #21 MOVED, and the reasoning is his.** Committed to **shared tables with `operator_id`**,
+  then reconsidered mid-defense toward schema-per-tenant on the grounds that *"it's the right approach
+  for a multi-tenant project"* — an appeal to convention, and it was rejected as an argument rather
+  than as a conclusion. Re-run against a concrete case from his own design (the Day 8 sweep's
+  `GROUP BY operator_id` and the Day 7 lost-promotion query are both **cross-tenant**), he produced a
+  real cost defense unaided: schema-per-tenant → **N-way fan-out** on every cross-tenant query;
+  db-per-tenant → operational cost scales **linearly** in backups, pools and credentials; shared
+  tables → cross-tenant aggregation free, migrations run once. Named the honest costs without being
+  walked to them: noisy neighbour, migration blast radius.
+  **The strongest single answer: RLS, unprompted.** Asked where `operator_id` lands on the claim
+  statement, he went past the WHERE clause to a **row-level security policy keyed on a per-transaction
+  setting**, then volunteered both residual risks himself — forgetting the policy on a new table, and
+  not enclosing the operation in a transaction that sets the tenant. That is his own Day 7 sentence
+  (*"enforcement that has to be remembered gets forgotten"*) transferred to tenancy without prompting
+  — **the inverse of the transfer failures in #11, #20 and #22.**
+  Handed over, both Day 10-adjacent: `SET` persists on a pooled connection where `SET LOCAL` dies with
+  the transaction; and the leading-column composite index, which is what makes one shared table cost
+  the same at 1 operator and at 200. **#21 not closed — it is decided and defended but still not on
+  the diagram.** One line, one box, one constraint is all it needs.
+- **Q3 — stakeholder pushback, strongest live answer of the plan, and it took two passes.**
+  Pass 1 had the structure right: acknowledged the real objection in the stakeholder's own terms
+  (maintenance debt, not a strawman), produced arithmetic from the prompt's own figures
+  (14,000 → 5% → 700 → conservative 100 × $30 = **$3,000/day**), and closed by naming the metric that
+  decides it and conceding on it — *"if we're at 70% occupancy this shouldn't be built"* — which is
+  the graded behaviour, unprompted.
+  **The flaw was ordering, not content: the two halves contradicted.** $3,000/day and "worth nothing
+  at 70% occupancy" cannot both stand, because a freed desk is only lost revenue if someone would have
+  booked it. Also undercosted the proposal at *"$30/month for RabbitMQ"* — the broker is the cheapest
+  part, and a stakeholder hearing that concludes it was never costed.
+  **Pass 2 fixed both by leading with the deciding question**, so the number arrives already
+  conditioned and cannot be caught between the two claims; and repriced it at **two dev-weeks plus
+  maintenance**, which strengthens the argument rather than weakening it. Added unprompted, and the
+  best line in it: the cheap alternative reframed as a **test** — *"we can prove first if the demand
+  is actually there"* — background job plus email, let the data buy the realtime version.
+  **One residual over-claim left with him, deliberately:** $3,000 is money *left on the table*, not
+  money *recovered*; pre-empt the conversion-rate follow-up with a fraction.
+- **#19 — two clean reps, no miss**, across a pure-pushback question, which is the exact condition
+  that has produced four of them. Second consecutive session with no adjacent-answer instance.
+  **Still not closing it** — Monday is the graded test.
+
+| # | Gap | Evidence | Reality | Addressed |
+|---|---|---|---|---|
+| 22 | **Reaches for an absolute count threshold, not an age or a ratio** | Second instance. Day 4: framed the Postgres pool alert as an absolute number when the useful signal is saturation (`in_use / pool_size`). Day 9 prep: could say what `> 5` *does* but not what 5 *is*, and when asked for a better shape reached for **per-tenant grouping** — which bounds blast radius but makes the threshold worse, since operator A (50 locations) pages every morning while operator B (2 locations) never reaches 6. | **5 was a silent claim about throughput** — how many bookings can legitimately fall due inside one sweep period plus the `for` window, measured against a toy stack doing a handful an hour. Move the traffic and it is wrong in the direction that trains people to ignore the page. The transferable rule, produced by him after the two-operator case was walked: **a count threshold encodes your traffic, an age threshold encodes your SLO** — key on how long the oldest expired booking has sat unswept, which is identical at 1 location and at 200. **The sting: he built exactly this on Day 8.** `time() - job_last_success_timestamp_seconds` was chosen deliberately over `rate(...) == 0` — an age threshold on the step signal and a count threshold on the state signal, same file, same afternoon. Same class as #11, #20 and the Day 8 `finally` transfer: **the rule is owned, the transfer across frames is not.** | drill before Day 10; also a live Day 9 answer if scale follow-ups reach alerting |
+
 **Day 3 build session — gaps #4 and #8 both closed.**
 
 - **#8 CLOSED.** Asked what an abandoned request logs under the Day 2 code, he answered
@@ -674,6 +768,34 @@ Residual on #3 — he framed the fix as "we should see an error log entry for th
 inverts it: if an error existed to log, it would not be a silent failure. The detection
 has to key on the **absence of an expected success**, not on the presence of an error.
 Drill this exact sentence before Day 8 and again before the Day 10 retest.
+
+**Day 10 warm-up quiz — the two topics the Day 5 recording never reached.**
+
+- **Winston vs pino — strongest answer of the plan on an undrilled topic.** Both pino mechanisms
+  produced correctly and unaided (per-shape serialiser compilation; `sonic-boom` plus worker-thread
+  transports vs Winston's synchronous format chain), the `mixin()` mapping was exact, and part 3
+  answered *what would actually change* rather than reciting a comparison. Verified against his own
+  code: every specific claim held. **Three things handed over, none of them knowledge gaps:**
+  (a) he missed that sonic-boom's async buffer **dies on a hard exit** — which is his own Day 6
+  `BatchSpanProcessor` rule one layer up, and it argues *for* his choice, so he dropped a point in
+  his own favour; (b) he compared Winston to bare pino, not **`nestjs-pino`**, which is the real
+  alternative and the one that would have displaced his own `HttpLoggingMiddleware`; (c) *"compiles a
+  serialiser per log-shape"* overstates it, and *"volume was never the bottleneck"* invites
+  *"what volume would change your mind?"* — for which he has no number.
+- **Metric vs log — gap #4 at its strongest written form.** Derived ~2 GB/yr vs ~1.9 TB/yr rather
+  than asserting it, then produced the real discriminator unprompted: **a dropped log line is
+  indistinguishable from a request that never happened, while a missed scrape leaves a visible
+  gap.** Missing half, handed over: **write-time aggregation forecloses the questions you did not
+  predict** — the flip side of his own route-template decision — and `histogram_quantile()`
+  interpolates inside a bucket, so a metric p99 is an approximation where a log-derived one is exact.
+  ⚠️ **This is the topic that collapsed on camera on Day 5 after being marked closed on Day 3.**
+- **#14 seen twice more.** He missed the counter's heap dying before a scrape, in the same session as
+  missing sonic-boom's buffer — the same *in-memory thing not yet flushed, process dies* shape, twice
+  in one morning, on a mechanism he produced unaided for spans on Day 7.
+
+| # | Gap | Evidence | Reality | Addressed |
+|---|---|---|---|---|
+| 23 | **Answers collapse to single words under fatigue, and the words are right** | Day 10 Q3. Q1 and Q2 were long, mechanical and among the best of the plan. Q3 came back as *"the 'is an invariant broken?'"* and *"the cardinality"* — three words each. The *areas* were right; one was also the wrong category (he wrote an `ExpirySweepNotRunning` query in (a), then called it the **state** signal in (b), contradicting his own Day 8 state-vs-step split). | **Not a knowledge gap — a stamina one, and it is the live-format risk.** *"The cardinality"* scores zero from an assessor who cannot see what is behind it, and Days 9 and 10 are exactly the formats where that happens. He named it as running low when asked, which is the correct call and better than pushing through badly. Worth knowing about himself: the failure mode under fatigue is **terseness that reads as not knowing**, not error. | named Day 10; carries past the plan |
 
 ### Live-skill gaps (self-identified, Day 1 system design session)
 
@@ -1188,3 +1310,84 @@ no server writing labels underneath it.
 Leander's call**, on the reasoning that both are Day 10 content while Monday is System Design. That
 reasoning is sound; the exposure it leaves is #18, since the spoken rep itself is Day 9-critical and
 is now five days carried.
+
+### Day 9 — Mon Aug 10 ✅ **GRADED — ⚠️ under-recorded**
+
+**Objective:** live 30-minute System Design defense with Harvey, in two parts — skeptical-stakeholder
+pushback on the waitlist's cost, then the Day 1 design re-presented from scratch with the waitlist and
+defended under follow-up. **The formal System Design post-training assessment.**
+
+**What is known:** it happened, live. Leander's own summary: *"went a bit well, he pushed a bit of
+some questions within the architecture."* Prep was done solo over the weekend against
+`design/day-09-cram.md`.
+
+**⚠️ What is missing, and it is the graded day.** No score recorded, no note of which architecture
+questions were pushed on, no artefact in `deliverables/day-09/`, and
+`journal/day-09-system-design-defense.md` still carries four empty `<!-- filled at day-end -->`
+sections. Every other day in this plan closes with evidence on disk; this one does not.
+
+**Why it matters beyond tidiness.** The whole Day 9 carry-over block was built around specific,
+checkable items — was multi-tenancy actually *drawn*, did the scale-math conclusion get *said*, did
+the crash-after-`fulfilled` hole get volunteered, did the read-the-question-back habit hold under
+pure pushback (gap **#19**, four misses, and part one of Day 9 is the exact condition that produces
+it). **None of those can now be scored against the real session**, so the plan ends without knowing
+whether its most-drilled behavioural gap closed.
+
+**Action:** fill the Day 9 journal from memory before the detail fades, and record the score when
+Harvey returns it. It is the last outstanding piece of the plan's evidence trail.
+
+### Day 10 — Tue Aug 11 ✅ **GRADED — plan complete**
+
+**Objective:** walk through the full observability stack — structured logging, metrics, tracing and
+the silent-failure demo — then sit the Observability post-training assessment in the Day 1 format.
+
+**Deliverable — verified on disk and committed:**
+
+| Evidence | Path |
+|---|---|
+| Recorded walkthrough | [Drive](https://drive.google.com/file/d/1chHOsTnULtDu0ffsUbv9qFEoOBheyrAT/view?usp=sharing) |
+| **The written retest** | `deliverables/day-10/observability-post-training-answers.md` |
+| Run sheet | `deliverables/day-10/run-sheet.md` |
+| Teleprompter script (HTML) | `deliverables/day-10/walkthrough-script.html` |
+| Stepper, 8 → 19 beats | `coworking-obs/infra/scripts/walkthrough.sh` |
+| Reasoning | `journal/day-10-final-walkthrough.md` |
+
+Stack re-verified cold at the start of the day: `verify.sh` **all checks pass** — both targets UP,
+six rules healthy, datasource and dashboard provisioned, both services exporting spans, cardinality
+guard clean.
+
+**The day's real content was four errors found in his own material by running it.**
+
+1. **The Day 5 stepper beat that never worked.** `f"{r[\"name\"]}"` — a backslash inside an f-string
+   expression, which Python rejects outright. Committed on Day 5, never executed until today. The
+   same shape as Day 8's `exported_job`: it looked right and was never run.
+2. **`SWEEP_FAILURE_RATE_PCT=20` silently disables the demo.** One run in five fails; the other four
+   sweep the backlog clean, the gauge never crosses `> 5`, **the alert never fires.** At `100` it
+   climbs 0 → 42 and fires in 4½ minutes. Measured both ways.
+3. **`count(http_requests_total)` returns 2, not 135.** The 135 is the whole registry projected for
+   the finished service (~15 counter + ~120 histogram). **Found by Leander running the query against
+   the script.** Saying "135" over a `2` on screen is precisely the Day 5 failure — script said two
+   lines, panel had four.
+4. **`tracked` climbing proves nothing** — it climbs at three per tick in the *healthy* state too,
+   because the seeder runs regardless. Only `swept: 0` discriminates. **Also found by Leander**, by
+   running the command and reading the output against the claim. *A constant cannot explain a
+   variable* — his own gap-#19 diagnostic, turned on his own script.
+
+**Two operational findings worth keeping.** `http_requests_total` and the latency histogram do not
+exist in `/metrics` until the first request is served (prom-client creates the labelled child on
+first increment), so a cold stack reads as broken instrumentation — `verify.sh` failed three checks
+cold and passed after 15 requests. And Jaeger's API returns traces in **unstable order**, so
+`limit=1` yields an arbitrary recent trace; export lag measured at ~5s, not 3.
+
+**Warm-up quiz — Winston vs pino and metric-vs-log, both previously undrilled.** See the weak-spot
+additions below. Q1 and Q2 were the strongest answers of the plan on those topics; Q3 was cut.
+
+**Post-training assessment.** Five questions, unaided, one pass, no reference to the baseline.
+Question-by-question delta table is in the deliverable. Gaps **#1**, **#2**, **#3**, **#13**, **#14**
+and **#17** all appear closed in his own words, unprompted, in a graded artefact.
+
+**Checks at close:** `verify.sh` fully green · stack reset to `SWEEP_FAILURE_MODE=mixed` ·
+all Day 10 evidence committed.
+
+**Time:** ran long. Most of it went on testing the stepper beats against the live stack rather than
+on the recording — which is what produced findings 1–4, so it paid for itself.
