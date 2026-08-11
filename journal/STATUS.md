@@ -1345,6 +1345,7 @@ the silent-failure demo — then sit the Observability post-training assessment 
 
 | Evidence | Path |
 |---|---|
+| PR (merged) | [#6](https://github.com/llubgubanfs/2-week-training-plan-journey/pull/6) → merge commit `f487f13` |
 | Recorded walkthrough | [Drive](https://drive.google.com/file/d/1chHOsTnULtDu0ffsUbv9qFEoOBheyrAT/view?usp=sharing) |
 | **The written retest** | `deliverables/day-10/observability-post-training-answers.md` |
 | ~~Run sheet + HTML teleprompter~~ | **removed before merge — Leander's call.** Personal prep aids for recording, not artefacts the deliverable asks for. Shipping them puts review attention on scaffolding rather than on the work. |
