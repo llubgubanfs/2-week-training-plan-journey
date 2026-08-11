@@ -1347,8 +1347,7 @@ the silent-failure demo — then sit the Observability post-training assessment 
 |---|---|
 | Recorded walkthrough | [Drive](https://drive.google.com/file/d/1chHOsTnULtDu0ffsUbv9qFEoOBheyrAT/view?usp=sharing) |
 | **The written retest** | `deliverables/day-10/observability-post-training-answers.md` |
-| Run sheet | `deliverables/day-10/run-sheet.md` |
-| Teleprompter script (HTML) | `deliverables/day-10/walkthrough-script.html` |
+| ~~Run sheet + HTML teleprompter~~ | **removed before merge — Leander's call.** Personal prep aids for recording, not artefacts the deliverable asks for. Shipping them puts review attention on scaffolding rather than on the work. |
 | Stepper, 8 → 19 beats | `coworking-obs/infra/scripts/walkthrough.sh` |
 | Reasoning | `journal/day-10-final-walkthrough.md` |
 

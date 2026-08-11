@@ -36,9 +36,10 @@ are the near-certain follow-ups.
   length and both hold up. Q3 (per-tenant PromQL) was cut — running low, my call.
 - Extended `infra/scripts/walkthrough.sh` from 8 beats to 19: tracing, the silent-failure demo,
   the label-collision proof, and a reset. Every new beat run against the live stack.
-- Wrote `deliverables/day-10/run-sheet.md` and an HTML teleprompter,
-  `deliverables/day-10/walkthrough-script.html` — full spoken script, screen map, six measured
-  hazards, live segment timer.
+- Wrote a run sheet and an HTML teleprompter — full spoken script, per-segment screen map, six
+  measured hazards, live segment timer. **Both removed before merge, deliberately:** they were
+  prep aids for recording, not artefacts the deliverable asks for, and shipping them puts review
+  attention on scaffolding instead of on the work.
 - **Recorded the walkthrough** and uploaded it.
 - **Sat the Observability post-training assessment** — same five questions as Day 1, written
   unaided in one pass: `deliverables/day-10/observability-post-training-answers.md`.
