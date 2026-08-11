@@ -697,3 +697,64 @@ one to announce.
 Day 7 and is unanswered with the session two days out; the Day 10 walkthrough format was asked on
 Day 4 and re-raised on Days 6 and 7. If Monday arrives with no answer, the default is to prepare
 for **live** — it is the harder case and the plan's own wording.
+
+---
+
+## Day 10 — Tue 2026-08-11 · Final walkthrough + Observability retest · **PLAN COMPLETE**
+
+**Rocks — Daily Status Report:** sent by Leander directly, not drafted here.
+
+### Chat with Harvey
+
+<details><summary>message</summary>
+
+```
+Hi Harvey,
+
+Day 10 is done, which closes out the two-week plan.
+
+Walkthrough recording (observability end to end — structured logging, metrics,
+tracing, and the silent-failure cron):
+https://drive.google.com/file/d/1chHOsTnULtDu0ffsUbv9qFEoOBheyrAT/view?usp=sharing
+
+PR: <link>
+
+Observability post-training assessment — the same five questions as the Day 1
+baseline, answered again. It's committed at
+deliverables/day-10/observability-post-training-answers.md, with a
+question-by-question comparison against my Day 1 answers so the change is easy
+to see.
+
+Two things I need from you to close this out properly:
+
+1. Scores for both post-training assessments — System Design from Day 9, and
+   Observability from the answers above.
+2. The Day 1 baseline scores, if you still have them. I never received either
+   one, so at the moment both post-training results will land without anything
+   to compare them to. If they're not available that's fine — I'd just rather
+   know than assume.
+
+Thanks for the two weeks — the silent-failure day in particular closed the exact
+gap I raised in my interview.
+```
+
+</details>
+
+**The asks are the whole point of this message.** Both baseline numbers have been outstanding since
+Day 1 and were deliberately parked twice (Leander's call, Days 2 and 3) on the reasoning that they
+were not blocking. That reasoning held for nine days and then stopped holding: the plan has ended and
+both post-training scores will now land with nothing to compare them to. Framed with an explicit easy
+out so it reads as closing a loop rather than chasing.
+
+**The four bugs found today were deliberately left out.** Day 8's label collision was volunteered
+because it was a bug in the *deliverable* Harvey was being handed. These four are in *tooling* — the
+Day 5 stepper beat that had never once run, the sweep failure rate that silently disabled the demo,
+Jaeger's unstable trace ordering, and prom-client's lazy series creation. Leading a final message
+with them inverts the emphasis. They are in the PR description and `journal/day-10-final-walkthrough.md`
+if he looks.
+
+**⚠️ Day 9 was left unrecorded — Leander's call, asked twice and declined.** The System Design
+defense happened live on Mon Aug 10 and no score, no detail and no artefact exist on disk.
+`STATUS.md` records it as done-but-under-recorded rather than papering over it, so the trail is
+honest, but the specific carry-over items that block was built around can no longer be checked
+against what actually happened.
