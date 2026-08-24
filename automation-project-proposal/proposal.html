@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Automation Project Proposal — Course Companion</title>
+<style>
+  @page { size: A4; margin: 22mm 20mm; }
+  body {
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    color: #1a1a1a;
+    line-height: 1.5;
+    font-size: 11pt;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  h1 {
+    font-size: 20pt;
+    margin-bottom: 2px;
+  }
+  .subtitle {
+    font-size: 11pt;
+    color: #555;
+    margin-top: 0;
+    margin-bottom: 4px;
+  }
+  .meta {
+    font-size: 9.5pt;
+    color: #777;
+    margin-bottom: 24px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 12px;
+  }
+  h2 {
+    font-size: 13pt;
+    margin-top: 26px;
+    margin-bottom: 8px;
+    border-bottom: 2px solid #2b3a55;
+    padding-bottom: 4px;
+    color: #2b3a55;
+  }
+  p { margin: 8px 0; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0 14px 0;
+    font-size: 9.8pt;
+  }
+  th, td {
+    border: 1px solid #ccc;
+    padding: 6px 8px;
+    text-align: left;
+    vertical-align: top;
+  }
+  th {
+    background: #eef1f6;
+    color: #2b3a55;
+    font-weight: 600;
+  }
+  tr:nth-child(even) td { background: #fafafa; }
+  .tag {
+    display: inline-block;
+    font-size: 8pt;
+    font-weight: 600;
+    padding: 1px 6px;
+    border-radius: 3px;
+    color: #fff;
+  }
+  .tag-mvp { background: #4a7a5f; }
+  .tag-later { background: #4a5c8a; }
+  ul { margin: 6px 0; padding-left: 20px; }
+  li { margin: 3px 0; }
+  footer {
+    margin-top: 30px;
+    font-size: 8.5pt;
+    color: #999;
+    border-top: 1px solid #ddd;
+    padding-top: 8px;
+  }
+</style>
+</head>
+<body>
+
+<h1>Automation Project Proposal</h1>
+<p class="subtitle">Course Companion — AI Knowledge Checks and Weak-Spot Tracking for the Growth Portal</p>
+<div class="meta">
+  Ad-hoc Activity Plan, Item 4 &nbsp;·&nbsp; Prepared by Leander &nbsp;·&nbsp; 2026-08-24
+</div>
+
+<h2>Problem</h2>
+<p>
+  Growth Portal courses today are watch-only. When someone finishes a course, the only signals
+  are a progress percentage and the "I learned something useful" button. Nothing verifies that
+  the viewer actually <strong>understood</strong> the material, and nothing checks whether it
+  <strong>stuck</strong> a week later. For the learner that means passive watching with no
+  feedback; for mentors and EMs it means course completion counts that say little about what
+  was actually learned.
+</p>
+
+<h2>Proposed project</h2>
+<p>
+  A <strong>Course Companion</strong> that closes the learning loop on every course, using AI
+  where it is strong (generating good questions from a transcript) and keeping a human in the
+  loop where it matters (approving them):
+</p>
+<table>
+  <tr><th>Step</th><th>What happens</th></tr>
+  <tr><td>1. Generate</td><td>A short knowledge check (3&ndash;5 questions) is generated from the course transcript using Claude. It stays a draft until the course author or an EM approves it.</td></tr>
+  <tr><td>2. Answer</td><td>The learner takes the check when they finish the course.</td></tr>
+  <tr><td>3. Score</td><td>A comprehension score is recorded alongside the existing completion signal.</td></tr>
+  <tr><td>4. Track</td><td>Missed questions land on the learner's personal <strong>weak-spot list</strong>, tagged by course and concept.</td></tr>
+  <tr><td>5. Resurface</td><td>Weak spots come back later as a short spaced retest &mdash; so the result reflects retention, not just same-day recall.</td></tr>
+</table>
+
+<h2>Why this project</h2>
+<p>
+  This is the loop my 2-week training plan ran manually, and it worked: a quiz before each
+  build session, every miss logged to a running weak-spot list, and the final retest prepared
+  by drilling that list instead of re-reading everything. The Day 10 retest answers include a
+  question-by-question comparison against the Day 1 baseline. The proposal is simply to
+  automate the mechanism that already produced that result, and make it available on every
+  Growth Portal course &mdash; which covers both examples in the activity item: an AI learning
+  activity that speeds up learning, delivered as a GP integration.
+</p>
+
+<h2>Phased scope</h2>
+<table>
+  <tr><th>Phase</th><th>Scope</th><th>Delivers</th></tr>
+  <tr>
+    <td><span class="tag tag-mvp">MVP</span></td>
+    <td>Standalone service alongside GP &mdash; no GP changes needed. Takes a course transcript, generates a reviewable quiz, serves it, stores scores and the weak-spot list.</td>
+    <td>A working end-to-end demo on one real course, enough to judge question quality and the review workflow.</td>
+  </tr>
+  <tr>
+    <td><span class="tag tag-later">Phase 1.5</span></td>
+    <td>GP integration: the knowledge check appears at course completion; the comprehension score shows on the course card next to progress %.</td>
+    <td>The loop becomes part of the normal course experience.</td>
+  </tr>
+  <tr>
+    <td><span class="tag tag-later">Phase 2</span></td>
+    <td>Mentor/EM view: weak-spot rollups per mentee, plus baseline and retest generation for individual training plans.</td>
+    <td>Automates the assessment side of training plans that is run by hand today.</td>
+  </tr>
+</table>
+
+<h2>Risks and mitigations</h2>
+<ul>
+  <li><strong>Question quality</strong> &mdash; AI-generated quizzes can be wrong or trivial. Every quiz is a draft until a human (course author or EM) approves it.</li>
+  <li><strong>How the data is perceived</strong> &mdash; scores could feel like performance rating. The Companion is scoped as a <strong>learning signal, not a performance-rating input</strong>: the weak-spot list belongs to the learner, and mentor rollups (phase 2) are mentorship-oriented.</li>
+  <li><strong>Missing transcripts</strong> &mdash; courses without a transcript get one auto-generated (speech-to-text) during ingestion. Side benefit: transcripts also make the course library searchable.</li>
+</ul>
+
+<h2>Proposed next step</h2>
+<p>
+  If the direction looks right, I would start with the MVP &mdash; a small NestJS service using
+  the Claude API, matching the team stack &mdash; and demo it on one existing GP course. I
+  estimate the MVP as roughly a one-week time-box at the same daily hours as the course work;
+  I will propose a concrete schedule once the phase-1 scope is agreed.
+</p>
+
+<footer>Automation Project Proposal — Course Companion · Leander · 2026-08-24</footer>
+
+</body>
+</html>
