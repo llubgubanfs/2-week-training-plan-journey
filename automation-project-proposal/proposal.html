@@ -105,21 +105,20 @@
 
 <h2>Proposed project</h2>
 <p>
-  During my 2-week training plan I solved this with a written working agreement and five
-  custom Claude Code commands. They ran the whole plan &mdash; but they are hardcoded to me
-  and to my topic. The project is to generalize and package that system as
-  <strong>Training Buddy</strong>: an installable Claude Code plugin any Full Scale engineer
-  can point at their own training plan.
+  <strong>Training Buddy</strong> is an installable Claude Code plugin that any engineer can
+  point at their own training plan &mdash; whatever the topic. It runs a daily learning loop
+  that is subject-independent: the plan file supplies the material and the assessment format;
+  the plugin supplies the discipline.
 </p>
 <table>
-  <tr><th>Command</th><th>What it automates</th></tr>
+  <tr><th>Loop stage</th><th>What it automates</th></tr>
   <tr><td><code>/day-start</code></td><td>Orientation from the plan file &mdash; today's objective, prerequisites, time budget &mdash; plus a warm-up quiz on yesterday's material.</td></tr>
   <tr><td><code>/quiz</code></td><td>Socratic quiz, one question at a time, <strong>answers withheld</strong>. Escalates recall &rarr; application &rarr; "what breaks if&hellip;". Every miss is logged.</td></tr>
   <tr><td><code>/explain-back</code></td><td>Feynman drill: the learner explains a concept in their own words; Claude grades it and names the gaps.</td></tr>
-  <tr><td><code>/design-drill</code></td><td>Timed design prompt, then a critique against a rubric.</td></tr>
+  <tr><td><code>/drill</code></td><td>A timed practice exercise <strong>matched to the growth area</strong>, critiqued against a rubric afterward &mdash; a whiteboard prompt for system design, a broken scenario for debugging, a review exercise for code quality, a mock stand-up for communication. Drill types are defined in the plan file, not hardcoded.</td></tr>
   <tr><td><code>/day-end</code></td><td>Verifies the day's evidence exists on disk, updates the status file, drafts the EOD report.</td></tr>
 </table>
-<p>Two assets ship with the commands, and they are what made the loop actually work:</p>
+<p>Two assets ship with the loop, and they are what make it actually work:</p>
 <ul>
   <li><strong>The buddy contract as plugin rules</strong> &mdash; no implementation code until the learner states an approach first, open design questions get turned back into questions, quiz comes <em>before</em> the build session. This is the discipline vanilla AI usage lacks.</li>
   <li><strong>A persistent weak-spot list</strong> &mdash; every quiz miss is logged (what was answered vs. what is true), and retest prep drills that list instead of re-reading everything.</li>
@@ -132,14 +131,16 @@
 
 <h2>Why this project</h2>
 <p>
-  The prototype predates the proposal. This system ran my full 10-day plan end-to-end, and
-  the evidence is in the training-plan repo: the five commands, the working agreement, a
-  weak-spot list that tracked 21+ gaps across the plan, and a final retest answered with a
-  question-by-question comparison against the Day 1 baseline. The project is extraction,
-  generalization, packaging, and documentation &mdash; not invention. It also fits where the
-  company is already heading: Claude masterclasses and hands-on workshops are running now,
-  and this gives engineers a concrete, disciplined way to apply Claude to their own growth
-  areas &mdash; an AI learning activity that speeds up learning, per the activity item.
+  The prototype predates the proposal. This loop already ran one full training plan
+  end-to-end &mdash; my recent 2-week plan &mdash; as a set of custom Claude Code commands and
+  a written working agreement, and the evidence is in that repo: a weak-spot list that tracked
+  21+ gaps, and a final retest answered with a question-by-question comparison against the
+  Day&nbsp;1 baseline. That version is hardwired to one learner and one plan; the project is
+  extracting the loop, making it topic-agnostic, and packaging it &mdash; not invention. It
+  also fits where the company is already heading: Claude masterclasses and hands-on workshops
+  are running now, and this gives engineers a concrete, disciplined way to apply Claude to
+  their own growth areas &mdash; an AI learning activity that speeds up learning, per the
+  activity item.
 </p>
 
 <h2>Phased scope</h2>
@@ -147,8 +148,8 @@
   <tr><th>Phase</th><th>Scope</th><th>Depends on</th></tr>
   <tr>
     <td><span class="tag tag-mvp">MVP</span></td>
-    <td>Extract the commands and contract, make them plan-agnostic (plan file as input, generic weak-spot and status format), package as an installable Claude Code plugin with documentation and an example plan. Pilot on one other engineer's growth area.</td>
-    <td>Nothing &mdash; all material exists.</td>
+    <td>Build the plugin: the core loop driven by a plan file (any topic), configurable drill types per growth area, a generic weak-spot and status format, documentation and an example plan. Pilot on one engineer's growth area &mdash; ideally a topic different from mine, to prove the loop is subject-independent.</td>
+    <td>Nothing &mdash; the loop is proven, the material exists.</td>
   </tr>
   <tr>
     <td><span class="tag tag-later">Phase 1.5</span></td>
