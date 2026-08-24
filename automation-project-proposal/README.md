@@ -2,7 +2,11 @@
 
 **Status:** proposal drafted 2026-08-24, awaiting Harvey's review. Not started.
 Pivoted same day from the original Course Companion draft (see git history) — the plugin
-ships the same learning loop with zero product dependencies.
+ships the same learning loop with zero product dependencies. Refined same day again:
+tailored to the **2-week training plan** specifically, after word that (a) the EM generates
+these plans and (b) another employee has a PoC in progress for interview sessions — so this
+slots into an emerging ecosystem of AI PoCs around FS Learning's people workflows, covering
+the stage that is still manual: running the plan.
 
 ## Where this comes from
 
@@ -16,7 +20,7 @@ Item 4 of Harvey's ad-hoc activity plan (post-2-week-plan, undated):
 
 | Idea | Verdict | Why |
 |---|---|---|
-| **Training Buddy** — a Claude Code plugin running a topic-agnostic training-plan loop (orient → quiz → drill → evidence check), generalized from the 2-week plan's commands + working agreement | **Chosen** | The loop already ran a full 10-day plan end-to-end in this repo. The project is generalizing and distributing it — no GP code change, no hosted service, no product-team dependency, and it lands in the company's active Claude push (masterclasses, workshops, badges). |
+| **Training Buddy** — a Claude Code plugin tailored to the 2-week training plan: ingests the EM-generated plan and runs the mentee side (orient → quiz → drill → evidence check) | **Chosen** | The loop already ran a full 10-day plan end-to-end in this repo, and the plan-generation side already exists on the EM's end — this covers the stage between generation and retest that is still manual. No GP code change, no hosted service, no product-team dependency, and it lands in the company's active Claude push. |
 | Course Companion — AI knowledge checks + weak-spot tracking built into GP courses | Deferred (was the original draft of this proposal) | Same learning loop, but requires GP product changes, a transcript pipeline, and a hosted service before anything is demoable. The plugin proves the loop first; GP integration stays on the roadmap as a later phase. |
 | EM-side training-plan automation (baseline grading, progress dashboards, retest generation) | Folded in as a later phase | High value — training plans are run by hand today — but it automates the EM's own workflow, so it should follow a proven mentee-side tool rather than lead. |
 | "Ask the Portal" — semantic Q&A over transcribed course videos | Deferred | Buildable and broadly useful, but needs a transcript corpus that doesn't exist yet and has no personal-evidence story. |
@@ -24,15 +28,17 @@ Item 4 of Harvey's ad-hoc activity plan (post-2-week-plan, undated):
 
 ## What it is
 
-Training and growth plans at Full Scale are run by hand, per person: the EM writes the plan,
-the mentee self-studies, and assessment is manual. Meanwhile the naive way to use AI for
-learning — "Claude, teach me X" — fails in a specific, predictable way: **it hands over
-answers.** That optimizes for finishing the task, not for being able to reproduce the
-reasoning later, which is exactly what a graded assessment (or a client conversation) tests.
+The 2-week training plan is a concrete, recurring workflow: the EM generates the plan
+(baseline → daily topics → graded retest) and the mentee runs it. Only the *generation* side
+has tooling today — the *running* is manual per mentee: self-study, no structured assessment
+between Day 1 and the retest, hand-written progress reports. And the naive way for the
+mentee to use AI — "Claude, teach me X" — fails predictably: **it hands over answers**,
+which optimizes for finishing the task, not for reproducing the reasoning at the retest.
 
-Training Buddy is a Claude Code plugin any engineer can point at their own training plan,
-whatever the topic. It runs a subject-independent daily loop — the plan file supplies the
-material and assessment format, the plugin supplies the discipline:
+Training Buddy ingests the EM-generated plan and runs the mentee side of it. The loop maps
+to the plan's actual shape (baseline captured on Day 1, topic days driven by the plan,
+retest prep driven by the weak-spot list). Format-specific, **topic-agnostic** — the plan
+supplies the material and assessment format, the plugin supplies the discipline:
 
 | Loop stage | What it automates |
 |---|---|
@@ -65,14 +71,17 @@ training plan end-to-end in this repo: the commands in `.claude/commands/`, the 
 `CLAUDE.md`, the weak-spot list with 21+ tracked gaps in `journal/STATUS.md`, and the Day 10
 retest answered with a question-by-question delta against Day 1 (`deliverables/day-10/`).
 That version is one instance; the project is extracting the loop, making it topic-agnostic,
-packaging, and documentation — not invention.
+packaging, and documentation — not invention. It also composes with the AI work already
+emerging around these workflows: interview sessions have a PoC in progress, plan generation
+is the EM's, and this covers the remaining manual stage — the two weeks where the learning
+actually happens.
 
 ## Phasing
 
 | Phase | What | Depends on |
 |---|---|---|
-| **MVP** | Build the plugin: core loop driven by a plan file (any topic), configurable drill types per growth area, generic weak-spot/status format, docs and an example plan. Pilot on one engineer's growth area — ideally a topic different from mine, to prove the loop is subject-independent. | Nothing — the loop is proven, the material exists |
-| **1.5 — EM side** | A plan-authoring command that generates a plan skeleton from a growth area + assessment format, and a weak-spot/progress rollup the EM can read per mentee — trimming the hand-run part of training plans. | MVP feedback |
+| **MVP** | Build the plugin against the actual generated 2-week plan format: core loop reading the plan directly, configurable drill types per growth area, generic weak-spot/status format, docs. Pilot on one real generated plan — ideally a topic different from mine, to prove topic-independence. Needs a sample generated plan from Harvey to build ingestion against. | Nothing — the loop is proven, the material exists |
+| **1.5 — EM side** | Baseline/retest grading assist against the plan's own targets, plus a per-mentee weak-spot/progress rollup — plan *review* becomes as cheap as plan *generation* already is. (A plan-authoring command was dropped from this phase: generation is already covered on the EM's end.) | MVP feedback |
 | **2 — GP integration** | Pull course/objective context from GP so `/day-start` can point at relevant GP courses; optionally post completion or comprehension signals back. | A GP API being available |
 
 ## Risks and mitigations

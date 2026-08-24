@@ -88,31 +88,36 @@
 <body>
 
 <h1>Automation Project Proposal</h1>
-<p class="subtitle">Training Buddy — a Claude Code Plugin That Turns Any Training Plan into a Guided, Assessed Learning Loop</p>
+<p class="subtitle">Training Buddy — a Claude Code Plugin for Running the 2-Week Training Plan</p>
 <div class="meta">
   Ad-hoc Activity Plan, Item 4 &nbsp;·&nbsp; Prepared by Leander &nbsp;·&nbsp; 2026-08-24
 </div>
 
 <h2>Problem</h2>
 <p>
-  Training and growth plans are run by hand, per person: the EM writes the plan, the mentee
-  self-studies, and assessment and progress tracking are manual. Meanwhile the naive way to
-  use AI for learning &mdash; "Claude, teach me X" &mdash; fails in a specific, predictable
-  way: <strong>it hands over answers.</strong> That optimizes for finishing the task, not for
+  The 2-week training plan is a concrete, recurring workflow: the EM generates the plan
+  &mdash; baseline assessment, daily topics, a graded retest at the end &mdash; and the
+  mentee runs it. Today only the <em>generation</em> side has tooling; the <em>running</em>
+  of it is manual per mentee: self-study, no structured assessment between Day&nbsp;1 and the
+  retest, and progress reporting written by hand. Meanwhile the naive way for the mentee to
+  use AI &mdash; "Claude, teach me X" &mdash; fails in a specific, predictable way:
+  <strong>it hands over answers.</strong> That optimizes for finishing the task, not for
   being able to reproduce the reasoning later without the AI in the room &mdash; which is
-  exactly what a graded assessment, or a client conversation, tests.
+  exactly what the plan's graded retest tests.
 </p>
 
 <h2>Proposed project</h2>
 <p>
-  <strong>Training Buddy</strong> is an installable Claude Code plugin that any engineer can
-  point at their own training plan &mdash; whatever the topic. It runs a daily learning loop
-  that is subject-independent: the plan file supplies the material and the assessment format;
-  the plugin supplies the discipline.
+  <strong>Training Buddy</strong> is an installable Claude Code plugin tailored to the 2-week
+  training plan: its input is the plan the EM already generates, and it runs the mentee side
+  of it. The loop is mapped to the plan's actual shape &mdash; Day&nbsp;1 baseline captured,
+  daily topic days driven by the plan, and retest prep driven by the weak-spot list rather
+  than by re-reading everything. It is format-specific but <strong>topic-agnostic</strong>:
+  the plan supplies the material and assessment format, the plugin supplies the discipline.
 </p>
 <table>
   <tr><th>Loop stage</th><th>What it automates</th></tr>
-  <tr><td><code>/day-start</code></td><td>Orientation from the plan file &mdash; today's objective, prerequisites, time budget &mdash; plus a warm-up quiz on yesterday's material.</td></tr>
+  <tr><td><code>/day-start</code></td><td>Orientation from the generated plan &mdash; today's objective, prerequisites, time budget &mdash; plus a warm-up quiz on yesterday's material.</td></tr>
   <tr><td><code>/quiz</code></td><td>Socratic quiz, one question at a time, <strong>answers withheld</strong>. Escalates recall &rarr; application &rarr; "what breaks if&hellip;". Every miss is logged.</td></tr>
   <tr><td><code>/explain-back</code></td><td>Feynman drill: the learner explains a concept in their own words; Claude grades it and names the gaps.</td></tr>
   <tr><td><code>/drill</code></td><td>A timed practice exercise <strong>matched to the growth area</strong>, critiqued against a rubric afterward &mdash; a whiteboard prompt for system design, a broken scenario for debugging, a review exercise for code quality, a mock stand-up for communication. Drill types are defined in the plan file, not hardcoded.</td></tr>
@@ -140,7 +145,10 @@
   also fits where the company is already heading: Claude masterclasses and hands-on workshops
   are running now, and this gives engineers a concrete, disciplined way to apply Claude to
   their own growth areas &mdash; an AI learning activity that speeds up learning, per the
-  activity item.
+  activity item. And it slots into the AI work already emerging around these workflows:
+  with a PoC for interview sessions in progress and the training plan itself EM-generated,
+  this covers the remaining manual stage &mdash; the two weeks where the learning actually
+  happens.
 </p>
 
 <h2>Phased scope</h2>
@@ -148,12 +156,12 @@
   <tr><th>Phase</th><th>Scope</th><th>Depends on</th></tr>
   <tr>
     <td><span class="tag tag-mvp">MVP</span></td>
-    <td>Build the plugin: the core loop driven by a plan file (any topic), configurable drill types per growth area, a generic weak-spot and status format, documentation and an example plan. Pilot on one engineer's growth area &mdash; ideally a topic different from mine, to prove the loop is subject-independent.</td>
+    <td>Build the plugin against the actual 2-week plan format the EM generates: the core loop reading the generated plan directly, configurable drill types per growth area, a generic weak-spot and status format, documentation. Pilot on one real generated plan &mdash; ideally a topic different from mine, to prove the loop is topic-independent.</td>
     <td>Nothing &mdash; the loop is proven, the material exists.</td>
   </tr>
   <tr>
     <td><span class="tag tag-later">Phase 1.5</span></td>
-    <td>The EM side: a plan-authoring command that generates a plan skeleton from a growth area and assessment format, plus a per-mentee weak-spot/progress rollup &mdash; trimming the hand-run part of training plans.</td>
+    <td>The EM side: baseline and retest grading assist against the plan's own targets, plus a per-mentee weak-spot/progress rollup &mdash; so plan generation and plan review are both cheap, not just generation.</td>
     <td>MVP pilot feedback.</td>
   </tr>
   <tr>
@@ -173,9 +181,10 @@
 <h2>Proposed next step</h2>
 <p>
   If the direction looks right, I would start the MVP &mdash; roughly a one-week time-box at
-  the same daily hours as the course work &mdash; and I would like your help picking a pilot:
-  one engineer with an active growth area willing to run a short plan through the plugin. I
-  will propose a concrete schedule once the scope is agreed.
+  the same daily hours as the course work. Two things would help: a sample of a generated
+  2-week plan (any topic) to build the ingestion against, and a pilot &mdash; one mentee with
+  an upcoming or active plan willing to run it through the plugin. I will propose a concrete
+  schedule once the scope is agreed.
 </p>
 
 <footer>Automation Project Proposal — Training Buddy · Leander · 2026-08-24</footer>
