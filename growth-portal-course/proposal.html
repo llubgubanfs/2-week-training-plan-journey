@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Growth Portal Course Proposal — Observability</title>
+<style>
+  @page { size: A4; margin: 22mm 20mm; }
+  body {
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    color: #1a1a1a;
+    line-height: 1.5;
+    font-size: 11pt;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  h1 {
+    font-size: 20pt;
+    margin-bottom: 2px;
+  }
+  .subtitle {
+    font-size: 11pt;
+    color: #555;
+    margin-top: 0;
+    margin-bottom: 4px;
+  }
+  .meta {
+    font-size: 9.5pt;
+    color: #777;
+    margin-bottom: 24px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 12px;
+  }
+  h2 {
+    font-size: 13pt;
+    margin-top: 26px;
+    margin-bottom: 8px;
+    border-bottom: 2px solid #2b3a55;
+    padding-bottom: 4px;
+    color: #2b3a55;
+  }
+  p { margin: 8px 0; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0 14px 0;
+    font-size: 9.8pt;
+  }
+  th, td {
+    border: 1px solid #ccc;
+    padding: 6px 8px;
+    text-align: left;
+    vertical-align: top;
+  }
+  th {
+    background: #eef1f6;
+    color: #2b3a55;
+    font-weight: 600;
+  }
+  tr:nth-child(even) td { background: #fafafa; }
+  .tag {
+    display: inline-block;
+    font-size: 8pt;
+    font-weight: 600;
+    padding: 1px 6px;
+    border-radius: 3px;
+    color: #fff;
+  }
+  .tag-shared { background: #4a7a5f; }
+  .tag-deep { background: #4a5c8a; }
+  ul { margin: 6px 0; padding-left: 20px; }
+  li { margin: 3px 0; }
+  footer {
+    margin-top: 30px;
+    font-size: 8.5pt;
+    color: #999;
+    border-top: 1px solid #ddd;
+    padding-top: 8px;
+  }
+</style>
+</head>
+<body>
+
+<h1>Growth Portal Course Proposal</h1>
+<p class="subtitle">Observability — 3 Pillars, from Structured Logging to Failure Detection</p>
+<div class="meta">
+  Ad-hoc Activity Plan, Item 2 &nbsp;·&nbsp; Prepared by Leander &nbsp;·&nbsp; 2026-08-24
+</div>
+
+<h2>Objective</h2>
+<p>
+  Create and post a course to the Growth Portal on <strong>observability</strong> — the Growth
+  Area identified in my 2-week training plan. The course translates what the training plan
+  covered (structured logging, metrics, distributed tracing, and silent-failure detection) into
+  a short, practical course for other Full Scale engineers, with an accessible entry point for
+  people outside engineering (QA, UI/UX, PM) who work alongside these systems.
+</p>
+
+<h2>Approach</h2>
+<p>
+  The course teaches <strong>observability concepts</strong>, demonstrated in a real NestJS
+  application built during the training plan — the framework is the vehicle for showing the
+  ideas concretely, not the subject of the course itself. Every technical module explains the
+  underlying mechanism in plain language before any code appears on screen, so the reasoning
+  transfers even to someone working in a different stack.
+</p>
+<p>
+  Because the audience is mixed, the course is structured in two tiers: one short, jargon-free
+  module anyone can follow, followed by technical modules that assume an engineering background.
+</p>
+
+<h2>Module outline</h2>
+<table>
+  <tr><th>Tier</th><th>Module</th><th>Covers</th></tr>
+  <tr>
+    <td><span class="tag tag-shared">Everyone</span></td>
+    <td>1. Why observability, and the 3 pillars</td>
+    <td>No jargon, no code — what a system looks like with no observability vs. with it, and why that gap matters.</td>
+  </tr>
+  <tr>
+    <td><span class="tag tag-deep">Engineers</span></td>
+    <td>2. Structured logging + correlation IDs</td>
+    <td>Tracking one request's behavior across a service without losing context mid-flight.</td>
+  </tr>
+  <tr>
+    <td><span class="tag tag-deep">Engineers</span></td>
+    <td>3. Metrics that survive scale</td>
+    <td>Designing metrics that stay cheap to store and query as traffic grows.</td>
+  </tr>
+  <tr>
+    <td><span class="tag tag-deep">Engineers</span></td>
+    <td>4. Distributed tracing</td>
+    <td>Seeing how one request moves across multiple services, not just within one.</td>
+  </tr>
+  <tr>
+    <td><span class="tag tag-deep">Engineers</span></td>
+    <td>5. Detecting silent failure</td>
+    <td>Catching the failures that produce no error at all — the hardest failure mode to design for.</td>
+  </tr>
+</table>
+
+<h2>Format</h2>
+<p>
+  A recorded, produced video course (scripted, edited, not a single continuous take) posted to
+  the Growth Portal, with each module labelled by tier so viewers can self-select how deep to go.
+</p>
+
+<h2>Execution schedule</h2>
+<p>Proposed at 6 hours/day, with buffer kept in reserve each day:</p>
+<table>
+  <tr><th>Day</th><th>Focus</th><th>Output</th></tr>
+  <tr><td>1</td><td>Outline + Module 1 scripting</td><td>Course outline finalized; Module 1 script drafted and reviewed</td></tr>
+  <tr><td>2</td><td>Modules 2–3 scripting</td><td>Scripts drafted, read aloud and checked for framework-tutorial drift</td></tr>
+  <tr><td>3</td><td>Modules 4–5 scripting</td><td>Scripts drafted and checked; full run-through of all 5 for pacing</td></tr>
+  <tr><td>4</td><td>Recording</td><td>All 5 modules recorded, re-takes as needed</td></tr>
+  <tr><td>5</td><td>Editing + self-review</td><td>Cut, tier labels added, reviewed against each module's objective</td></tr>
+  <tr><td>6</td><td>Review + publish</td><td>Reviewed with EM, feedback incorporated, published to Growth Portal</td></tr>
+</table>
+<p>
+  This runs in parallel with the other ad-hoc items (SkillIQ assessments, automation project
+  proposal), which are self-paced and scheduled separately.
+</p>
+
+<footer>Growth Portal Course Proposal — Observability · Leander · 2026-08-24</footer>
+
+</body>
+</html>
