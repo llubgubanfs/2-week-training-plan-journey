@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Automation Project Proposal — Course Companion</title>
+<title>Automation Project Proposal — Training Buddy</title>
 <style>
   @page { size: A4; margin: 22mm 20mm; }
   body {
@@ -69,6 +69,13 @@
   .tag-later { background: #4a5c8a; }
   ul { margin: 6px 0; padding-left: 20px; }
   li { margin: 3px 0; }
+  code {
+    font-family: "SF Mono", Consolas, monospace;
+    font-size: 9.5pt;
+    background: #f0f2f5;
+    padding: 0 3px;
+    border-radius: 3px;
+  }
   footer {
     margin-top: 30px;
     font-size: 8.5pt;
@@ -81,83 +88,96 @@
 <body>
 
 <h1>Automation Project Proposal</h1>
-<p class="subtitle">Course Companion — AI Knowledge Checks and Weak-Spot Tracking for the Growth Portal</p>
+<p class="subtitle">Training Buddy — a Claude Code Plugin That Turns Any Training Plan into a Guided, Assessed Learning Loop</p>
 <div class="meta">
   Ad-hoc Activity Plan, Item 4 &nbsp;·&nbsp; Prepared by Leander &nbsp;·&nbsp; 2026-08-24
 </div>
 
 <h2>Problem</h2>
 <p>
-  Growth Portal courses today are watch-only. When someone finishes a course, the only signals
-  are a progress percentage and the "I learned something useful" button. Nothing verifies that
-  the viewer actually <strong>understood</strong> the material, and nothing checks whether it
-  <strong>stuck</strong> a week later. For the learner that means passive watching with no
-  feedback; for mentors and EMs it means course completion counts that say little about what
-  was actually learned.
+  Training and growth plans are run by hand, per person: the EM writes the plan, the mentee
+  self-studies, and assessment and progress tracking are manual. Meanwhile the naive way to
+  use AI for learning &mdash; "Claude, teach me X" &mdash; fails in a specific, predictable
+  way: <strong>it hands over answers.</strong> That optimizes for finishing the task, not for
+  being able to reproduce the reasoning later without the AI in the room &mdash; which is
+  exactly what a graded assessment, or a client conversation, tests.
 </p>
 
 <h2>Proposed project</h2>
 <p>
-  A <strong>Course Companion</strong> that closes the learning loop on every course, using AI
-  where it is strong (generating good questions from a transcript) and keeping a human in the
-  loop where it matters (approving them):
+  During my 2-week training plan I solved this with a written working agreement and five
+  custom Claude Code commands. They ran the whole plan &mdash; but they are hardcoded to me
+  and to my topic. The project is to generalize and package that system as
+  <strong>Training Buddy</strong>: an installable Claude Code plugin any Full Scale engineer
+  can point at their own training plan.
 </p>
 <table>
-  <tr><th>Step</th><th>What happens</th></tr>
-  <tr><td>1. Generate</td><td>A short knowledge check (3&ndash;5 questions) is generated from the course transcript using Claude. It stays a draft until the course author or an EM approves it.</td></tr>
-  <tr><td>2. Answer</td><td>The learner takes the check when they finish the course.</td></tr>
-  <tr><td>3. Score</td><td>A comprehension score is recorded alongside the existing completion signal.</td></tr>
-  <tr><td>4. Track</td><td>Missed questions land on the learner's personal <strong>weak-spot list</strong>, tagged by course and concept.</td></tr>
-  <tr><td>5. Resurface</td><td>Weak spots come back later as a short spaced retest &mdash; so the result reflects retention, not just same-day recall.</td></tr>
+  <tr><th>Command</th><th>What it automates</th></tr>
+  <tr><td><code>/day-start</code></td><td>Orientation from the plan file &mdash; today's objective, prerequisites, time budget &mdash; plus a warm-up quiz on yesterday's material.</td></tr>
+  <tr><td><code>/quiz</code></td><td>Socratic quiz, one question at a time, <strong>answers withheld</strong>. Escalates recall &rarr; application &rarr; "what breaks if&hellip;". Every miss is logged.</td></tr>
+  <tr><td><code>/explain-back</code></td><td>Feynman drill: the learner explains a concept in their own words; Claude grades it and names the gaps.</td></tr>
+  <tr><td><code>/design-drill</code></td><td>Timed design prompt, then a critique against a rubric.</td></tr>
+  <tr><td><code>/day-end</code></td><td>Verifies the day's evidence exists on disk, updates the status file, drafts the EOD report.</td></tr>
 </table>
+<p>Two assets ship with the commands, and they are what made the loop actually work:</p>
+<ul>
+  <li><strong>The buddy contract as plugin rules</strong> &mdash; no implementation code until the learner states an approach first, open design questions get turned back into questions, quiz comes <em>before</em> the build session. This is the discipline vanilla AI usage lacks.</li>
+  <li><strong>A persistent weak-spot list</strong> &mdash; every quiz miss is logged (what was answered vs. what is true), and retest prep drills that list instead of re-reading everything.</li>
+</ul>
+<p>
+  Progress stays EM-visible without any new tooling: each day produces a committed evidence
+  trail (journal, deliverables, EOD draft) &mdash; the same pattern my plan used for its
+  daily reporting.
+</p>
 
 <h2>Why this project</h2>
 <p>
-  This is the loop my 2-week training plan ran manually, and it worked: a quiz before each
-  build session, every miss logged to a running weak-spot list, and the final retest prepared
-  by drilling that list instead of re-reading everything. The Day 10 retest answers include a
-  question-by-question comparison against the Day 1 baseline. The proposal is simply to
-  automate the mechanism that already produced that result, and make it available on every
-  Growth Portal course &mdash; which covers both examples in the activity item: an AI learning
-  activity that speeds up learning, delivered as a GP integration.
+  The prototype predates the proposal. This system ran my full 10-day plan end-to-end, and
+  the evidence is in the training-plan repo: the five commands, the working agreement, a
+  weak-spot list that tracked 21+ gaps across the plan, and a final retest answered with a
+  question-by-question comparison against the Day 1 baseline. The project is extraction,
+  generalization, packaging, and documentation &mdash; not invention. It also fits where the
+  company is already heading: Claude masterclasses and hands-on workshops are running now,
+  and this gives engineers a concrete, disciplined way to apply Claude to their own growth
+  areas &mdash; an AI learning activity that speeds up learning, per the activity item.
 </p>
 
 <h2>Phased scope</h2>
 <table>
-  <tr><th>Phase</th><th>Scope</th><th>Delivers</th></tr>
+  <tr><th>Phase</th><th>Scope</th><th>Depends on</th></tr>
   <tr>
     <td><span class="tag tag-mvp">MVP</span></td>
-    <td>Standalone service alongside GP &mdash; no GP changes needed. Takes a course transcript, generates a reviewable quiz, serves it, stores scores and the weak-spot list.</td>
-    <td>A working end-to-end demo on one real course, enough to judge question quality and the review workflow.</td>
+    <td>Extract the commands and contract, make them plan-agnostic (plan file as input, generic weak-spot and status format), package as an installable Claude Code plugin with documentation and an example plan. Pilot on one other engineer's growth area.</td>
+    <td>Nothing &mdash; all material exists.</td>
   </tr>
   <tr>
     <td><span class="tag tag-later">Phase 1.5</span></td>
-    <td>GP integration: the knowledge check appears at course completion; the comprehension score shows on the course card next to progress %.</td>
-    <td>The loop becomes part of the normal course experience.</td>
+    <td>The EM side: a plan-authoring command that generates a plan skeleton from a growth area and assessment format, plus a per-mentee weak-spot/progress rollup &mdash; trimming the hand-run part of training plans.</td>
+    <td>MVP pilot feedback.</td>
   </tr>
   <tr>
     <td><span class="tag tag-later">Phase 2</span></td>
-    <td>Mentor/EM view: weak-spot rollups per mentee, plus baseline and retest generation for individual training plans.</td>
-    <td>Automates the assessment side of training plans that is run by hand today.</td>
+    <td>Growth Portal integration: pull course and objective context so <code>/day-start</code> can point at relevant GP courses; optionally post completion or comprehension signals back to GP.</td>
+    <td>A GP API being available.</td>
   </tr>
 </table>
 
 <h2>Risks and mitigations</h2>
 <ul>
-  <li><strong>Question quality</strong> &mdash; AI-generated quizzes can be wrong or trivial. Every quiz is a draft until a human (course author or EM) approves it.</li>
-  <li><strong>How the data is perceived</strong> &mdash; scores could feel like performance rating. The Companion is scoped as a <strong>learning signal, not a performance-rating input</strong>: the weak-spot list belongs to the learner, and mentor rollups (phase 2) are mentorship-oriented.</li>
-  <li><strong>Missing transcripts</strong> &mdash; courses without a transcript get one auto-generated (speech-to-text) during ingestion. Side benefit: transcripts also make the course library searchable.</li>
+  <li><strong>Learners can bypass the contract</strong> by asking vanilla Claude. The plugin cannot prevent that &mdash; instead it makes the disciplined path the convenient path, and the evidence trail (quiz logs, weak-spot list) shows whether the loop was actually run.</li>
+  <li><strong>Overfit to my plan and topic.</strong> The MVP explicitly includes a pilot with a different engineer on a different topic; generalization is not done until that runs clean.</li>
+  <li><strong>GP integration may not be possible.</strong> It is phased last, and the plugin is fully useful without it.</li>
 </ul>
 
 <h2>Proposed next step</h2>
 <p>
-  If the direction looks right, I would start with the MVP &mdash; a small NestJS service using
-  the Claude API, matching the team stack &mdash; and demo it on one existing GP course. I
-  estimate the MVP as roughly a one-week time-box at the same daily hours as the course work;
-  I will propose a concrete schedule once the phase-1 scope is agreed.
+  If the direction looks right, I would start the MVP &mdash; roughly a one-week time-box at
+  the same daily hours as the course work &mdash; and I would like your help picking a pilot:
+  one engineer with an active growth area willing to run a short plan through the plugin. I
+  will propose a concrete schedule once the scope is agreed.
 </p>
 
-<footer>Automation Project Proposal — Course Companion · Leander · 2026-08-24</footer>
+<footer>Automation Project Proposal — Training Buddy · Leander · 2026-08-24</footer>
 
 </body>
 </html>

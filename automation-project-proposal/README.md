@@ -1,6 +1,8 @@
-# Automation project proposal — Course Companion
+# Automation project proposal — Training Buddy (Claude Code plugin)
 
 **Status:** proposal drafted 2026-08-24, awaiting Harvey's review. Not started.
+Pivoted same day from the original Course Companion draft (see git history) — the plugin
+ships the same learning loop with zero product dependencies.
 
 ## Where this comes from
 
@@ -14,58 +16,67 @@ Item 4 of Harvey's ad-hoc activity plan (post-2-week-plan, undated):
 
 | Idea | Verdict | Why |
 |---|---|---|
-| **Course Companion** — AI knowledge checks + weak-spot tracking per GP course | **Chosen** | The one idea with on-disk evidence: it productizes the exact loop the 2-week plan ran on me. Hits both of Harvey's examples at once (AI learning activity *and* GP integration). |
-| EM-side training-plan automation (baseline grading, progress dashboards, retest generation) | **Folded in as phase 2** | Highest business value — the training-plan workflow is run by hand today, and my own baseline scores never came back because grading is manual. But it automates the EM's own workflow, so it should follow a proven learner-side MVP rather than lead. |
-| "Ask the Portal" — semantic Q&A over transcribed course videos, answers with course + timestamp citations | Deferred | Very buildable and benefits everyone, but no personal-evidence story, and it needs a transcript corpus that doesn't exist yet. |
-| Author publishing pipeline — auto transcript, description, skill tags, chapters on course upload | Deferred | Safe and useful (and the enabler for "Ask the Portal"), but small; reads as tooling, not a project proposal. |
-| Objective-to-course learning path recommender | Deferred | Value depends entirely on catalog coverage and how well-maintained Career Growth data is — weakest standalone pitch. |
+| **Training Buddy** — the 2-week plan's Claude commands + working agreement, generalized and packaged as an installable Claude Code plugin | **Chosen** | The system already exists and ran a full 10-day plan end-to-end in this repo. The project is generalizing and distributing it — no GP code change, no hosted service, no product-team dependency, and it lands in the company's active Claude push (masterclasses, workshops, badges). |
+| Course Companion — AI knowledge checks + weak-spot tracking built into GP courses | Deferred (was the original draft of this proposal) | Same learning loop, but requires GP product changes, a transcript pipeline, and a hosted service before anything is demoable. The plugin proves the loop first; GP integration stays on the roadmap as a later phase. |
+| EM-side training-plan automation (baseline grading, progress dashboards, retest generation) | Folded in as a later phase | High value — training plans are run by hand today — but it automates the EM's own workflow, so it should follow a proven mentee-side tool rather than lead. |
+| "Ask the Portal" — semantic Q&A over transcribed course videos | Deferred | Buildable and broadly useful, but needs a transcript corpus that doesn't exist yet and has no personal-evidence story. |
+| Author publishing pipeline / learning-path recommender | Deferred | Useful tooling, weak standalone proposals. |
 
 ## What it is
 
-Growth Portal courses today are watch-only. The signals that exist are a progress percentage
-and the "I learned something useful" button — nothing verifies that the viewer *understood*
-the material, and nothing checks whether it *stuck* a week later.
+Training and growth plans at Full Scale are run by hand, per person: the EM writes the plan,
+the mentee self-studies, and assessment is manual. Meanwhile the naive way to use AI for
+learning — "Claude, teach me X" — fails in a specific, predictable way: **it hands over
+answers.** That optimizes for finishing the task, not for being able to reproduce the
+reasoning later, which is exactly what a graded assessment (or a client conversation) tests.
 
-The Course Companion closes that loop, per course:
+My 2-week plan solved this with a written working agreement and five custom Claude Code
+commands, currently hardcoded to me and to observability. Training Buddy generalizes and
+packages that system so any Full Scale engineer can install it and point it at their own plan:
 
-1. **Generate** — a short knowledge check (3–5 questions) is generated from the course's
-   transcript using Claude, reviewed by the course author or an EM before it goes live.
-2. **Answer** — the learner takes the check when they finish the course.
-3. **Score** — a comprehension score is recorded alongside the existing completion signal.
-4. **Track** — missed questions land on the learner's **personal weak-spot list**, tagged by
-   course and concept.
-5. **Resurface** — weak spots come back later as a short spaced retest, so the score reflects
-   retention, not just same-day recall.
+| Command | What it automates |
+|---|---|
+| `/day-start` | Orientation: today's objective, prereqs, time budget from the plan file — plus a warm-up quiz on yesterday's material |
+| `/quiz` | Socratic quiz, one question at a time, **answers withheld**; escalates recall → application → "what breaks if…"; every miss logged |
+| `/explain-back` | Feynman drill: the learner explains a concept, Claude grades it and names the gaps |
+| `/design-drill` | Timed design prompt with a rubric critique afterward |
+| `/day-end` | Verifies the day's evidence exists on disk, updates the status file, drafts the EOD report |
+
+Plus the two assets that made the loop actually work:
+
+- **The buddy contract as plugin rules** — no implementation code until the learner states
+  an approach, open design questions turned back into questions, quiz *before* the build
+  session. This is the part vanilla Claude usage lacks.
+- **The persistent weak-spot list** — every quiz miss is logged with what was answered vs.
+  what's true, and retest prep drills that list instead of re-reading everything.
+
+Input is a plan file (topic, days, objectives, deliverables); output is a committed evidence
+trail per day — which is also what makes progress **EM-visible without a portal**: the same
+journal/deliverable/EOD pattern Harvey reviewed throughout my plan.
 
 ## Why this one — the evidence
 
-This is not a hypothetical mechanism. The 2-week training plan ran exactly this loop manually:
-Socratic quizzes before each build session, every miss logged to the weak-spot list in
-`journal/STATUS.md`, and Day 10 retest prep driven entirely by that list rather than by
-re-reading everything. The retest answers include a question-by-question delta against the
-Day 1 baseline (`deliverables/day-10/observability-post-training-answers.md`). The proposal is
-to automate the loop that already worked, and give it to every GP course.
+This is the rare proposal where the prototype predates the proposal. The full 10-day run is
+in this repo: the commands in `.claude/commands/`, the contract in `CLAUDE.md`, the weak-spot
+list with 21+ tracked gaps in `journal/STATUS.md`, and the Day 10 retest answered with a
+question-by-question delta against Day 1 (`deliverables/day-10/`). The project is extraction,
+generalization, packaging, and documentation — not invention.
 
 ## Phasing
 
-| Phase | What | GP change needed |
+| Phase | What | Depends on |
 |---|---|---|
-| **MVP** | Standalone service alongside GP: takes a course transcript, generates a reviewable quiz, serves it, stores scores and the weak-spot list. Demoable end-to-end on one real course. | None |
-| **1.5 — GP integration** | Knowledge check surfaced at course completion; comprehension score visible on the course card next to progress %. | Yes — UI + API hook |
-| **2 — EM view** | Weak-spot rollups per mentee, and baseline/retest generation for training plans — automating the plan workflow that is run by hand today. | Yes |
+| **MVP** | Extract the commands + contract from this repo, make them plan-agnostic (plan file as input, learner-neutral wording, generic weak-spot/status format), package as an installable Claude Code plugin with docs and an example plan. Pilot on one other engineer's growth area. | Nothing — all material exists |
+| **1.5 — EM side** | A plan-authoring command that generates a plan skeleton from a growth area + assessment format, and a weak-spot/progress rollup the EM can read per mentee — trimming the hand-run part of training plans. | MVP feedback |
+| **2 — GP integration** | Pull course/objective context from GP so `/day-start` can point at relevant GP courses; optionally post completion or comprehension signals back. | A GP API being available |
 
 ## Risks and mitigations
 
 | Risk | Mitigation |
 |---|---|
-| AI-generated questions are wrong or trivial | A quiz is a **draft until a human approves it** — course author or EM reviews before it goes live. |
-| Assessment data feels like surveillance / performance rating | Framed and scoped as a **learning signal, not a performance-rating input**: the weak-spot list belongs to the learner; rollups (phase 2) are opt-in and mentorship-oriented. |
-| Courses have no transcript | Auto-generate one (speech-to-text) as part of ingestion — a side benefit, since transcripts also make the catalog searchable. |
-
-## Proposed stack
-
-NestJS service + Claude API — matches the team stack; detail belongs in a design doc after the
-scope is agreed, not here.
+| Learners bypass the contract by asking vanilla Claude | The plugin can't prevent it — instead it makes the disciplined path the *convenient* path, and the evidence trail (quiz logs, weak-spot list) shows whether the loop was actually run. |
+| The system is overfit to my plan / my topic | The MVP explicitly includes a pilot with a different engineer on a different topic; generalization isn't done until that runs clean. |
+| GP integration may not be possible | It's phased last and the plugin is fully useful without it. |
 
 ## Deliverables in this directory
 
