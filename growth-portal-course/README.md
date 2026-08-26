@@ -43,7 +43,7 @@ Received after the 2026-08-24 lock, on an earlier video/proposal. Verbatim:
 | 3 | Should/shouldn't per approach | Resolved — drafted for the original 4 modules, plus the host-metrics addition (see Module 3 in Structure below) |
 | 4 | Demonstrate structured logging beyond application code | Resolved — see [Demonstrating structured logging beyond application code](#demonstrating-structured-logging-beyond-application-code) below |
 | 5 | Overview vs. implementation depth, deliberately decided | Resolved — see [Depth](#depth-a-familiarity-driven-split-not-one-global-ratio) below |
-| 6 | Recording estimate too optimistic | Resolved via a new Day 0, and via re-sizing Day 2 (Module 3 script + buffer both grew once host metrics was added) — see [Schedule](#schedule-6-hrsday-buffer-kept-for-other-ad-hoc-items-outside-this-block) below |
+| 6 | Recording estimate too optimistic | Resolved via a new Day 0, splitting the old combined Modules-2-and-3 day into two, and splitting the recording day itself (Module 3 alone, then the rest) once a known perfectionism risk on recording days surfaced — see [Schedule](#schedule-6-hrsday-buffer-kept-for-other-ad-hoc-items-outside-this-block) below |
 
 ## Addressing the feedback
 
@@ -176,15 +176,22 @@ defense like Days 9/10. Posted to Growth Portal once reviewed.
 |---|---|
 | 0 | Build day, added 2026-08-26 to close point 4's gaps. Implementation (Postgres + health-check log, env-schema validation, cAdvisor + Prometheus scrape config + Grafana panel) is delegated/parallel — near-zero draw on this day. **1.5h** review/understand what got built, enough to narrate it plainly later · **1h** hands-on verification — run the stack, confirm `verify.sh` green, click through the new panel, hit the health-check endpoint · **1h** buffer (first-time infra — Postgres, an exporter — is where something unexpected tends to surface) |
 | 1 | 45m outline doc (this file) · 30m Module 1 material pull · 2.5h Module 1 script · 45m read-back/revise · 1h buffer |
-| 2 | 30m re-read Day 2/3 source · 1.75h Module 2 script · 2.25h Module 3 script (grew from 1.75h — the host-metrics addition sizes to roughly ⅓ more, same shape as the block's other 3 items) · 30m capture-clip list · 30m read-aloud check (Modules 2–3) · 1h buffer (grew from 30m to match Days 1/4/5's convention, since the day now carries new-content risk on top of two full module scripts) — **6.5h total, the one day in this schedule that runs longer than the 6hr/day yardstick** |
-| 3 | 30m diagram review (exporter → Prometheus → Grafana wiring diagram, production delegated — this is review/revision time; needs to be finished before it's presented live on Day 4) · 30m re-read Day 6/8 source · 1.75h Module 4 script · 1.75h Module 5 script · 30m full run-through/pacing check across all 5 (diagram checked alongside, since it needs to be part of the pacing) · 30m read-aloud check (Modules 4–5) · 30m buffer — **6h total** |
-| 4 | 30m setup (screen recorder, audio check, stack up — `docker compose up -d`, `verify.sh` green) · 4.5h recording, re-takes allowed per module · 1h buffer |
-| 5 | 1.5h cut/trim · 1h tier labels ("for everyone" / "assumes engineering background") · 1.5h self-review vs. objectives · 30m full watch-through for pacing/coherence · 30m export · 1h buffer |
-| 6 | Review pass with Harvey, incorporate feedback, publish to Growth Portal — bound by his turnaround, not hours worked |
+| 2 | **Module 2 only** — decoupled from Module 3 on 2026-08-26 so no single day erodes the ~2h/day reserved for SkillIQ and other ad-hoc items against an 8h workday. 30m re-read Day 2 source · 1.75h Module 2 script · 15m capture-clip list · 15m read-aloud check · 1h buffer — **3.75h total, 4.25h left for SkillIQ** |
+| 3 | **Module 3 only**, including the host-metrics addition. 30m re-read Day 3 source · 2.25h Module 3 script (grew from 1.75h — the host-metrics addition sizes to roughly ⅓ more, same shape as the block's other 3 items) · 15m capture-clip list · 15m read-aloud check · 1h buffer — **4.25h total, 3.75h left for SkillIQ** |
+| 4 | 30m diagram review (exporter → Prometheus → Grafana wiring diagram, production delegated — this is review/revision time; needs to be finished before it's presented live on Day 5) · 30m re-read Day 6/8 source · 1.75h Module 4 script · 1.75h Module 5 script · 30m full run-through/pacing check across all 5 (diagram checked alongside, since it needs to be part of the pacing) · 30m read-aloud check (Modules 4–5) · 30m buffer — **6h total** |
+| 5 | **Recording — Module 3 alone**, split out on 2026-08-26 since it's the highest-retake-risk module (live diagram narration, host-metrics demo) and recording is a known perfectionism trap — isolating it means a retake spiral doesn't eat into the other four modules' time. 30m setup (screen recorder, audio check, stack up — `docker compose up -d`, `verify.sh` green) · 2h recording · 1h buffer — **3.5h total, 4.5h left for SkillIQ** |
+| 6 | **Recording — Modules 1, 2, 4, 5.** 30m setup · 3.5h recording, re-takes allowed per module · 1h buffer — **5h total, 3h left for SkillIQ** |
+| 7 | 1.5h cut/trim · 1h tier labels ("for everyone" / "assumes engineering background") · 1.5h self-review vs. objectives · 30m full watch-through for pacing/coherence · 30m export · 1h buffer |
+| 8 | Review pass with Harvey, incorporate feedback, publish to Growth Portal — bound by his turnaround, not hours worked |
 
-Note: this 6-day window runs in parallel with items 3 (SkillIQ) and 4 (automation project idea)
-from the same ad-hoc plan, which are self-paced and happen outside this time block — not
-stacked on top of it as additional days.
+Note: this 9-day window (Day 0–8) assumes a fixed 8-hour workday; each day's course-hours are
+sized to leave real headroom for items 3 (SkillIQ) and 4 (automation project idea) from the
+same ad-hoc plan, which are self-paced and happen the same day, not stacked on top of it as
+additional days. Day 2 was split from a combined Modules-2-and-3 day, and recording was split
+into two days (Module 3 alone, then the other four), both on 2026-08-26 — the first because at
+6.5h combined it was the only scripting day cutting that headroom below ~2h, the second because
+recording specifically is where prior experience says perfectionism eats time, so Module 3 (the
+highest-retake-risk module) gets isolated room rather than sharing a fixed 4.5h across all 5.
 
 ## Content sources (for scripting)
 

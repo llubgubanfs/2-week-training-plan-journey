@@ -83,7 +83,7 @@
 <h1>Growth Portal Course Proposal</h1>
 <p class="subtitle">Observability — 3 Pillars, from Structured Logging to Failure Detection</p>
 <div class="meta">
-  Ad-hoc Activity Plan, Item 2 &nbsp;·&nbsp; Prepared by Leander &nbsp;·&nbsp; 2026-08-24
+  Ad-hoc Activity Plan, Item 2 &nbsp;·&nbsp; Prepared by Leander &nbsp;·&nbsp; 2026-08-24, revised 2026-08-26 after EM feedback
 </div>
 
 <h2>Objective</h2>
@@ -108,6 +108,53 @@
   module anyone can follow, followed by technical modules that assume an engineering background.
 </p>
 
+<h2>Response to feedback</h2>
+<p>
+  Six points on the previous draft — addressed below, and reflected in the module outline and
+  schedule that follow.
+</p>
+<table>
+  <tr><th>Feedback</th><th>Response</th></tr>
+  <tr>
+    <td>Minimize jargon</td>
+    <td>Every concept is explained in plain language first; the field term is named only once
+      that explanation has already landed — never the reverse.</td>
+  </tr>
+  <tr>
+    <td>Avoid framing the content around "gaps"</td>
+    <td>Reframed every module as "here's the team's standard," not "here's what you don't know" —
+      the same content, presented as a shared convention rather than a deficiency.</td>
+  </tr>
+  <tr>
+    <td>Research the landscape; name specific topics</td>
+    <td>Considered and ruled out: alerting/on-call, SLOs/error budgets, log aggregation platforms,
+      APM/RUM, synthetic monitoring, chaos engineering, cardinality as a standalone topic. The 4
+      modules below are what's kept, plus a host-metrics addition to Module 3.</td>
+  </tr>
+  <tr>
+    <td>Explain when each approach should and shouldn't be used</td>
+    <td>Should/shouldn't framing added to all 5 technical modules, including the new host-metrics
+      segment (compute-bound vs. I/O-bound — host metrics answer the first question, not the
+      second).</td>
+  </tr>
+  <tr>
+    <td>Demonstrate structured logging across source, config, external services, and
+      infrastructure</td>
+    <td>Audited the existing demo app against all four categories. Source code and external-service
+      logging were already solid; application-configuration and infrastructure logging had no
+      coverage, since the demo app has no database or config validation. Rather than build a
+      second project, the existing one is being extended: a Postgres instance with a
+      connection/health-check log, and env-schema validation with a log of what got validated.</td>
+  </tr>
+  <tr>
+    <td>Recording estimate too optimistic</td>
+    <td>Added a build day (Day 0, below), split the combined Modules-2-and-3 scripting day into
+      two, and split the recording day itself — Module 3 alone, then the other four — so no
+      single day cuts into the time reserved for other ad-hoc work against a fixed 8-hour
+      workday, and so a retake spiral on the riskiest module doesn't threaten the rest.</td>
+  </tr>
+</table>
+
 <h2>Module outline</h2>
 <table>
   <tr><th>Tier</th><th>Module</th><th>Covers</th></tr>
@@ -119,12 +166,17 @@
   <tr>
     <td><span class="tag tag-deep">Engineers</span></td>
     <td>2. Structured logging + correlation IDs</td>
-    <td>Tracking one request's behavior across a service without losing context mid-flight.</td>
+    <td>Tracking one request's behavior across a service without losing context mid-flight — and
+      applying the same structured format outside request handlers, to config validation and
+      infrastructure connection lifecycle.</td>
   </tr>
   <tr>
     <td><span class="tag tag-deep">Engineers</span></td>
     <td>3. Metrics that survive scale</td>
-    <td>Designing metrics that stay cheap to store and query as traffic grows.</td>
+    <td>Designing metrics that stay cheap to store and query as traffic grows. Plus: when
+      host-level metrics (CPU/RAM) help diagnose a slow service, and when they can't — the
+      difference between a service that's compute-bound and one that's waiting on something
+      else.</td>
   </tr>
   <tr>
     <td><span class="tag tag-deep">Engineers</span></td>
@@ -145,22 +197,34 @@
 </p>
 
 <h2>Execution schedule</h2>
-<p>Proposed at 6 hours/day, with buffer kept in reserve each day:</p>
+<p>
+  Revised to 9 days against a fixed 8-hour workday, with each day's course-hours sized to leave
+  real headroom (targeting ~2h) for the other ad-hoc items (SkillIQ, automation project proposal)
+  the same day, rather than treating them as scheduled separately. Day 0 is new — the extension
+  work from the feedback response above. The old combined Modules-2-and-3 scripting day is split
+  into two (Days 2 and 3), and the recording day is split into two as well (Day 5: Module 3
+  alone; Day 6: the other four) — Module 3 carries the highest retake risk (live diagram
+  narration, host-metrics demo), and recording is specifically where perfectionism tends to eat
+  time, so it gets isolated room rather than sharing a fixed budget with the rest.
+</p>
 <table>
   <tr><th>Day</th><th>Focus</th><th>Output</th></tr>
+  <tr><td>0</td><td>Extend the demo app — Postgres + health-check log, env-schema validation, host-metrics exporter + dashboard panel (implementation delegated; this day is review and verification)</td><td>Demo app covers all 4 structured-logging categories from the feedback; stack verified working</td></tr>
   <tr><td>1</td><td>Outline + Module 1 scripting</td><td>Course outline finalized; Module 1 script drafted and reviewed</td></tr>
-  <tr><td>2</td><td>Modules 2–3 scripting</td><td>Scripts drafted, read aloud and checked for framework-tutorial drift</td></tr>
-  <tr><td>3</td><td>Modules 4–5 scripting</td><td>Scripts drafted and checked; full run-through of all 5 for pacing</td></tr>
-  <tr><td>4</td><td>Recording</td><td>All 5 modules recorded, re-takes as needed</td></tr>
-  <tr><td>5</td><td>Editing + self-review</td><td>Cut, tier labels added, reviewed against each module's objective</td></tr>
-  <tr><td>6</td><td>Review + publish</td><td>Reviewed with EM, feedback incorporated, published to Growth Portal</td></tr>
+  <tr><td>2</td><td>Module 2 scripting only</td><td>Script drafted, read aloud and checked for framework-tutorial drift</td></tr>
+  <tr><td>3</td><td>Module 3 scripting only, including the host-metrics addition</td><td>Script drafted, read aloud and checked</td></tr>
+  <tr><td>4</td><td>Modules 4–5 scripting, plus review of the host-metrics wiring diagram used in Module 3</td><td>Scripts drafted and checked; full run-through of all 5 for pacing</td></tr>
+  <tr><td>5</td><td>Recording — Module 3 alone</td><td>Module 3 recorded, re-takes allowed without pressure from the other four</td></tr>
+  <tr><td>6</td><td>Recording — Modules 1, 2, 4, 5</td><td>Remaining four modules recorded, re-takes as needed</td></tr>
+  <tr><td>7</td><td>Editing + self-review</td><td>Cut, tier labels added, reviewed against each module's objective</td></tr>
+  <tr><td>8</td><td>Review + publish</td><td>Reviewed with EM, feedback incorporated, published to Growth Portal</td></tr>
 </table>
 <p>
-  This runs in parallel with the other ad-hoc items (SkillIQ assessments, automation project
-  proposal), which are self-paced and scheduled separately.
+  Items 3 (SkillIQ) and 4 (automation project proposal) from the same ad-hoc plan are self-paced
+  and run within the daily headroom above, not stacked on top of this schedule as additional days.
 </p>
 
-<footer>Growth Portal Course Proposal — Observability · Leander · 2026-08-24</footer>
+<footer>Growth Portal Course Proposal — Observability · Leander · 2026-08-24, revised 2026-08-26</footer>
 
 </body>
 </html>
