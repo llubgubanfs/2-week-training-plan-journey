@@ -126,6 +126,18 @@ matches the per-container shape of this docker-compose stack) was folded in as a
 addition to Module 3 — app-level metrics answer "is my service healthy," host-level metrics
 answer "is the machine underneath it healthy."
 
+## Feedback from Harvey — round 2 (2026-08-27)
+
+On the revised proposal. Verbatim: "Can you add a pre-assessment and post-assessment."
+
+Clarified with Harvey over three follow-up questions (mechanism, scope, weight):
+
+- **Mechanism**: a Growth Portal-native feature — not something authored/hosted outside GP.
+- **Scope**: one pre-assessment and one post-assessment for the whole course, not per-module.
+- **Weight**: graded and tracked — GP handles grading and tracking itself.
+
+Resolved as design decisions; what remains is build scope — see Open items below.
+
 ## What this is trying to showcase
 
 Not a "here's my reusable project" portfolio piece — deliberately ruled out, since the
@@ -181,7 +193,7 @@ defense like Days 9/10. Posted to Growth Portal once reviewed.
 | 4 | 30m diagram review (exporter → Prometheus → Grafana wiring diagram, production delegated — this is review/revision time; needs to be finished before it's presented live on Day 5) · 30m re-read Day 6/8 source · 1.75h Module 4 script · 1.75h Module 5 script · 30m full run-through/pacing check across all 5 (diagram checked alongside, since it needs to be part of the pacing) · 30m read-aloud check (Modules 4–5) · 30m buffer — **6h total** |
 | 5 | **Recording — Module 3 alone**, split out on 2026-08-26 since it's the highest-retake-risk module (live diagram narration, host-metrics demo) and recording is a known perfectionism trap — isolating it means a retake spiral doesn't eat into the other four modules' time. 30m setup (screen recorder, audio check, stack up — `docker compose up -d`, `verify.sh` green) · 2h recording · 1h buffer — **3.5h total, 4.5h left for SkillIQ** |
 | 6 | **Recording — Modules 1, 2, 4, 5.** 30m setup · 3.5h recording, re-takes allowed per module · 1h buffer — **5h total, 3h left for SkillIQ** |
-| 7 | 1.5h cut/trim · 1h tier labels ("for everyone" / "assumes engineering background") · 1.5h self-review vs. objectives · 30m full watch-through for pacing/coherence · 30m export · 1h buffer |
+| 7 | 1.5h cut/trim · 1h tier labels ("for everyone" / "assumes engineering background") · 1.5h self-review vs. objectives · 30m full watch-through for pacing/coherence · 30m export · **1h author pre/post-assessment question bank** (whole-course, GP-native/GP-graded — content only, added 2026-08-27 per Harvey's round-2 feedback; placed here because it needs all 5 module scripts locked, and needs to exist before the Day 8 review) · 1h buffer — **7h total, 1h left for SkillIQ** (down from the usual ~2h — this is the one day absorbing the round-2 feedback's new scope) |
 | 8 | Review pass with Harvey, incorporate feedback, publish to Growth Portal — bound by his turnaround, not hours worked |
 
 Note: this 9-day window (Day 0–8) assumes a fixed 8-hour workday; each day's course-hours are
@@ -204,6 +216,12 @@ highest-retake-risk module) gets isolated room rather than sharing a fixed 4.5h 
 
 ## Open items
 
-None outstanding as of 2026-08-26 — the three items tracked here (host-metrics should/shouldn't,
-Module 3 script-time, diagram placement) are all resolved above. Still genuinely pending:
-Harvey's sign-off on this revised schedule, and item 4's build work (Day 0) hasn't started.
+None outstanding as of 2026-08-27 — round 2 feedback (pre/post-assessment: GP-native, one pair
+for the whole course, GP-graded) is fully resolved and slotted into Day 7 in the Schedule below.
+Deliberately scheduled as ordinary execution work rather than sent to Harvey as a separate
+upfront deliverable — the design questions were already answered, and the questions can't be
+written until all 5 module scripts lock anyway, so there was nothing left for an early check-in
+to resolve. It'll be reviewed alongside everything else at the single Day 8 checkpoint.
+
+Still genuinely pending: Harvey's sign-off on the revised schedule, and item 4's build work
+(Day 0) hasn't started.
