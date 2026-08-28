@@ -175,6 +175,13 @@ Harvey, rather than guessed at:
   for Module 3 specifically — is left as Harvey's call rather than stated as settled. Reversed
   from an earlier draft of this session that stated it as resolved; re-flagged as open per
   Leander's explicit call that he wants Harvey's input on it.
+- **F3 (duplication check, catalog overlap):** caught mid-session — an earlier draft of this
+  section claimed "checked against GP content and Pluralsight/iMocha, no overlap found," which
+  never actually happened. Corrected to state plainly that no such check has been done (no
+  visibility into GP's course catalog to search it), and flagged for Harvey to confirm instead
+  of asserting a check that didn't occur. The landscape/topic-scoping research in the same
+  section (topics considered and ruled out) is genuine and unaffected — only the catalog-overlap
+  claim was fabricated and has been fixed.
 
 **Resolved directly (not flagged to Harvey):**
 - F2 (mandate) → worked through in this session, not left as an open guess: Module 1
@@ -285,7 +292,10 @@ As of 2026-08-28 (round 3, template + audit):
 4. **Mid-course checkpoint for Module 3** — the platform constraint is confirmed (no native
    mid-course/per-module GP mechanism), but whether to settle for whole-course-only or build a
    non-GP workaround is left as Harvey's call, not stated as decided.
-5. **Pilot delivery step** — newly added to the Execution Plan table (template §14) between Day
+5. **Duplication/catalog-overlap check (F3)** — genuinely not done; corrected from an earlier
+   draft that wrongly claimed it was. Needs Harvey (or whoever has GP catalog visibility) to
+   confirm no existing course overlaps with this one.
+6. **Pilot delivery step** — newly added to the Execution Plan table (template §14) between Day
    7 and Day 8; needs 1-2 volunteer learners identified before Day 7 ends.
 
 Still genuinely pending from round 2: Harvey's sign-off on the revised schedule, and item 4's
