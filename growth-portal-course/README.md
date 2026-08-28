@@ -57,6 +57,18 @@ rather than staying abstract. This is also how the course avoids talking down to
 already done observability work at a client engagement: it reads as calibration to a shared
 convention, not remedial teaching.
 
+**Refinement (round 3, 2026-08-28):** "the team's standard" as written here implies an
+already-adopted, uniform convention across the org. Leander flagged that this overstates it —
+Full Scale's engagements run varying stacks, so a Node/NestJS-specific convention isn't
+uniformly "the team's" standard, and as a junior he doesn't have the standing to declare an
+org-wide standard on his own authority either way. Reframed as **a proposed/reference standard,
+most directly applicable to Node/NestJS-based projects** rather than an existing cross-stack
+policy. This doesn't reopen point 1 (avoid "gap" framing) — proposing a standard is still
+constructive framing, not "here's what you're missing" — it just corrects the framing from
+asserted fact to proposal. Applied in the filled template's Duplication Check section (§3);
+worth carrying into the script/video language too when Module 1-5 scripts are written, not just
+this proposal doc.
+
 ### Jargon: plain-language-first, name-the-term second
 
 Point (preamble) said minimize jargon. Resolution: every concept gets explained in two beats —
@@ -208,6 +220,16 @@ Harvey, rather than guessed at:
   Environment sections correctly name NestJS specifics only when describing the actual demo app,
   which matches the proposal's own established pattern (mechanism explained generically first,
   then "here's what that looks like in this app").
+
+  **Second follow-up catch (same session):** "the team's specific applied standard" itself
+  overstated it — implies an already-adopted, uniform org-wide convention, but Full Scale's
+  engagements run varying stacks, so a Node/NestJS-specific convention isn't uniformly "the
+  team's," and Leander (a junior) doesn't have standing to assert an org-wide standard either
+  way. Softened to "a proposed/reference standard, most directly applicable to Node/NestJS-based
+  projects" — see the round-3 refinement note under "Framing: standard, not gap" above for the
+  full reasoning. The duplication-check argument still holds with the softened claim: Pluralsight
+  still can't show a concrete, demonstrated proposal specific to this codebase, whether or not
+  it's already org-adopted.
 - F2 (mandate) → worked through in this session, not left as an open guess: Module 1
   (shared/everyone) is mandatory since it's a foundational concept regardless of role; Modules
   2–5 (engineer-deep) are mandatory for engineers, elective for QA/UI-UX/PM. Expected headcount
