@@ -160,7 +160,7 @@ objectives with assessable verbs, a task-analysis breakdown per objective, and a
 metrics/modules table with per-module duration estimates (~50–55 min total, still directional
 pending the Day 2–4 read-aloud checks).
 
-One item was deliberately **not** decided unilaterally and stays flagged as an open question for
+Two items were deliberately **not** decided unilaterally and stay flagged as open questions for
 Harvey, rather than guessed at:
 
 - **F5 (Rocks hookup):** talked through in this session — Rocks is a separate internal Full
@@ -169,6 +169,12 @@ Harvey, rather than guessed at:
   (2) whether any other GP course already has a Rocks hookup to model this on, and (3) whether
   "success" for hookup purposes means completion or passing the post-assessment threshold. The
   template asks Harvey directly rather than guessing at platform capability or precedent.
+- **C7 (mid-course checkpoint):** confirmed the platform fact (GP has no native mid-course/
+  per-module assessment mechanism, only whole-course pre/post), but the *decision* of what to do
+  given that constraint — settle for whole-course-only, or build a lightweight non-GP workaround
+  for Module 3 specifically — is left as Harvey's call rather than stated as settled. Reversed
+  from an earlier draft of this session that stated it as resolved; re-flagged as open per
+  Leander's explicit call that he wants Harvey's input on it.
 
 **Resolved directly (not flagged to Harvey):**
 - F2 (mandate) → worked through in this session, not left as an open guess: Module 1
@@ -184,11 +190,6 @@ Harvey, rather than guessed at:
   explicitly as a proposal for Harvey to confirm, not a stated fact.
 - C4 (per-module duration) → estimated per module in the proposed-modules table, flagged as
   directional until the scripts lock.
-- C7 (mid-course checkpoint) → confirmed with Harvey (via this session) that Growth Portal has
-  no native mid-course/per-module assessment mechanism — only a whole-course pre/post pair.
-  Settling for whole-course-only given that platform constraint, stated explicitly rather than
-  left silent, with Module 3 named as the module most likely to need a checkpoint if GP ever
-  adds one.
 - Template §14 (Execution Plan) already has a "Pilot delivery (1-2 learners)" row the existing
   Day 0–8 schedule didn't previously account for — slotted between Day 7 (editing) and Day 8
   (EM review), run in parallel with the EM review rather than as an added day.
@@ -281,7 +282,10 @@ As of 2026-08-28 (round 3, template + audit):
    definition of "success"), all flagged for Harvey rather than guessed at.
 3. **Pass threshold (70% proposed)** — stated as a proposal in the filled template, not a
    confirmed number; needs Harvey's sign-off.
-4. **Pilot delivery step** — newly added to the Execution Plan table (template §14) between Day
+4. **Mid-course checkpoint for Module 3** — the platform constraint is confirmed (no native
+   mid-course/per-module GP mechanism), but whether to settle for whole-course-only or build a
+   non-GP workaround is left as Harvey's call, not stated as decided.
+5. **Pilot delivery step** — newly added to the Execution Plan table (template §14) between Day
    7 and Day 8; needs 1-2 volunteer learners identified before Day 7 ends.
 
 Still genuinely pending from round 2: Harvey's sign-off on the revised schedule, and item 4's
