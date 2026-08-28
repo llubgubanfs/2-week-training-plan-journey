@@ -138,6 +138,54 @@ Clarified with Harvey over three follow-up questions (mechanism, scope, weight):
 
 Resolved as design decisions; what remains is build scope — see Open items below.
 
+## Feedback from Harvey — round 3 (2026-08-28)
+
+Harvey ran the proposal through an EM audit process and asked for it to be filled into a
+standard template rather than continuing as a freeform doc: "I had some realization while
+checking all of these course proposal and we lacked the template. So, I would want you is to
+fill up first the template based on your proposal.pdf." He supplied both the template
+(`GP-Course-Proposal-Template.docx`) and a written audit (`observability-course-audit.md`)
+against a gate (F1–F7) and design checklist (C1–C7).
+
+**Audit verdict:** closest to approval of any proposal audited so far. Only one hard blocker
+(F6, maintenance owner — unaddressed) plus two "needs work" gate items (F2 mandate/headcount,
+F5 Rocks hookup) and several design-checklist gaps (C1 unnumbered objectives, C3 no pass
+threshold, C4 no per-module duration, C7 no mid-course checkpoint). Full detail in
+`observability-course-audit.md`.
+
+**Filled into `observability-gp-template-filled.docx`.** Everything derivable from the existing
+README/proposal content (duplication check, module structure, materials, hands-on-environment
+answer) was carried over and reformatted into the template's stricter structure — numbered
+objectives with assessable verbs, a task-analysis breakdown per objective, and a proposed
+metrics/modules table with per-module duration estimates (~50–55 min total, still directional
+pending the Day 2–4 read-aloud checks).
+
+Three items were deliberately **not** decided unilaterally and are flagged in the template as
+open questions for Harvey, rather than guessed at:
+
+- **F2 (mandate/headcount):** mandatory vs. elective status and expected headcount — an
+  org-level call, not mine to set.
+- **F5 (Rocks hookup):** whether a learner's pass/fail result feeds their own Rocks/checkpoint
+  tracking, or stays a completion-only signal with no individual linkage.
+- **C7 (mid-course checkpoint):** confirmed with Harvey (via this session) that Growth Portal
+  has no native mid-course/per-module assessment mechanism — only a whole-course pre/post pair.
+  Settling for whole-course-only given that platform constraint, stated explicitly rather than
+  left silent, with Module 3 named as the module most likely to need a checkpoint if GP ever
+  adds one.
+
+**Resolved directly (not flagged to Harvey):**
+- F6 (maintenance owner) → Leander, covering the demo app's dependencies (Postgres, env-schema
+  validation, cAdvisor/Grafana provisioning) as they drift.
+- C1 (objectives) → 5 numbered, assessable-verb objectives, one per module, referenced by number
+  throughout the task-analysis, module, and assessment tables.
+- C3 (pass threshold) → proposed 70% overall on the whole-course post-assessment, marked
+  explicitly as a proposal for Harvey to confirm, not a stated fact.
+- C4 (per-module duration) → estimated per module in the proposed-modules table, flagged as
+  directional until the scripts lock.
+- Template §14 (Execution Plan) already has a "Pilot delivery (1-2 learners)" row the existing
+  Day 0–8 schedule didn't previously account for — slotted between Day 7 (editing) and Day 8
+  (EM review), run in parallel with the EM review rather than as an added day.
+
 ## What this is trying to showcase
 
 Not a "here's my reusable project" portfolio piece — deliberately ruled out, since the
@@ -216,12 +264,16 @@ highest-retake-risk module) gets isolated room rather than sharing a fixed 4.5h 
 
 ## Open items
 
-None outstanding as of 2026-08-27 — round 2 feedback (pre/post-assessment: GP-native, one pair
-for the whole course, GP-graded) is fully resolved and slotted into Day 7 in the Schedule below.
-Deliberately scheduled as ordinary execution work rather than sent to Harvey as a separate
-upfront deliverable — the design questions were already answered, and the questions can't be
-written until all 5 module scripts lock anyway, so there was nothing left for an early check-in
-to resolve. It'll be reviewed alongside everything else at the single Day 8 checkpoint.
+As of 2026-08-28 (round 3, template + audit):
 
-Still genuinely pending: Harvey's sign-off on the revised schedule, and item 4's build work
-(Day 0) hasn't started.
+1. **Mandate (mandatory/elective + headcount)** — flagged in the filled template as an open
+   question for Harvey; not something to guess at.
+2. **Rocks/checkpoint-tracking hookup** — flagged in the filled template as an open question for
+   Harvey; this course affects other learners' reporting, not just mine.
+3. **Pass threshold (70% proposed)** — stated as a proposal in the filled template, not a
+   confirmed number; needs Harvey's sign-off.
+4. **Pilot delivery step** — newly added to the Execution Plan table (template §14) between Day
+   7 and Day 8; needs 1-2 volunteer learners identified before Day 7 ends.
+
+Still genuinely pending from round 2: Harvey's sign-off on the revised schedule, and item 4's
+build work (Day 0) hasn't started.
