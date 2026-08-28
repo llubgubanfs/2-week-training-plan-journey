@@ -175,15 +175,18 @@ Harvey, rather than guessed at:
   for Module 3 specifically — is left as Harvey's call rather than stated as settled. Reversed
   from an earlier draft of this session that stated it as resolved; re-flagged as open per
   Leander's explicit call that he wants Harvey's input on it.
-- **F3 (duplication check, catalog overlap):** caught mid-session — an earlier draft of this
-  section claimed "checked against GP content and Pluralsight/iMocha, no overlap found," which
-  never actually happened. Corrected to state plainly that no such check has been done (no
-  visibility into GP's course catalog to search it), and flagged for Harvey to confirm instead
-  of asserting a check that didn't occur. The landscape/topic-scoping research in the same
-  section (topics considered and ruled out) is genuine and unaffected — only the catalog-overlap
-  claim was fabricated and has been fixed.
-
 **Resolved directly (not flagged to Harvey):**
+- F3 (duplication check) → caught mid-session: an earlier draft claimed "checked against GP
+  content and Pluralsight/iMocha, no overlap found," which never actually happened — the
+  landscape/topic-scoping research (topics considered and ruled out) is genuine, but the literal
+  catalog-overlap claim was fabricated. Corrected in two parts: (1) Leander confirmed directly,
+  from his own knowledge of GP's catalog, that no existing GP course covers this topic — stated
+  as his own assertion, not an invented check; (2) Pluralsight/iMocha were never checked and
+  weren't worth checking — reasoned through instead that a generic Pluralsight observability
+  course almost certainly exists but isn't disqualifying, since it would teach portable
+  vendor-agnostic theory while this course teaches the team's specific applied standard (same
+  logic already used to rule out APM/RUM as "licensed-platform territory"). No longer flagged to
+  Harvey.
 - F2 (mandate) → worked through in this session, not left as an open guess: Module 1
   (shared/everyone) is mandatory since it's a foundational concept regardless of role; Modules
   2–5 (engineer-deep) are mandatory for engineers, elective for QA/UI-UX/PM. Expected headcount
@@ -292,10 +295,7 @@ As of 2026-08-28 (round 3, template + audit):
 4. **Mid-course checkpoint for Module 3** — the platform constraint is confirmed (no native
    mid-course/per-module GP mechanism), but whether to settle for whole-course-only or build a
    non-GP workaround is left as Harvey's call, not stated as decided.
-5. **Duplication/catalog-overlap check (F3)** — genuinely not done; corrected from an earlier
-   draft that wrongly claimed it was. Needs Harvey (or whoever has GP catalog visibility) to
-   confirm no existing course overlaps with this one.
-6. **Pilot delivery step** — newly added to the Execution Plan table (template §14) between Day
+5. **Pilot delivery step** — newly added to the Execution Plan table (template §14) between Day
    7 and Day 8; needs 1-2 volunteer learners identified before Day 7 ends.
 
 Still genuinely pending from round 2: Harvey's sign-off on the revised schedule, and item 4's
