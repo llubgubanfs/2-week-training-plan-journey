@@ -160,20 +160,22 @@ objectives with assessable verbs, a task-analysis breakdown per objective, and a
 metrics/modules table with per-module duration estimates (~50–55 min total, still directional
 pending the Day 2–4 read-aloud checks).
 
-Three items were deliberately **not** decided unilaterally and are flagged in the template as
-open questions for Harvey, rather than guessed at:
+One item was deliberately **not** decided unilaterally and stays flagged as an open question for
+Harvey, rather than guessed at:
 
-- **F2 (mandate/headcount):** mandatory vs. elective status and expected headcount — an
-  org-level call, not mine to set.
-- **F5 (Rocks hookup):** whether a learner's pass/fail result feeds their own Rocks/checkpoint
-  tracking, or stays a completion-only signal with no individual linkage.
-- **C7 (mid-course checkpoint):** confirmed with Harvey (via this session) that Growth Portal
-  has no native mid-course/per-module assessment mechanism — only a whole-course pre/post pair.
-  Settling for whole-course-only given that platform constraint, stated explicitly rather than
-  left silent, with Module 3 named as the module most likely to need a checkpoint if GP ever
-  adds one.
+- **F5 (Rocks hookup):** talked through in this session — Rocks is a separate internal Full
+  Scale tool tracking employee performance broadly, but three specific things sit outside what a
+  course author can know: (1) whether/how Rocks integrates with GP course completions at all,
+  (2) whether any other GP course already has a Rocks hookup to model this on, and (3) whether
+  "success" for hookup purposes means completion or passing the post-assessment threshold. The
+  template asks Harvey directly rather than guessing at platform capability or precedent.
 
 **Resolved directly (not flagged to Harvey):**
+- F2 (mandate) → worked through in this session, not left as an open guess: Module 1
+  (shared/everyone) is mandatory since it's a foundational concept regardless of role; Modules
+  2–5 (engineer-deep) are mandatory for engineers, elective for QA/UI-UX/PM. Expected headcount
+  is still unknown — flagged for Harvey now that the mandatory *scope* itself is settled, not
+  the mandate question itself.
 - F6 (maintenance owner) → Leander, covering the demo app's dependencies (Postgres, env-schema
   validation, cAdvisor/Grafana provisioning) as they drift.
 - C1 (objectives) → 5 numbered, assessable-verb objectives, one per module, referenced by number
@@ -182,6 +184,11 @@ open questions for Harvey, rather than guessed at:
   explicitly as a proposal for Harvey to confirm, not a stated fact.
 - C4 (per-module duration) → estimated per module in the proposed-modules table, flagged as
   directional until the scripts lock.
+- C7 (mid-course checkpoint) → confirmed with Harvey (via this session) that Growth Portal has
+  no native mid-course/per-module assessment mechanism — only a whole-course pre/post pair.
+  Settling for whole-course-only given that platform constraint, stated explicitly rather than
+  left silent, with Module 3 named as the module most likely to need a checkpoint if GP ever
+  adds one.
 - Template §14 (Execution Plan) already has a "Pilot delivery (1-2 learners)" row the existing
   Day 0–8 schedule didn't previously account for — slotted between Day 7 (editing) and Day 8
   (EM review), run in parallel with the EM review rather than as an added day.
@@ -266,10 +273,12 @@ highest-retake-risk module) gets isolated room rather than sharing a fixed 4.5h 
 
 As of 2026-08-28 (round 3, template + audit):
 
-1. **Mandate (mandatory/elective + headcount)** — flagged in the filled template as an open
-   question for Harvey; not something to guess at.
-2. **Rocks/checkpoint-tracking hookup** — flagged in the filled template as an open question for
-   Harvey; this course affects other learners' reporting, not just mine.
+1. **Expected headcount** — mandate scope is now settled (Module 1 mandatory for everyone,
+   Modules 2–5 mandatory for engineers only, elective for QA/UI-UX/PM); the headcount number
+   itself is still flagged for Harvey.
+2. **Rocks/checkpoint-tracking hookup** — narrowed to three specific unknowns (GP-Rocks
+   integration mechanism, precedent from another course, and the completion-vs-mastery
+   definition of "success"), all flagged for Harvey rather than guessed at.
 3. **Pass threshold (70% proposed)** — stated as a proposal in the filled template, not a
    confirmed number; needs Harvey's sign-off.
 4. **Pilot delivery step** — newly added to the Execution Plan table (template §14) between Day
