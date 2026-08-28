@@ -169,12 +169,15 @@ Harvey, rather than guessed at:
   (2) whether any other GP course already has a Rocks hookup to model this on, and (3) whether
   "success" for hookup purposes means completion or passing the post-assessment threshold. The
   template asks Harvey directly rather than guessing at platform capability or precedent.
-- **C7 (mid-course checkpoint):** confirmed the platform fact (GP has no native mid-course/
-  per-module assessment mechanism, only whole-course pre/post), but the *decision* of what to do
-  given that constraint — settle for whole-course-only, or build a lightweight non-GP workaround
-  for Module 3 specifically — is left as Harvey's call rather than stated as settled. Reversed
-  from an earlier draft of this session that stated it as resolved; re-flagged as open per
-  Leander's explicit call that he wants Harvey's input on it.
+- **C7 (mid-course checkpoint):** reworked twice this session. First patched as "confirmed: GP
+  has no native mid-course/per-module mechanism," but Leander caught that this asserted a
+  platform limitation nobody had actually verified — same pattern as F3's duplication check.
+  Reframed as a genuine two-part question: does GP support a native mid-course/per-module
+  assessment at all? If not, settle for whole-course-only or build a lightweight non-GP
+  workaround for Module 3 (the highest-risk module either way); if GP does support it, add a
+  native check after Module 3 directly. Don't assert a platform capability question as answered
+  fact — ask it.
+
 **Resolved directly (not flagged to Harvey):**
 - F3 (duplication check) → caught mid-session: an earlier draft claimed "checked against GP
   content and Pluralsight/iMocha, no overlap found," which never actually happened — the
@@ -292,9 +295,9 @@ As of 2026-08-28 (round 3, template + audit):
    definition of "success"), all flagged for Harvey rather than guessed at.
 3. **Pass threshold (70% proposed)** — stated as a proposal in the filled template, not a
    confirmed number; needs Harvey's sign-off.
-4. **Mid-course checkpoint for Module 3** — the platform constraint is confirmed (no native
-   mid-course/per-module GP mechanism), but whether to settle for whole-course-only or build a
-   non-GP workaround is left as Harvey's call, not stated as decided.
+4. **Mid-course checkpoint for Module 3** — genuinely asking, not assuming: does GP support a
+   native mid-course/per-module assessment at all? If not, whole-course-only vs. a non-GP
+   workaround is Harvey's call; if it does, a native check after Module 3 is the fallback plan.
 5. **Pilot delivery step** — newly added to the Execution Plan table (template §14) between Day
    7 and Day 8; needs 1-2 volunteer learners identified before Day 7 ends.
 
