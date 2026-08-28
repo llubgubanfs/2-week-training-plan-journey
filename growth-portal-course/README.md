@@ -190,6 +190,24 @@ Harvey, rather than guessed at:
   vendor-agnostic theory while this course teaches the team's specific applied standard (same
   logic already used to rule out APM/RUM as "licensed-platform territory"). No longer flagged to
   Harvey.
+
+  **Follow-up catch (same session):** the first version of that F3 justification named specific
+  NestJS internals as the differentiator ("why this team uses AsyncLocalStorage over a
+  request-scoped provider") — Leander caught that this fails the proposal's own established test
+  ("would the explanation still hold if the demo were Express?" — `Scope.REQUEST` is a
+  NestJS-only concept, so no). That framework-tutorial drift also showed up in two other spots:
+  the course **title** had grown a "... in NestJS" tail, and the **target audience** field named
+  "Node/NestJS or equivalent" as the primary audience, contradicting the Prerequisites field
+  right below it ("any language"). All three fixed: title dropped the framework tail (back to
+  matching the original proposal subtitle), target audience is now stack-agnostic, and the
+  duplication-check paragraph now argues from *reasoning/tradeoffs* (why a shared-state
+  correlation-ID approach breaks across an async boundary, why an unbounded metric label blows
+  up cost) rather than named tool choices — the stack (NestJS, Winston, cAdvisor) is stated
+  explicitly as "the vehicle... not the subject being taught." Checked the rest of the document
+  for the same drift: the Objectives (§4) were already clean; the Module table and Hands-On
+  Environment sections correctly name NestJS specifics only when describing the actual demo app,
+  which matches the proposal's own established pattern (mechanism explained generically first,
+  then "here's what that looks like in this app").
 - F2 (mandate) → worked through in this session, not left as an open guess: Module 1
   (shared/everyone) is mandatory since it's a foundational concept regardless of role; Modules
   2–5 (engineer-deep) are mandatory for engineers, elective for QA/UI-UX/PM. Expected headcount
